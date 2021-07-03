@@ -1,0 +1,18 @@
+.sideNavRow {
+    padding: 20px;
+    border-bottom: 5px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+}
+
+.sideNavRow__title {
+    font-size: 26px;
+    text-transform: capitalize;
+}
+
+.sideNavRow__count {
+    font-size: 16px;
+    text-transform: uppercase;
+}

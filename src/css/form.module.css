@@ -1,0 +1,264 @@
+.form {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.formField {
+    height: 175px;
+    width: 50%;
+    border: 2px dotted black;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+    border-radius: 5px;
+    flex: 1 0 40%;
+    text-align: center;
+    flex-wrap: wrap;
+}
+
+.inputItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.inputItem__label {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 18px;
+    margin: 0;
+    text-align: left;
+    width: 100%;
+}
+
+.inputItem__textInput {
+    width: 90%;
+    height: 40px;
+    border: 1px solid black;
+    border-radius: 1px;
+    text-align: center;
+    font-size: 18px;
+    padding: 5px;
+}
+
+.inputItem__textAreaInput {
+    width: 90%;
+    height: 80px;
+    border: 1px solid black;
+    border-radius: 1px;
+    font-size: 18px;
+    padding: 5px;
+}
+
+.inputItem__checkboxes {
+    width: 100%;
+}
+
+.inputItem__checkboxInput {
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+  
+.inputItem__checkbox {
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.checkboxInput__label {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+}
+
+.inputItem__submit {
+    width: 40%;
+    height: 50px;
+    background-color: white;
+    border: 3px solid black;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 18px;
+    padding: 5px;
+    margin: 20px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.inputItem__submitArea {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.timeGrid {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.timeBox {
+    width: 20%;
+    height: 50px;
+    background-color: white;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 90px;
+    height: 34px;
+}
+  
+.toggle .toggleInput {
+    display:none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ca2222;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.toggleInput:checked + .slider {
+    background-color: #2ab934;
+}
+
+.toggleInput:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+.toggleInput:checked + .slider:before {
+    -webkit-transform: translateX(55px);
+    -ms-transform: translateX(55px);
+    transform: translateX(55px);
+}
+
+/*------ ADDED CSS ---------*/
+.t12 {
+    display: none;
+}
+
+.t12, .t24 {
+    color: white;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    top: 50%;
+    left: 50%;
+    font-size: 10px;
+    font-family: Verdana, sans-serif;
+}
+
+.toggleInput:checked+ .slider .t12 {
+    display: block;
+}
+
+.toggleInput:checked + .slider .t24 {
+    display: none;
+}
+
+/*--------- END --------*/
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.available {
+    background-color: lightblue;
+}
+
+.unavailable {
+    background-color: white;
+}
+
+.tagSelection {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px;
+    display: inline-block;
+    margin: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.tagSelection p {
+    margin: 0;
+}
+
+.selected {
+    background-color: lightblue;
+}
+
+.notSelected {
+    background-color: white;
+}
+
+.addTagInput {
+    display: flex;
+    align-items: center;
+}
+
+.addTagButton {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 15px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.cameraIcon {
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+}
+
+.photoInputs {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.imgUpload {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 15px;
+    cursor: pointer;
+}
