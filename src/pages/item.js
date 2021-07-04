@@ -4,8 +4,8 @@ import { firestore } from "../components/firebase"
 import { useUser } from "../context/UserContext"
 import { Layout, Content, SideNav } from '../components/layout'
 import ItemForm from '../components/item-form'
-import * as FormCSS from '../components/form.module.css'
-import * as ItemCSS from '../components/item-page.module.css'
+import * as FormCSS from '../css/form.module.css'
+import * as ItemCSS from '../css/item-page.module.css'
 
 const ItemPage = ({ location }) => {
     const [itemData, setItemData] = useState({})

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Link, useStaticQuery, graphql } from 'gatsby'
 import { useUser } from "../context/UserContext"
-import * as LayoutCSS from '../components/layout.module.css'
+import * as LayoutCSS from '../css/layout.module.css'
 
 
 export const Content = ({ contentTitle, children }) => {

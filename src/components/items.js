@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'gatsby'
 import { firestore } from "./firebase"
 import { useUser } from "../context/UserContext"
-import * as ItemsCSS from '../components/items.module.css'
+import * as ItemsCSS from '../css/items.module.css'
 import add_icon from '../images/add_icon.png'
 
 export async function getItemTags() {

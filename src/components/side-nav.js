@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'gatsby'
 import { useUser } from "../context/UserContext"
 import { getItemTags } from './items'
-import * as SideNavCSS from '../components/side-nav.module.css'
+import * as SideNavCSS from '../css/side-nav.module.css'
 
 const SideNavContent = ({ type }) => {
     const [tags, setTags] = useState()

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useUser } from "../context/UserContext"
 import { getItemTags } from '../components/items'
 import { imgStorage } from "../components/firebase"
-import * as FormCSS from '../components/form.module.css'
+import * as FormCSS from '../css/form.module.css'
 import camera_icon from '../images/camera_icon.png'
 import remove_icon from '../images/remove_icon.png'
 

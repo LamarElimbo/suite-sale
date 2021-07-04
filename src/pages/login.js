@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import { navigate } from "gatsby"
 import { useUser } from "../context/UserContext"
 import {Layout, Content, SideNav} from '../components/layout'
-import { form, inputItem, inputItem__label, inputItem__textInput, inputItem__submit } from '../components/form.module.css'
+import { form, inputItem, inputItem__label, inputItem__textInput, inputItem__submit } from '../css/form.module.css'
 
 const LoginPage = () => {
   const email = useRef()

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import {Layout, Content, SideNav} from '../components/layout'
-import { timeGrid, timeBox, form, available, unavailable } from '../components/form.module.css'
+import { timeGrid, timeBox, form, available, unavailable } from '../css/form.module.css'
 
 const Time = () => {
   const [availableTimes, setAvailableTimes] = useState([])
