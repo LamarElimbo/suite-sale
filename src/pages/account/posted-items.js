@@ -3,7 +3,7 @@ import {ItemCardList} from '../../components/items'
 import {Layout, Content, SideNav} from '../../components/layout'
 import SideNavContent from '../../components/side-nav'
 
-const AccountPage = () => {
+const PostedItemsPage = () => {
   return (
     <Layout pageTitle="Home Page" headerLink="Logout">
       <Content contentTitle="Your active listings">
@@ -16,4 +16,4 @@ const AccountPage = () => {
   )
 }
 
-export default AccountPage
+export default PostedItemsPage

@@ -38,6 +38,10 @@ export function UserProvider({ children }) {
     return auth.signOut()
   }
 
+  function deleteAccount() {
+    return auth.delete()
+  }
+
   function resetPassword(email) {
     return auth.sendPasswordResetEmail(email)
   }
@@ -101,6 +105,7 @@ export function UserProvider({ children }) {
     userAuth,
     userData,
     login,
+    deleteAccount,
     signup,
     logout,
     resetPassword,

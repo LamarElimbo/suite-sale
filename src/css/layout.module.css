@@ -65,3 +65,7 @@ p, a {
 input[type="file"] {
     display: none;
   }
+
+.isCentered {
+    text-align: center;
+}

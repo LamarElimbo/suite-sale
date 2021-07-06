@@ -4,14 +4,12 @@ import { useUser } from "../context/UserContext"
 import * as LayoutCSS from '../css/layout.module.css'
 
 
-export const Content = ({ contentTitle, children }) => {
+export const Content = ({ contentTitle, children, titlePosition }) => {
     return (
-        <>
-            <div className={LayoutCSS.leftCol}>
-                <h2>{contentTitle}</h2>
-                <div className={LayoutCSS.leftColBody}>{children}</div>
-            </div>
-        </>
+        <div className={LayoutCSS.leftCol}>
+            <h2 className={titlePosition && LayoutCSS.isCentered}>{contentTitle}</h2>
+            <div className={LayoutCSS.leftColBody}>{children}</div>
+        </div>
     )
 }
 

@@ -77,10 +77,11 @@ export const ItemCardList = ({ filter }) => {
                     });
                 break
 
-            case 'posted listings':
-                if (userData) {
+            case 'posted items':
+                if (userData?.itemsPosted.length > 0) {
+                    console.log('post true')
                     firestore
-                        .collection("items").where("poster", "==", userData?.id)
+                        .collection("items").where("poster", "==", userData.id)
                         .get()
                         .then((listItems) => {
                             const docItems = []
@@ -94,13 +95,13 @@ export const ItemCardList = ({ filter }) => {
                         .catch((error) => {
                             console.log("Error getting documents: ", error);
                         });
-                    }
-                    break
+                }
+                break
 
             case 'purchase history':
-                if (userData) {
+                if (userData?.itemsPurchased.length > 0) {
                     firestore
-                        .collection("items").where("id", "in", userData?.itemsPurchased)
+                        .collection("items").where("id", "in", userData.itemsPurchased)
                         .get()
                         .then((listItems) => {
                             const docItems = []
@@ -114,13 +115,13 @@ export const ItemCardList = ({ filter }) => {
                         .catch((error) => {
                             console.log("Error getting documents: ", error);
                         });
-                    }
-                    break
+                }
+                break
 
             case 'saved':
-                if (userData) {
+                if (userData?.itemsSaved.length > 0) {
                     firestore
-                        .collection("items").where("id", "in", userData?.itemsSaved)
+                        .collection("items").where("id", "in", userData.itemsSaved)
                         .get()
                         .then((listItems) => {
                             const docItems = []
@@ -134,16 +135,20 @@ export const ItemCardList = ({ filter }) => {
                         .catch((error) => {
                             console.log("Error getting documents: ", error);
                         });
-                    }
-                    break
+                }
+                break
         }
     }, [filter, userData])
 
-    return (
-        <>
-            {filteredItems.map(item => <ItemCard create='false' item={item} key={item.id} />)}
-        </>
-    )
+    if (filteredItems.length === 0) {
+        return <p>You don't have any items under this category</p>
+    } else {
+        return (
+            <>
+                {filteredItems.map(item => <ItemCard create='false' item={item} key={item.id} />)}
+            </>
+        )
+    }
 }
 
 export const ItemCard = ({ create, item }) => {

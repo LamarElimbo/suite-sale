@@ -7,7 +7,7 @@ const AccountPage = () => {
   return (
     <Layout pageTitle="Home Page" headerLink="Logout">
       <Content contentTitle="Your active listings">
-        <ItemCardList filter="posted listings" />
+        <ItemCardList filter="posted items" />
       </Content>
       <SideNav>
         <SideNavContent type='account' />
