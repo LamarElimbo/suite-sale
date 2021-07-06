@@ -240,7 +240,7 @@ const ItemForm = ({ itemData, handleSubmit }) => {
                     <p className={FormCSS.inputItem__label}>Tags</p>
                     <div id='box'>
                         {existingTags.map(tag =>
-                            <button className={FormCSS.tagSelection + " " + (tags.includes(tag) ? FormCSS.selected : FormCSS.notSelected)}
+                            <button className={FormCSS.tagSelection + " " + (tags?.includes(tag) ? FormCSS.selected : FormCSS.notSelected)}
                                 id={tag}
                                 key={tag}
                                 onClick={onTagSelection}>{tag}</button>

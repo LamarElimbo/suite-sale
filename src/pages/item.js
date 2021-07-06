@@ -13,8 +13,20 @@ const ItemPage = ({ location }) => {
     const { userData, updateUserItems } = useUser()
 
     useEffect(() => {
-        setItemData(location.state.item)
-        setSaved(userData?.itemsSaved.includes(location.state.item.id))
+        if (location.state) {
+            setItemData(location.state.item)
+            setSaved(userData?.itemsSaved.includes(location.state.item.id))
+        } else {
+            const urlParams = new URLSearchParams(location.search);
+            firestore
+            .collection("items")
+            .doc(urlParams.get('item'))
+            .get()
+            .then(doc => {
+                setItemData(doc.data())
+                setSaved(userData?.itemsSaved.includes(doc.id))
+            })
+        }
     }, [location, userData])
 
     const onSave = () => {
