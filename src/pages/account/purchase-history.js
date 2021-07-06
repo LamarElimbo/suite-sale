@@ -10,10 +10,7 @@ const AccountPage = () => {
         <ItemCardList filter="purchase history"/>
       </Content>
       <SideNav>
-        <SideNavContent type='posted listings' />
-        <SideNavContent type='purchase history' />
-        <SideNavContent type='saved' />
-        <SideNavContent type='account settings' />
+        <SideNavContent type='account' />
       </SideNav>
     </Layout>
   )

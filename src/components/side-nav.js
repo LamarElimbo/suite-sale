@@ -15,7 +15,7 @@ const SideNavContent = ({ type }) => {
                     let content = []
                     for (let tag in itemsList) {
                         content.push(
-                            <Link to= "/" state={{tag}} key={tag} className={SideNavCSS.sideNavRow}>
+                            <Link to="/" state={{ tag }} key={tag} className={SideNavCSS.sideNavRow}>
                                 <p className={SideNavCSS.sideNavRow__title}>{tag}</p>
                                 <p>{itemsList[tag]} Items</p>
                             </Link>
@@ -26,41 +26,32 @@ const SideNavContent = ({ type }) => {
         }
         getTags()
     }, [])
-    
+
 
     switch (type) {
-        default :
+        default:
             return <>{tags}</> //return all tags
-        case 'posted listings': 
+        case 'account':
             return (
-                //return all posts
-                <div className={SideNavCSS.sideNavRow}>
-                    <p className={SideNavCSS.sideNavRow__title}>Your posted listings</p>
-                    <p>{userData?.itemsPosted.length} Items</p>
-                </div>
-              )
-        case 'purchase history': 
-            return (
-                //returnall purchases
-                <div className={SideNavCSS.sideNavRow}>
-                    <p className={SideNavCSS.sideNavRow__title}>Your purchase history</p>
-                    <p>{userData?.itemsPurchased.length} Items</p>
-                </div>
-              )
-        case 'saved': 
-            return (
-                <div className={SideNavCSS.sideNavRow}>
-                    <p className={SideNavCSS.sideNavRow__title}>Your saved items</p>
-                    <p>{userData?.itemsSaved.length} Items</p>
-                </div>
-              )
-        case 'account settings': 
-            return (
-                <div className={SideNavCSS.sideNavRow}>
-                    <p className={SideNavCSS.sideNavRow__title}>Your account settings</p>
-                    <p>10 Items</p>
-                </div>
-              )
+                <>
+                    <Link to="/account/posted-items" className={SideNavCSS.sideNavRow}>
+                        <p className={SideNavCSS.sideNavRow__title}>Your posted listings</p>
+                        <p>{userData?.itemsPosted.length} Items</p>
+                    </Link>
+                    <Link to="/account/purchase-history" className={SideNavCSS.sideNavRow}>
+                        <p className={SideNavCSS.sideNavRow__title}>Your purchase history</p>
+                        <p>{userData?.itemsPurchased.length} Items</p>
+                    </Link>
+                    <Link to="/account/saved-items" className={SideNavCSS.sideNavRow}>
+                        <p className={SideNavCSS.sideNavRow__title}>Your saved items</p>
+                        <p>{userData?.itemsSaved.length} Items</p>
+                    </Link>
+                    <Link to="/account/account-settings" className={SideNavCSS.sideNavRow}>
+                        <p className={SideNavCSS.sideNavRow__title}>Your account settings</p>
+                        <p>10 Items</p>
+                    </Link>
+                </>
+            )
     }
 }
 

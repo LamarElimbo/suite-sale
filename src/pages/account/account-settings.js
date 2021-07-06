@@ -9,10 +9,7 @@ const AccountPage = () => {
         
       </Content>
       <SideNav>
-        <SideNavContent type='posted items' />
-        <SideNavContent type='purchase history' />
-        <SideNavContent type='saved' />
-        <SideNavContent type='account settings' />
+        <SideNavContent type='account' />
       </SideNav>
     </Layout>
   )
