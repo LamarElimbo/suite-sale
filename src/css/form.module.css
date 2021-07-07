@@ -205,8 +205,12 @@
     background-color: lightblue;
 }
 
-.unavailable {
+.unselected {
     background-color: white;
+}
+
+.inactive {
+    background-color: grey;
 }
 
 .tagSelection {

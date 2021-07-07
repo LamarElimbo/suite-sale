@@ -41,9 +41,6 @@ const LoginPage = () => {
               <div className={inputItem}>
                 <input className={inputItem__submit}
                         type="submit"
-                        maxLength=""
-                        id=""
-                        name=""
                         value="Submit" />
               </div>
             </form>

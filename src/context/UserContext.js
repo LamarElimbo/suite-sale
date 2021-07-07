@@ -22,6 +22,7 @@ export function UserProvider({ children }) {
             id: response.user.uid,
             email: email,
             apartment: apartment,
+            itemsInProgress: [],
             itemsPosted: [],
             itemsPurchased: [],
             itemsSaved: []
@@ -74,6 +75,9 @@ export function UserProvider({ children }) {
       switch (array) {
         default:
           return null
+        case 'itemsInProgress':
+          userDoc.update({ itemsInProgress: firebase.firestore.FieldValue.arrayUnion(itemId) })
+          break
         case 'itemsPosted':
           userDoc.update({ itemsPosted: firebase.firestore.FieldValue.arrayUnion(itemId) })
           break
@@ -85,38 +89,47 @@ export function UserProvider({ children }) {
           break
       }
     } else {
-      userDoc.update({ itemsSaved: firebase.firestore.FieldValue.arrayRemove(itemId) })
+      switch (array) {
+        default:
+          return null
+        case 'itemsInProgress':
+          userDoc.update({ itemsInProgress: firebase.firestore.FieldValue.arrayRemove(itemId) })
+          break
+        case 'itemsSaved':
+          userDoc.update({ itemsSaved: firebase.firestore.FieldValue.arrayRemove(itemId) })
+          break
+      }
     }
 
-    getUserDocument(userAuth)
-  }
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(userAuth => {
-      setUserAuth(userAuth)
       getUserDocument(userAuth)
-      setLoading(false)
-    })
+    }
 
-    return unsubscribe
-  }, [])
+    useEffect(() => {
+      const unsubscribe = auth.onAuthStateChanged(userAuth => {
+        setUserAuth(userAuth)
+        getUserDocument(userAuth)
+        setLoading(false)
+      })
 
-  const value = {
-    userAuth,
-    userData,
-    login,
-    deleteAccount,
-    signup,
-    logout,
-    resetPassword,
-    updateEmail,
-    updatePassword,
-    updateUserItems
+      return unsubscribe
+    }, [])
+
+    const value = {
+      userAuth,
+      userData,
+      login,
+      deleteAccount,
+      signup,
+      logout,
+      resetPassword,
+      updateEmail,
+      updatePassword,
+      updateUserItems
+    }
+
+    return (
+      <UserContext.Provider value={value}>
+        {!loading && children}
+      </UserContext.Provider>
+    )
   }
-
-  return (
-    <UserContext.Provider value={value}>
-      {!loading && children}
-    </UserContext.Provider>
-  )
-}

@@ -10,7 +10,7 @@ const ItemCreatePage = () => {
 
   const createItem = (updatedItemData) => {
     const data = {
-      poster: updatedItemData.poster,
+      seller: updatedItemData.seller,
       item: updatedItemData.item,
       cost: updatedItemData.cost,
       itemNotes: updatedItemData.itemNotes,

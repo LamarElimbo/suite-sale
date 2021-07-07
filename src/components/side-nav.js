@@ -4,7 +4,7 @@ import { useUser } from "../context/UserContext"
 import { getItemTags } from './items'
 import * as SideNavCSS from '../css/side-nav.module.css'
 
-const SideNavContent = ({ type }) => {
+const SideNavContent = ({ type, tagSearch = () => null }) => {
     const [tags, setTags] = useState()
     const { userData } = useUser()
 
@@ -15,7 +15,7 @@ const SideNavContent = ({ type }) => {
                     let content = []
                     for (let tag in itemsList) {
                         content.push(
-                            <Link to="/" state={{ tag }} key={tag} className={SideNavCSS.sideNavRow}>
+                            <Link to={`/?tag=${tag}`} key={tag} className={SideNavCSS.sideNavRow} onClick={tagSearch(tag)}>
                                 <p className={SideNavCSS.sideNavRow__title}>{tag}</p>
                                 <p>{itemsList[tag]} Items</p>
                             </Link>
@@ -25,7 +25,7 @@ const SideNavContent = ({ type }) => {
                 })
         }
         getTags()
-    }, [])
+    }, [tagSearch])
 
 
     switch (type) {
@@ -34,6 +34,10 @@ const SideNavContent = ({ type }) => {
         case 'account':
             return (
                 <>
+                    <Link to="/account/items-in-progress" className={SideNavCSS.sideNavRow}>
+                        <p className={SideNavCSS.sideNavRow__title}>Items in progress</p>
+                        <p>{userData?.itemsInProgress.length} Items</p>
+                    </Link>
                     <Link to="/account/posted-items" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Your posted listings</p>
                         <p>{userData?.itemsPosted.length} Items</p>
@@ -48,7 +52,6 @@ const SideNavContent = ({ type }) => {
                     </Link>
                     <Link to="/account/account-settings" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Your account settings</p>
-                        <p>10 Items</p>
                     </Link>
                 </>
             )

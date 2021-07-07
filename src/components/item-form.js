@@ -116,7 +116,7 @@ const ItemForm = ({ itemData, handleSubmit }) => {
         e.preventDefault()
 
         const updatedItemData = {
-            poster: userData.id,
+            seller: userData.id,
             item: item.current.value,
             cost: cost.current.value,
             photo1, photo2, photo3, photo4,

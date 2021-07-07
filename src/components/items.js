@@ -77,11 +77,30 @@ export const ItemCardList = ({ filter }) => {
                     });
                 break
 
+            case 'in progress':
+                if (userData?.itemsInProgress.length > 0) {
+                    firestore
+                        .collection("items").where('itemId', "in", userData.itemsInProgress)
+                        .get()
+                        .then((listItems) => {
+                            const docItems = []
+                            listItems.forEach((doc) => {
+                                const data = doc.data()
+                                data['id'] = doc.id
+                                docItems.push(data)
+                            })
+                            setFilteredItems(docItems)
+                        })
+                        .catch((error) => {
+                            console.log("Error getting documents: ", error);
+                        });
+                }
+                break
+
             case 'posted items':
                 if (userData?.itemsPosted.length > 0) {
-                    console.log('post true')
                     firestore
-                        .collection("items").where("poster", "==", userData.id)
+                        .collection("items").where("seller", "==", userData.id)
                         .get()
                         .then((listItems) => {
                             const docItems = []
@@ -101,7 +120,7 @@ export const ItemCardList = ({ filter }) => {
             case 'purchase history':
                 if (userData?.itemsPurchased.length > 0) {
                     firestore
-                        .collection("items").where("id", "in", userData.itemsPurchased)
+                        .collection("items").where('itemId', "in", userData.itemsPurchased)
                         .get()
                         .then((listItems) => {
                             const docItems = []
@@ -121,7 +140,7 @@ export const ItemCardList = ({ filter }) => {
             case 'saved':
                 if (userData?.itemsSaved.length > 0) {
                     firestore
-                        .collection("items").where("id", "in", userData.itemsSaved)
+                        .collection("items").where('itemId', "in", userData.itemsSaved)
                         .get()
                         .then((listItems) => {
                             const docItems = []
@@ -167,6 +186,7 @@ export const ItemCard = ({ create, item }) => {
             <div className={ItemsCSS.itemCard__Info}>
                 <div className={ItemsCSS.cardInfo__cost}><sup className={ItemsCSS.dollarSign}>$</sup>{item.cost}</div>
                 <div className={ItemsCSS.cardInfo__item}>{item.item}</div>
+                {item.transactionData && <div className={ItemsCSS.cardInfo__item}>{item.transactionData.status}</div>}
             </div>
             <div className={ItemsCSS.itemCard__imgArea}>
                 <img className={ItemsCSS.itemCard__img} src={item.photo1 && item.photo1} alt="Item Preview" />
