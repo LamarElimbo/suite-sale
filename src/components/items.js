@@ -1,170 +1,66 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'gatsby'
-import { firestore } from "./firebase"
 import { useUser } from "../context/UserContext"
 import * as ItemsCSS from '../css/items.module.css'
 import add_icon from '../images/add_icon.png'
 
-export async function getItemTags() {
-
-    return firestore
-        .collection("items")
-        .get()
-        .then((listItems) => {
-            const docItems = []
-            listItems.forEach((doc) => docItems.push(doc.data()))
-
-            var tags = []
-            var setTags = {}
-
-            docItems.forEach((doc) => {
-                tags.push(...doc.tags)
-            })
-
-            tags.forEach((tag) => {
-                if (setTags[tag]) {
-                    setTags[tag]++
-                } else {
-                    setTags[tag] = 1
-                }
-            })
-            return setTags //format = {tag1: count, tag1: count}
-        })
-        .catch((error) => {
-            console.log("Error getting documents: ", error);
-        });
-}
+export const getAllItemTags = allItems => {
+    var tags = []
+    var setTags = {}
+    
+    allItems?.forEach(item => tags.push(...item.tags))
+    tags.forEach(tag => setTags[tag] = setTags[tag] ? setTags++ : 1)
+    return setTags //format = {tag1: count, tag1: count}
+    }
 
 export const ItemCardList = ({ filter }) => {
     const [filteredItems, setFilteredItems] = useState([])
-    const { userData } = useUser()
+    const { userData, allItems } = useUser()
+    console.log("ItemCardList: ", allItems)
 
     useEffect(() => {
+
         switch (filter) {
             default:
-                firestore
-                    .collection("items").where("tags", "array-contains", filter)
-                    .get()
-                    .then((filterdList) => {
-                        const docItems = []
-                        filterdList.forEach((doc) => {
-                            const data = doc.data()
-                            data['id'] = doc.id
-                            docItems.push(data)
-                        })
-                        setFilteredItems(docItems)
-                    })
-                    .catch((error) => {
-                        console.log("Error getting documents: ", error);
-                    });
+                setFilteredItems(allItems.filter(item => item.tags.includes(filter)))
                 break
 
             case 'all items':
-                firestore
-                    .collection("items")
-                    .get()
-                    .then((listItems) => {
-                        const docItems = []
-                        listItems.forEach((doc) => {
-                            const data = doc.data()
-                            data['id'] = doc.id
-                            docItems.push(data)
-                        })
-                        setFilteredItems(docItems)
-                    })
-                    .catch((error) => {
-                        console.log("Error getting documents: ", error);
-                    });
+                setFilteredItems(allItems)
                 break
 
             case 'in progress':
                 if (userData?.itemsInProgress.length > 0) {
-                    firestore
-                        .collection("items").where('itemId', "in", userData.itemsInProgress)
-                        .get()
-                        .then((listItems) => {
-                            const docItems = []
-                            listItems.forEach((doc) => {
-                                const data = doc.data()
-                                data['id'] = doc.id
-                                docItems.push(data)
-                            })
-                            setFilteredItems(docItems)
-                        })
-                        .catch((error) => {
-                            console.log("Error getting documents: ", error);
-                        });
+                    setFilteredItems(allItems.filter(item => userData.itemsInProgress.includes(item.itemId)))
                 }
                 break
 
             case 'posted items':
                 if (userData?.itemsPosted.length > 0) {
-                    firestore
-                        .collection("items").where("seller", "==", userData.id)
-                        .get()
-                        .then((listItems) => {
-                            const docItems = []
-                            listItems.forEach((doc) => {
-                                const data = doc.data()
-                                data['id'] = doc.id
-                                docItems.push(data)
-                            })
-                            setFilteredItems(docItems)
-                        })
-                        .catch((error) => {
-                            console.log("Error getting documents: ", error);
-                        });
+                    setFilteredItems(allItems.filter(item => item.seller === userData.id))
                 }
                 break
 
             case 'purchase history':
                 if (userData?.itemsPurchased.length > 0) {
-                    firestore
-                        .collection("items").where('itemId', "in", userData.itemsPurchased)
-                        .get()
-                        .then((listItems) => {
-                            const docItems = []
-                            listItems.forEach((doc) => {
-                                const data = doc.data()
-                                data['id'] = doc.id
-                                docItems.push(data)
-                            })
-                            setFilteredItems(docItems)
-                        })
-                        .catch((error) => {
-                            console.log("Error getting documents: ", error);
-                        });
+                    setFilteredItems(allItems.filter(item => userData.itemsPurchased.includes(item.itemId)))
                 }
                 break
 
             case 'saved':
                 if (userData?.itemsSaved.length > 0) {
-                    firestore
-                        .collection("items").where('itemId', "in", userData.itemsSaved)
-                        .get()
-                        .then((listItems) => {
-                            const docItems = []
-                            listItems.forEach((doc) => {
-                                const data = doc.data()
-                                data['id'] = doc.id
-                                docItems.push(data)
-                            })
-                            setFilteredItems(docItems)
-                        })
-                        .catch((error) => {
-                            console.log("Error getting documents: ", error);
-                        });
+                    setFilteredItems(allItems.filter(item => userData.itemsSaved.includes(item.itemId)))
                 }
                 break
         }
-    }, [filter, userData])
+    }, [filter, userData, allItems])
 
-    if (filteredItems.length === 0) {
+    if (filteredItems?.length === 0) {
         return <p>You don't have any items under this category</p>
     } else {
         return (
             <>
-                {filteredItems.map(item => <ItemCard create='false' item={item} key={item.id} />)}
+                {filteredItems?.map(item => <ItemCard create='false' item={item} key={item.itemId} />)}
             </>
         )
     }
@@ -182,7 +78,7 @@ export const ItemCard = ({ create, item }) => {
     }
 
     return (
-        <Link to={`/item?item=${item.id}`} state={{ item }} className={ItemsCSS.itemCard} id={item.id}>
+        <Link to={`/item?item=${item.itemId}`} state={{ item }} className={ItemsCSS.itemCard} id={item.itemId}>
             <div className={ItemsCSS.itemCard__Info}>
                 <div className={ItemsCSS.cardInfo__cost}><sup className={ItemsCSS.dollarSign}>$</sup>{item.cost}</div>
                 <div className={ItemsCSS.cardInfo__item}>{item.item}</div>

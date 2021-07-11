@@ -7,8 +7,7 @@ const DeliveryDatePage = ({ location }) => {
     <Layout pageTitle="Select Delivery Date">
       <Content>
         <DeliveryDateForm
-          itemId={location.state.item}
-          sellerId={location.state.sellerId}
+          item={location.state.item}
           deliveryMethod={location.state.deliveryMethod} />
       </Content>
       <SideNav>

@@ -3,13 +3,12 @@ import { firebase, auth, firestore } from "../components/firebase"
 
 const UserContext = React.createContext()
 
-export function useUser() {
-  return useContext(UserContext)
-}
+export const useUser = () => useContext(UserContext)
 
 export function UserProvider({ children }) {
   const [userAuth, setUserAuth] = useState()
   const [userData, setUserData] = useState()
+  const [allItems, setAllItems] = useState()
   const [loading, setLoading] = useState(true)
 
   async function signup(email, password, apartment) {
@@ -25,35 +24,24 @@ export function UserProvider({ children }) {
             itemsInProgress: [],
             itemsPosted: [],
             itemsPurchased: [],
-            itemsSaved: []
+            itemsSaved: [],
+            notifications: []
           })
       }
     })
   }
 
-  function login(email, password) {
-    return auth.signInWithEmailAndPassword(email, password)
-  }
+  const login = (email, password) => auth.signInWithEmailAndPassword(email, password)
 
-  function logout() {
-    return auth.signOut()
-  }
+  const logout = () => auth.signOut()
 
-  function deleteAccount() {
-    return auth.delete()
-  }
+  const deleteAccount = () => auth.delete()
 
-  function resetPassword(email) {
-    return auth.sendPasswordResetEmail(email)
-  }
+  const resetPassword = email => auth.sendPasswordResetEmail(email)
 
-  function updateEmail(email) {
-    return userAuth.updateEmail(email)
-  }
+  const updateEmail = email => userAuth.updateEmail(email)
 
-  function updatePassword(password) {
-    return userAuth.updatePassword(password)
-  }
+  const updatePassword = password => userAuth.updatePassword(password)
 
   async function getUserDocument(userAuth) {
     if (!userAuth?.uid) return null;
@@ -98,38 +86,72 @@ export function UserProvider({ children }) {
         case 'itemsSaved':
           userDoc.update({ itemsSaved: firebase.firestore.FieldValue.arrayRemove(itemId) })
           break
+        case 'sellerNotifications':
+          userDoc.update({
+            notifications: firebase.firestore.FieldValue.arrayRemove({
+              message: "You have a buyer!",
+              itemId
+            })
+          })
+          break
+        case 'buyerNotifications':
+          userDoc.update({
+            notifications: firebase.firestore.FieldValue.arrayRemove({
+              message: "Your order has been confirmed!",
+              itemId
+            })
+          })
+          break
       }
     }
-
-      getUserDocument(userAuth)
-    }
-
-    useEffect(() => {
-      const unsubscribe = auth.onAuthStateChanged(userAuth => {
-        setUserAuth(userAuth)
-        getUserDocument(userAuth)
-        setLoading(false)
-      })
-
-      return unsubscribe
-    }, [])
-
-    const value = {
-      userAuth,
-      userData,
-      login,
-      deleteAccount,
-      signup,
-      logout,
-      resetPassword,
-      updateEmail,
-      updatePassword,
-      updateUserItems
-    }
-
-    return (
-      <UserContext.Provider value={value}>
-        {!loading && children}
-      </UserContext.Provider>
-    )
+    getUserDocument(userAuth)
   }
+
+  const getAllItems = async () => {
+    try {
+      console.log('getting all items')
+      await firestore
+      .collection("items")
+      .get()
+      .then(items => {
+        let itemDocs = []
+        items.forEach(item => itemDocs.push(item.data()))
+        return itemDocs
+      })
+      .then(itemDocs => setAllItems(itemDocs))
+    } catch (error) {
+      console.log("Error getting all documents: ", error)
+    }
+  }
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(userAuth => {
+      setUserAuth(userAuth)
+      getUserDocument(userAuth)
+      getAllItems()
+      setLoading(false)
+    })
+
+    return unsubscribe
+  }, [])
+
+  const value = {
+    userAuth,
+    userData,
+    allItems,
+    login,
+    deleteAccount,
+    signup,
+    logout,
+    resetPassword,
+    updateEmail,
+    updatePassword,
+    updateUserItems
+  }
+
+  return (
+    <UserContext.Provider value={value}>
+      {!loading && children}
+    </UserContext.Provider>
+  )
+}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useUser } from "../context/UserContext"
-import { getItemTags } from '../components/items'
+import { getAllItemTags } from '../components/items'
 import { imgStorage } from "../components/firebase"
 import * as FormCSS from '../css/form.module.css'
 import camera_icon from '../images/camera_icon.png'
@@ -21,7 +21,7 @@ const ItemForm = ({ itemData, handleSubmit }) => {
     const [dropOff, setDropOff] = useState(false)
     const [lobby, setLobby] = useState(false)
     const [transport, setTransport] = useState(false)
-    const { userData } = useUser()
+    const { userData, allItems } = useUser()
 
     useEffect(() => {
         if (itemData) {
@@ -42,17 +42,15 @@ const ItemForm = ({ itemData, handleSubmit }) => {
 
     useEffect(() => {
         function getTags() {
-            getItemTags()
-                .then((itemsList) => {
-                    let content = []
-                    for (let tag in itemsList) {
-                        content.push(tag)
-                    }
-                    setExistingTags(content)
-                })
+            let content = []
+
+            for (let tag in getAllItemTags(allItems)) {
+                content.push(tag)
+            }
+            setExistingTags(content)
         }
         getTags()
-    }, [])
+    }, [allItems])
 
     const onTagSelection = (e) => {
         let selectedTags = tags

@@ -11,7 +11,6 @@ const LoginPage = () => {
   
   function onSubmit(e) { 
     e.preventDefault()
-
     login(email.current.value, password.current.value)
     navigate('/')
   }
@@ -24,7 +23,7 @@ const LoginPage = () => {
                 <label>
                   <p className={inputItem__label}>Email</p>
                   <input className={inputItem__textInput}
-                          placeholder="###"
+                          placeholder="example@gmail.com"
                           type="text"
                           ref={email} />
                 </label>
@@ -45,8 +44,7 @@ const LoginPage = () => {
               </div>
             </form>
         </Content>
-        <SideNav>
-        </SideNav>
+        <SideNav></SideNav>
     </Layout>
   )
 }

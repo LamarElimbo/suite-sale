@@ -43,7 +43,7 @@ const CreateAccountPage = () => {
             <label>
               <p className={inputItem__label}>Your email</p>
               <input className={inputItem__textInput}
-                placeholder="Email"
+                placeholder="example@gmail.com"
                 type="text"
                 ref={email} />
             </label>

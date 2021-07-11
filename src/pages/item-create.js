@@ -69,6 +69,7 @@ const ItemCreatePage = () => {
 
         updateUserItems('add', 'itemsPosted', itemDoc.id)
       })
+      .catch(error => console.log("Error creating a new item: ", error))
   }
 
   return (
