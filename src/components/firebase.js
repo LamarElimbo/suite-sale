@@ -26,8 +26,8 @@ if (typeof window !== 'undefined') {
 
 //firebase.analytics()
 
-const auth = isBrowser() ? firebase.auth() : null
-const firestore = isBrowser() ? firebase.firestore() : null
-const imgStorage = isBrowser() ? firebase.storage().ref() : null
+const auth = isBrowser() ? firebase?.auth() : null
+const firestore = isBrowser() ? firebase?.firestore() : null
+const imgStorage = isBrowser() ? firebase?.storage().ref() : null
 
 export { firebase, auth, firestore, imgStorage }
