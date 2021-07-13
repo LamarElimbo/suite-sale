@@ -6,9 +6,9 @@ const UserContext = React.createContext()
 export const useUser = () => useContext(UserContext)
 
 export function UserProvider({ children }) {
-  const [userAuth, setUserAuth] = useState()
-  const [userData, setUserData] = useState()
-  const [allItems, setAllItems] = useState()
+  const [userAuth, setUserAuth] = useState({})
+  const [userData, setUserData] = useState({})
+  const [allItems, setAllItems] = useState([])
   const [loading, setLoading] = useState(true)
 
   async function signup(email, password, apartment) {
