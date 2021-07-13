@@ -46,17 +46,17 @@ const DeliveryDateForm = ({ item, deliveryMethod }) => {
                     {timeSelection.map((time) => {
                         return (
                             <>
-                                {(!item.transactionData?.status) &&
+                                {(!item?.transactionData?.status) &&
                                     <div className={timeBox + " " + (availableTimes.includes(`${day} ${time}`) ? available : unselected)}
                                         id={`${day} ${time}`}
                                         key={day + "-" + time.replace(/:| /g, '-')}
                                         onClick={handleTimeSelection}>{time}</div>}
-                                {(item.transactionData?.status === 'Awaiting Time Confirmation' && availableTimes.includes(`${day} ${time}`)) &&
+                                {(item?.transactionData?.status === 'Awaiting Time Confirmation' && availableTimes.includes(`${day} ${time}`)) &&
                                     <div className={timeBox + " " + (deliveryTime === (`${day} ${time}`) ? available : unselected)}
                                         id={`${day} ${time}`}
                                         key={day + "-" + time.replace(/:| /g, '-')}
                                         onClick={handleTimeSelection}>{time}</div>}
-                                {(item.transactionData?.status === 'Awaiting Time Confirmation' && !availableTimes.includes(`${day} ${time}`)) &&
+                                {(item?.transactionData?.status === 'Awaiting Time Confirmation' && !availableTimes.includes(`${day} ${time}`)) &&
                                     <div className={timeBox + " " + inactive} key={day + "-" + time.replace(/:| /g, '-')}>{time}</div>}
                             </>
                         )

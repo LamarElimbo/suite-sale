@@ -1,10 +1,8 @@
 import firebase from "firebase/app"
-
 import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
 
-const isBrowser = () => typeof window !== 'undefined'
 var firebaseConfig = {
     apiKey: "AIzaSyChuCNh8Fl4Dc5TdOGa-LJDsRxSwNcz4Aw",
     authDomain: "suite-sale.firebaseapp.com",
@@ -14,6 +12,8 @@ var firebaseConfig = {
     appId: "1:1003066460606:web:0a9c3b91ab17f9a01dd1ef",
     measurementId: "G-QJZ817GHCW"
 };
+
+const isBrowser = () => typeof window !== 'undefined'
 
 // Initialize Firebase
 if (isBrowser() !== 'undefined') {
