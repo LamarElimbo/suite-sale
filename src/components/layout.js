@@ -22,7 +22,9 @@ export const SideNav = ({ children }) => {
 }
 
 const HeaderLink = ({ headerLink }) => {
-    const { userAuth, logout } = useUser()
+    //const { userAuth, logout } = useUser()
+    const userContext = useUser()
+
     switch (headerLink) {
         case "Login":
             return (
@@ -38,7 +40,7 @@ const HeaderLink = ({ headerLink }) => {
                 </Link>
             )
         default:
-            if (userAuth) {
+            if (userContext?.userAuth) {
                 return (
                     <Link to="/account">
                         <h1>Your Account</h1>
