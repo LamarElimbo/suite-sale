@@ -4,6 +4,7 @@ import 'firebase/auth'
 import 'firebase/firestore'
 import 'firebase/storage'
 
+const isBrowser = () => typeof window !== 'undefined'
 var firebaseConfig = {
     apiKey: "AIzaSyChuCNh8Fl4Dc5TdOGa-LJDsRxSwNcz4Aw",
     authDomain: "suite-sale.firebaseapp.com",
@@ -15,16 +16,18 @@ var firebaseConfig = {
 };
 
 // Initialize Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
- } else {
-    firebase.app(); // if already initialized, use that one
- }
+if (typeof window !== 'undefined') {
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    } else {
+        firebase.app(); // if already initialized, use that one
+    }
+}
 
 //firebase.analytics()
 
-const auth = firebase.auth()
-const firestore = firebase.firestore()
-const imgStorage = firebase.storage().ref()
+const auth = isBrowser() ? firebase.auth() : {}
+const firestore = isBrowser() ? firebase.firestore() : {}
+const imgStorage = isBrowser() ? firebase.storage().ref() : {}
 
-export { firebase, auth, firestore, imgStorage}
+export { firebase, auth, firestore, imgStorage }

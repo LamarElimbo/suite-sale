@@ -24,7 +24,6 @@ export const notifyUser = (userId, notifyAbout, itemId) => {
     }
 
     var userDocRef = firestore.collection('users').doc(userId)
-
     firestore
         .runTransaction(transaction => {
             return transaction.get(userDocRef).then(userDoc => {
@@ -40,6 +39,7 @@ export const notifyUser = (userId, notifyAbout, itemId) => {
 }
 
 export const sendSMS = async (notifyMethod, message) => {
+    //https://www.twilio.com/blog/sending-sms-gatsby-react-serverless
     const functionURL = "https://turquoise-octopus-1624.twil.io/send-sms"
     const response = await fetch(functionURL, {
         method: "post",
