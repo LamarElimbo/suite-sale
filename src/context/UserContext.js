@@ -125,7 +125,19 @@ export function UserProvider({ children }) {
   }
 
   useEffect(() => {
-    if (!firebase) return;
+    if (!firebase) {
+      setUserAuth(false)
+      setUserData({
+        id: "",
+        email: "",
+        apartment: "",
+        itemsInProgress: [],
+        itemsPosted: [],
+        itemsPurchased: [],
+        itemsSaved: [],
+        notifications: []
+      })
+    };
 
     // once your firebase is instanced, use it.
     const unsubscribe = auth.onAuthStateChanged(userAuth => {
