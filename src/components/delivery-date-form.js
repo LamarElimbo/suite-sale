@@ -94,7 +94,7 @@ const DeliveryDateForm = ({ item, deliveryMethod }) => {
                 .update({itemsInProgress: firebase.firestore.FieldValue.arrayUnion(item.itemId)})
 
             const transactionData = {
-                buyer: userData.id,
+                buyer: userData?.id,
                 deliveryMethod: deliveryMethod,
                 buyerAvailable: availableTimes,
                 deliveryTime: "",

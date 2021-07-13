@@ -57,8 +57,8 @@ const ItemPage = ({ location }) => {
     const deleteNotification = () => updateUserItems('remove', 'buyerNotifications', itemData.id)
     const deleteItem = () => firestore.collection("items").doc(itemData.id).delete()
     const cancelOrder = () => {
-        let currentUserIsThe = (userData.id === itemData.seller) ? 'seller' : 'buyer'
-        let notCurrentUserId = (userData.id === itemData.seller) ? itemData.transactionData?.buyer : itemData.seller
+        let currentUserIsThe = (userData?.id === itemData.seller) ? 'seller' : 'buyer'
+        let notCurrentUserId = (userData?.id === itemData.seller) ? itemData.transactionData?.buyer : itemData.seller
 
         updateUserItems('remove', 'itemsInProgress', itemData.id)
 
@@ -123,7 +123,7 @@ const ItemPage = ({ location }) => {
                             sellerId={itemData.seller}
                             deliveryMethod={itemData.transactionData?.deliveryMethod} />
                     }
-                    {(userType === 'buyer' && itemData.transactionData?.status === 'Awaiting Delivery' && userData.notifications.some(doc => doc.itemId === itemData.id)) &&
+                    {(userType === 'buyer' && itemData.transactionData?.status === 'Awaiting Delivery' && userData?.notifications.some(doc => doc.itemId === itemData.id)) &&
                         <>
                             <p>Your order has been confirmed!</p>
                             <p>Have you set yourself a reminder?</p>

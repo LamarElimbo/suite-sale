@@ -102,9 +102,9 @@ export const NotificationsList = () => {
     const allItems = firebaseContext?.allItems
 
     useEffect(() => {
-        console.log("userData.notifications: ", userData.notifications)
+        console.log("userData.notifications: ", userData?.notifications)
         console.log("allItems: ", allItems)
-        userData.notifications.forEach(notification => {
+        userData?.notifications.forEach(notification => {
             console.log("notification: ", notification)
             const item = allItems?.filter(item => item.itemId === notification.itemId)
             console.log("item: ", item)

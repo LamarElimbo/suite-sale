@@ -40,19 +40,19 @@ const SideNavContent = ({ type, tagSearch=null }) => {
                 <>
                     <Link to="/account/items-in-progress" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Items in progress</p>
-                        <p>{userData.itemsInProgress.length} Items</p>
+                        <p>{userData?.itemsInProgress.length} Items</p>
                     </Link>
                     <Link to="/account/posted-items" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Your posted listings</p>
-                        <p>{userData.itemsPosted.length} Items</p>
+                        <p>{userData?.itemsPosted.length} Items</p>
                     </Link>
                     <Link to="/account/purchase-history" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Your purchase history</p>
-                        <p>{userData.itemsPurchased.length} Items</p>
+                        <p>{userData?.itemsPurchased.length} Items</p>
                     </Link>
                     <Link to="/account/saved-items" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Your saved items</p>
-                        <p>{userData.itemsSaved.length} Items</p>
+                        <p>{userData?.itemsSaved.length} Items</p>
                     </Link>
                     <Link to="/account/account-settings" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Your account settings</p>
@@ -63,7 +63,7 @@ const SideNavContent = ({ type, tagSearch=null }) => {
             return (
                 <>
                     <div className={SideNavCSS.sideNavRow}>
-                        <p className={SideNavCSS.sideNavRow__title}>You have {userData.notifications.length} {userData.notifications.length > 1 ? 'notifications' : 'notification'}</p>
+                        <p className={SideNavCSS.sideNavRow__title}>You have {userData?.notifications.length} {userData?.notifications.length > 1 ? 'notifications' : 'notification'}</p>
                     </div>  
                     <NotificationsList/>
                 </>
