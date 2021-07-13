@@ -22,12 +22,12 @@ if (typeof window !== 'undefined') {
     } else {
         firebase.app(); // if already initialized, use that one
     }
-}
+} else 
 
 //firebase.analytics()
 
-const auth = isBrowser() ? firebase.auth() : {}
-const firestore = isBrowser() ? firebase.firestore() : {}
-const imgStorage = isBrowser() ? firebase.storage().ref() : {}
+const auth = isBrowser() ? firebase.auth() : null
+const firestore = isBrowser() ? firebase.firestore() : null
+const imgStorage = isBrowser() ? firebase.storage().ref() : null
 
 export { firebase, auth, firestore, imgStorage }

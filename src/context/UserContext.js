@@ -111,20 +111,23 @@ export function UserProvider({ children }) {
     try {
       console.log('getting all items')
       await firestore
-      .collection("items")
-      .get()
-      .then(items => {
-        let itemDocs = []
-        items.forEach(item => itemDocs.push(item.data()))
-        return itemDocs
-      })
-      .then(itemDocs => setAllItems(itemDocs))
+        .collection("items")
+        .get()
+        .then(items => {
+          let itemDocs = []
+          items.forEach(item => itemDocs.push(item.data()))
+          return itemDocs
+        })
+        .then(itemDocs => setAllItems(itemDocs))
     } catch (error) {
       console.log("Error getting all documents: ", error)
     }
   }
 
   useEffect(() => {
+    if (!auth) return;
+
+    // once your firebase is instanced, use it.
     const unsubscribe = auth.onAuthStateChanged(userAuth => {
       setUserAuth(userAuth)
       getUserDocument(userAuth)
@@ -133,25 +136,25 @@ export function UserProvider({ children }) {
     })
 
     return unsubscribe
-  }, [])
+}, [auth]);
 
-  const value = {
-    userAuth,
-    userData,
-    allItems,
-    login,
-    deleteAccount,
-    signup,
-    logout,
-    resetPassword,
-    updateEmail,
-    updatePassword,
-    updateUserItems
-  }
+const value = {
+  userAuth,
+  userData,
+  allItems,
+  login,
+  deleteAccount,
+  signup,
+  logout,
+  resetPassword,
+  updateEmail,
+  updatePassword,
+  updateUserItems
+}
 
-  return (
-    <UserContext.Provider value={value}>
-      {!loading && children}
-    </UserContext.Provider>
-  )
+return (
+  <UserContext.Provider value={value}>
+    {!loading && children}
+  </UserContext.Provider>
+)
 }
