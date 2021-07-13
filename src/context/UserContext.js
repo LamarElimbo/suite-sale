@@ -6,9 +6,9 @@ const UserContext = React.createContext()
 export const useUser = () => useContext(UserContext)
 
 export function UserProvider({ children }) {
-  const [userAuth, setUserAuth] = useState({})
-  const [userData, setUserData] = useState({})
-  const [allItems, setAllItems] = useState([])
+  const [userAuth, setUserAuth] = useState(null)
+  const [userData, setUserData] = useState(null)
+  const [allItems, setAllItems] = useState(null)
   const [loading, setLoading] = useState(true)
 
   async function signup(email, password, apartment) {
@@ -125,7 +125,7 @@ export function UserProvider({ children }) {
   }
 
   useEffect(() => {
-    if (!auth) return;
+    if (!firebase) return;
 
     // once your firebase is instanced, use it.
     const unsubscribe = auth.onAuthStateChanged(userAuth => {
@@ -136,7 +136,7 @@ export function UserProvider({ children }) {
     })
 
     return unsubscribe
-}, [auth]);
+}, []);
 
 const value = {
   userAuth,

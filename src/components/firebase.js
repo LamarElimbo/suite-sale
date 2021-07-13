@@ -16,7 +16,7 @@ var firebaseConfig = {
 };
 
 // Initialize Firebase
-if (typeof window !== 'undefined') {
+if (isBrowser() !== 'undefined') {
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     } else {
