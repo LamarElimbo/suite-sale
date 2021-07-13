@@ -10,6 +10,7 @@ export function UserProvider({ children }) {
   const [userData, setUserData] = useState(null)
   const [allItems, setAllItems] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [windowCheck, setWindowCheck] = useState(false)
 
   async function signup(email, password, apartment) {
     return auth.createUserWithEmailAndPassword(email, password).then((response) => {
@@ -125,7 +126,7 @@ export function UserProvider({ children }) {
   }
 
   useEffect(() => {
-    if (!firebase) {
+    if (!windowCheck) {
       setUserAuth(false)
       setUserData({
         id: "",
@@ -148,7 +149,13 @@ export function UserProvider({ children }) {
     })
 
     return unsubscribe
-});
+}, [windowCheck]);
+
+useEffect(() => {
+  if (typeof window !== 'undefined') {
+    setWindowCheck(true)
+  }
+})
 
 const value = {
   userAuth,
