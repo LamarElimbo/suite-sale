@@ -9,9 +9,9 @@ const SideNavContent = ({ type, tagSearch=null }) => {
     const [tags, setTags] = useState()
     //const { userData, allItems } = useUser()
 
-    const userContext = useUser()
-    const userData = userContext.userData
-    const allItems = userContext.allItems
+    const firebaseContext = useUser()
+    const userData = firebaseContext?.userData
+    const allItems = firebaseContext?.allItems
 
     useEffect(() => {
         function getTags() {

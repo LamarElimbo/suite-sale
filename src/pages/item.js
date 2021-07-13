@@ -14,10 +14,10 @@ const ItemPage = ({ location }) => {
     const [saved, setSaved] = useState(false)
     const [userType, setUserType] = useState('non-user')
     //const { userData, updateUserItems, allItems } = useUser()
-    const userContext = useUser()
-    const userData = userContext.userData
-    const updateUserItems = userContext.updateUserItems
-    const allItems = userContext.allItems
+    const firebaseContext = useUser()
+    const userData = firebaseContext?.userData
+    const updateUserItems = firebaseContext?.updateUserItems
+    const allItems = firebaseContext?.allItems
 
     useEffect(() => {
         if (location.state) { // If user came from a previous page

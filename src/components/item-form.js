@@ -22,9 +22,9 @@ const ItemForm = ({ itemData, handleSubmit }) => {
     const [lobby, setLobby] = useState(false)
     const [transport, setTransport] = useState(false)
     //const { userData, allItems } = useUser()
-    const userContext = useUser()
-    const userData = userContext.userData
-    const allItems = userContext.allItems
+    const firebaseContext = useUser()
+    const userData = firebaseContext?.userData
+    const allItems = firebaseContext?.allItems
     
 
     useEffect(() => {
