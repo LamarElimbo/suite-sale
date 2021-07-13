@@ -33,7 +33,7 @@ const HeaderLink = ({ headerLink }) => {
                 </Link>
             )
         case "Logout":
-            const onLogout = () => logout()
+            const onLogout = () => firebaseContext?.logout()
             return (
                 <Link to="/" onClick={onLogout}>
                     <h1>Logout</h1>

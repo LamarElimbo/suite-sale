@@ -7,7 +7,9 @@ import * as FormCSS from '../../css/form.module.css'
 
 const ChangeEmailPage = () => {
     const email = useRef()
-    const { updateEmail } = useUser()
+    //const { updateEmail } = useUser()
+    const firebaseContext = useUser()
+    const updateEmail = firebaseContext?.updateEmail
 
     const onSubmit = (e) => {
         e.preventDefault()

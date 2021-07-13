@@ -7,7 +7,9 @@ import * as FormCSS from '../../css/form.module.css'
 
 const ChangePasswordPage = () => {
     const newPassword = useRef()
-    const { updatePassword } = useUser()
+    //const { updatePassword } = useUser()
+    const firebaseContext = useUser()
+    const updatePassword = firebaseContext?.updatePassword
     
     const onSubmit = (e) => {
         e.preventDefault()

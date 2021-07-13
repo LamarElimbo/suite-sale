@@ -5,7 +5,9 @@ import SideNavContent from '../../components/side-nav'
 import * as FormCSS from '../../css/form.module.css'
 
 const DeleteAccountPage = () => {
-    const { deleteAccount } = useUser()
+    //const { deleteAccount } = useUser()
+    const firebaseContext = useUser()
+    const deleteAccount = firebaseContext?.deleteAccount
     
     const onDeleteAccount = () => deleteAccount()
 

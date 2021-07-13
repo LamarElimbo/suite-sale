@@ -6,7 +6,9 @@ import { Layout, Content, SideNav } from '../components/layout'
 import ItemForm from '../components/item-form'
 
 const ItemCreatePage = () => {
-  const { updateUserItems } = useUser()
+  //const { updateUserItems } = useUser()
+  const firebaseContext = useUser()
+  const updateUserItems = firebaseContext?.updateUserItems
 
   const createItem = (updatedItemData) => {
     const data = {
@@ -19,7 +21,7 @@ const ItemCreatePage = () => {
       dropOff: updatedItemData.dropOff,
       lobby: updatedItemData.lobby,
       transport: updatedItemData.transport
-  }
+    }
 
     firestore
       .collection("items")

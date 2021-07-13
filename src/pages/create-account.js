@@ -10,7 +10,9 @@ const CreateAccountPage = () => {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordMatch, setPasswordMatch] = useState('')
-  const { signup } = useUser()
+  //const { signup } = useUser()
+  const firebaseContext = useUser()
+  const signup = firebaseContext?.signup
 
   function onChangePassword(e) { setPassword(e.target.value) }
   function onChangeConfirmPassword(e) { setConfirmPassword(e.target.value) }
