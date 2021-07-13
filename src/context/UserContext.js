@@ -148,7 +148,7 @@ export function UserProvider({ children }) {
     })
 
     return unsubscribe
-}, []);
+});
 
 const value = {
   userAuth,
