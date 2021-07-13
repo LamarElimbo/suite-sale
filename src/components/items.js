@@ -15,8 +15,10 @@ export const getAllItemTags = allItems => {
 
 export const ItemCardList = ({ filter }) => {
     const [filteredItems, setFilteredItems] = useState([])
-    const { userData, allItems } = useUser()
-    console.log("ItemCardList: ", allItems)
+    //const { userData, allItems } = useUser()
+    const userContext = useUser()
+    const userData = userContext.userData
+    const allItems = userContext.allItems
 
     useEffect(() => {
 

@@ -21,7 +21,11 @@ const ItemForm = ({ itemData, handleSubmit }) => {
     const [dropOff, setDropOff] = useState(false)
     const [lobby, setLobby] = useState(false)
     const [transport, setTransport] = useState(false)
-    const { userData, allItems } = useUser()
+    //const { userData, allItems } = useUser()
+    const userContext = useUser()
+    const userData = userContext.userData
+    const allItems = userContext.allItems
+    
 
     useEffect(() => {
         if (itemData) {

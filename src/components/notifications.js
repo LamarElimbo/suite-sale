@@ -96,7 +96,10 @@ export const sendEmail = async (sendTo, notifyAbout) => {
 
 export const NotificationsList = () => {
     const [notificationItems, setNotificationItems] = useState([])
-    const { userData, allItems } = useUser()
+    //const { userData, allItems } = useUser()
+    const userContext = useUser()
+    const userData = userContext.userData
+    const allItems = userContext.allItems
 
     useEffect(() => {
         console.log("userData.notifications: ", userData.notifications)

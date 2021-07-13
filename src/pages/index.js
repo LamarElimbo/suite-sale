@@ -6,7 +6,8 @@ import { useUser } from "../context/UserContext"
 
 const IndexPage = ({ location }) => {
   const [filter, setFilter] = useState('all items')
-  const { userData } = useUser()
+  //const { userData } = useUser()
+  const userContext = useUser()
 
   useEffect(() => {
     // Check to see if user is filtering items based on a tag
@@ -25,7 +26,7 @@ const IndexPage = ({ location }) => {
         <ItemCardList filter={filter} />
       </Content>
       <SideNav>
-        {userData?.notifications.length > 0 ?
+        {userContext.userData?.notifications.length > 0 ?
           <SideNavContent type='notifications' />
           :
           <SideNavContent tagSearch={setFilter} />

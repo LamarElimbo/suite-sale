@@ -7,7 +7,11 @@ import * as SideNavCSS from '../css/side-nav.module.css'
 
 const SideNavContent = ({ type, tagSearch=null }) => {
     const [tags, setTags] = useState()
-    const { userData, allItems } = useUser()
+    //const { userData, allItems } = useUser()
+
+    const userContext = useUser()
+    const userData = userContext.userData
+    const allItems = userContext.allItems
 
     useEffect(() => {
         function getTags() {
