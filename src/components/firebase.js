@@ -22,7 +22,7 @@ if (typeof window !== 'undefined') {
     } else {
         firebase.app(); // if already initialized, use that one
     }
-} else 
+} 
 
 //firebase.analytics()
 
