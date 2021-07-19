@@ -6,7 +6,7 @@ import * as FormCSS from '../css/form.module.css'
 import camera_icon from '../images/camera_icon.png'
 import remove_icon from '../images/remove_icon.png'
 
-const ItemForm = ({ itemData, handleSubmit }) => {
+const ItemFormInfo = ({ itemData, handleSubmit }) => {
     const item = useRef()
     const cost = useRef('')
     const itemNotes = useRef('')
@@ -16,17 +16,14 @@ const ItemForm = ({ itemData, handleSubmit }) => {
     const [photo1, setPhoto1] = useState('')
     const [photo2, setPhoto2] = useState('')
     const [photo3, setPhoto3] = useState('')
-    const [photo4, setPhoto4] = useState('')
     const [pickUp, setPickUp] = useState(false)
     const [dropOff, setDropOff] = useState(false)
     const [lobby, setLobby] = useState(false)
     const [transport, setTransport] = useState(false)
-    //const { userData, allItems } = useUser()
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
     const allItems = firebaseContext?.allItems
     
-
     useEffect(() => {
         if (itemData) {
             item.current = itemData.item
@@ -36,7 +33,6 @@ const ItemForm = ({ itemData, handleSubmit }) => {
             setPhoto1(itemData.photo1)
             setPhoto2(itemData.photo2)
             setPhoto3(itemData.photo3)
-            setPhoto4(itemData.photo4)
             setPickUp(itemData.pickUp)
             setDropOff(itemData.dropOff)
             setLobby(itemData.lobby)
@@ -78,34 +74,26 @@ const ItemForm = ({ itemData, handleSubmit }) => {
     const onPhoto1Upload = (e) => setPhoto1(e.target.files[0])
     const onPhoto2Upload = (e) => setPhoto2(e.target.files[0])
     const onPhoto3Upload = (e) => setPhoto3(e.target.files[0])
-    const onPhoto4Upload = (e) => setPhoto4(e.target.files[0])
 
-    const onPhoto1Remove = (e) => {
+    const onPhoto1Remove = () => {
         setPhoto1('')
         if (itemData) {
             const img1Ref = imgStorage.child(`${itemData.id}/1`)
             img1Ref.delete()
         }
     }
-    const onPhoto2Remove = (e) => {
+    const onPhoto2Remove = () => {
         setPhoto2('')
         if (itemData) {
             const img2Ref = imgStorage.child(`${itemData.id}/2`)
             img2Ref.delete()
         }
     }
-    const onPhoto3Remove = (e) => {
+    const onPhoto3Remove = () => {
         setPhoto3('')
         if (itemData) {
             const img3Ref = imgStorage.child(`${itemData.id}/3`)
             img3Ref.delete()
-        }
-    }
-    const onPhoto4Remove = (e) => {
-        setPhoto4('')
-        if (itemData) {
-            const img4Ref = imgStorage.child(`${itemData.id}/4`)
-            img4Ref.delete()
         }
     }
 
@@ -121,7 +109,7 @@ const ItemForm = ({ itemData, handleSubmit }) => {
             seller: userData?.id,
             item: item.current.value,
             cost: cost.current.value,
-            photo1, photo2, photo3, photo4,
+            photo1, photo2, photo3,
             itemNotes: itemNotes.current.value,
             tags,
             pickUp,
@@ -138,7 +126,7 @@ const ItemForm = ({ itemData, handleSubmit }) => {
             <div className={FormCSS.formField}>
                 <div className={FormCSS.inputItem}>
                     <p className={FormCSS.inputItem__label}>Item</p>
-                    <p>What are you selling?</p>
+                    <p className={FormCSS.inputItem__desc}>What are you selling?</p>
                     <input className={FormCSS.inputItem__textInput}
                         placeholder="Item"
                         type="text"
@@ -149,7 +137,7 @@ const ItemForm = ({ itemData, handleSubmit }) => {
             <div className={FormCSS.formField}>
                 <div className={FormCSS.inputItem}>
                     <p className={FormCSS.inputItem__label}>Costs</p>
-                    <p>How much are you charging?</p>
+                    <p className={FormCSS.inputItem__desc}>How much are you charging?</p>
                     <input className={FormCSS.inputItem__textInput}
                         placeholder="$$$"
                         type="text"
@@ -160,6 +148,7 @@ const ItemForm = ({ itemData, handleSubmit }) => {
             <div className={FormCSS.formField}>
                 <div className={FormCSS.inputItem}>
                     <p className={FormCSS.inputItem__label}>Photos</p>
+                    <p className={FormCSS.inputItem__desc}>Upload up to 3 photos</p>
                     <div className={FormCSS.photoInputs}>
                         <div className={FormCSS.imgUpload}>
                             {(typeof photo1 === 'object' || photo1?.length > 0 ) ?
@@ -209,28 +198,13 @@ const ItemForm = ({ itemData, handleSubmit }) => {
                                 </>
                             }
                         </div>
-                        <div className={FormCSS.imgUpload}>
-                            {(typeof photo4 === 'object' || photo4?.length > 0 ) ?
-                                <>
-                                    <img src={itemData ? photo4 : URL.createObjectURL(photo4)} className={FormCSS.cameraIcon} alt="Item Preview" />
-                                    <button onClick={onPhoto4Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove icon" /></button>
-                                </>
-                                :
-                                <>
-                                    <label htmlFor="itemImg4">
-                                        <img src={camera_icon} className={FormCSS.cameraIcon} alt="Upload icon" />
-                                        <div className="action-area__text">Add<br />Image</div>
-                                    </label>
-                                    <input id="itemImg4" type="file" onChange={onPhoto4Upload} />
-                                </>
-                            }
-                        </div>
                     </div>
                 </div>
             </div>
             <div className={FormCSS.formField}>
                 <div className={FormCSS.inputItem}>
                     <p className={FormCSS.inputItem__label}>Notes</p>
+                    <p className={FormCSS.inputItem__desc}>What would you like potential buyers to know about the item you're selling?</p>
                     <textarea className={FormCSS.inputItem__textAreaInput}
                         placeholder="Notes"
                         ref={itemNotes}
@@ -240,9 +214,10 @@ const ItemForm = ({ itemData, handleSubmit }) => {
             <div className={FormCSS.formField}>
                 <div className={FormCSS.inputItem}>
                     <p className={FormCSS.inputItem__label}>Tags</p>
+                    <p className={FormCSS.inputItem__desc}>Select a tag or enter a new one</p>
                     <div id='box'>
                         {existingTags.map(tag =>
-                            <button className={FormCSS.tagSelection + " " + (tags?.includes(tag) ? FormCSS.selected : FormCSS.notSelected)}
+                            <button className={FormCSS.tagSelection + " " + (tags?.includes(tag) ? FormCSS.selected : FormCSS.unselected)}
                                 id={tag}
                                 key={tag}
                                 onClick={onTagSelection}>{tag}</button>
@@ -260,18 +235,19 @@ const ItemForm = ({ itemData, handleSubmit }) => {
             <div className={FormCSS.formField}>
                 <div className={FormCSS.inputItem}>
                     <p className={FormCSS.inputItem__label}>Preferred Delivery Method</p>
+                    <p className={FormCSS.inputItem__desc}>How would you like to exchange with your buyer?</p>
                     <div className={FormCSS.inputItem__checkboxes}>
                         <div className={FormCSS.inputItem__checkboxInput}>
                             <input className={FormCSS.inputItem__checkbox}
                                 type="checkbox"
                                 onChange={onChangePickUp} />
-                            <span className={FormCSS.checkboxInput__label}>Pick Up</span>
+                            <span className={FormCSS.checkboxInput__label}>Pick up from your suite</span>
                         </div>
                         <div className={FormCSS.inputItem__checkboxInput}>
                             <input className={FormCSS.inputItem__checkbox}
                                 type="checkbox"
                                 onChange={onChangeDropOff} />
-                            <span className={FormCSS.checkboxInput__label}>Drop Off</span>
+                            <span className={FormCSS.checkboxInput__label}>Drop off at buyer's suite</span>
                         </div>
                         <div className={FormCSS.inputItem__checkboxInput}>
                             <input className={FormCSS.inputItem__checkbox}
@@ -283,7 +259,7 @@ const ItemForm = ({ itemData, handleSubmit }) => {
                             <input className={FormCSS.inputItem__checkbox}
                                 type="checkbox"
                                 onChange={onChangeTransport} />
-                            <span className={FormCSS.checkboxInput__label}>Transport Help</span>
+                            <span className={FormCSS.checkboxInput__label}>Help transport item from your suite to theirs</span>
                         </div>
                     </div>
                 </div>
@@ -297,4 +273,4 @@ const ItemForm = ({ itemData, handleSubmit }) => {
     )
 }
 
-export default ItemForm
+export default ItemFormInfo

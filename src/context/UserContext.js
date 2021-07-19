@@ -44,7 +44,7 @@ export function UserProvider({ children }) {
 
   const updatePassword = password => userAuth.updatePassword(password)
 
-  async function getUserDocument(userAuth) {
+  const getUserDocument = async (userAuth) => {
     if (!userAuth?.uid) return null;
     try {
       const userDocument = await firestore
@@ -57,8 +57,8 @@ export function UserProvider({ children }) {
     }
   }
 
-  function updateUserItems(action, array, itemId) {
-    var userDoc = firestore.collection('users').doc(userAuth.uid)
+  const updateUserItems = (action, array, itemId, userId = userAuth.uid) => {
+    var userDoc = firestore.collection('users').doc(userId)
 
     if (action === "add") {
       switch (array) {
@@ -88,20 +88,10 @@ export function UserProvider({ children }) {
           userDoc.update({ itemsSaved: firebase.firestore.FieldValue.arrayRemove(itemId) })
           break
         case 'sellerNotifications':
-          userDoc.update({
-            notifications: firebase.firestore.FieldValue.arrayRemove({
-              message: "You have a buyer!",
-              itemId
-            })
-          })
+          userDoc.update({ notifications: firebase.firestore.FieldValue.arrayRemove({ message: "You have a buyer", itemId }) })
           break
         case 'buyerNotifications':
-          userDoc.update({
-            notifications: firebase.firestore.FieldValue.arrayRemove({
-              message: "Your order has been confirmed!",
-              itemId
-            })
-          })
+          userDoc.update({ notifications: firebase.firestore.FieldValue.arrayRemove({ message: "Your order has been confirmed", itemId }) })
           break
       }
     }
@@ -149,31 +139,29 @@ export function UserProvider({ children }) {
     })
 
     return unsubscribe
-}, [windowCheck]);
+  }, [windowCheck]);
 
-useEffect(() => {
-  if (typeof window !== 'undefined') {
-    setWindowCheck(true)
+  useEffect(() => {
+    if (typeof window !== 'undefined') { setWindowCheck(true) }
+  })
+
+  const value = {
+    userAuth,
+    userData,
+    allItems,
+    login,
+    deleteAccount,
+    signup,
+    logout,
+    resetPassword,
+    updateEmail,
+    updatePassword,
+    updateUserItems
   }
-})
 
-const value = {
-  userAuth,
-  userData,
-  allItems,
-  login,
-  deleteAccount,
-  signup,
-  logout,
-  resetPassword,
-  updateEmail,
-  updatePassword,
-  updateUserItems
-}
-
-return (
-  <UserContext.Provider value={value}>
-    {!loading && children}
-  </UserContext.Provider>
-)
+  return (
+    <UserContext.Provider value={value}>
+      {!loading && children}
+    </UserContext.Provider>
+  )
 }

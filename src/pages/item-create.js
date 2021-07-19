@@ -3,10 +3,9 @@ import { navigate } from "gatsby"
 import { firestore, imgStorage } from "../components/firebase"
 import { useUser } from "../context/UserContext"
 import { Layout, Content, SideNav } from '../components/layout'
-import ItemForm from '../components/item-form'
+import ItemFormInfo from '../components/item-form-info'
 
 const ItemCreatePage = () => {
-  //const { updateUserItems } = useUser()
   const firebaseContext = useUser()
   const updateUserItems = firebaseContext?.updateUserItems
 
@@ -31,7 +30,6 @@ const ItemCreatePage = () => {
         const img1Ref = imgStorage.child(`${itemDoc.id}/1`)
         const img2Ref = imgStorage.child(`${itemDoc.id}/2`)
         const img3Ref = imgStorage.child(`${itemDoc.id}/3`)
-        const img4Ref = imgStorage.child(`${itemDoc.id}/4`)
 
         if (typeof updatedItemData === 'object') {
           img1Ref.put(updatedItemData.photo1).then((snapshot) => {
@@ -59,16 +57,6 @@ const ItemCreatePage = () => {
             });
           })
         }
-
-        if (typeof updatedItemData === 'object') {
-          img4Ref.put(updatedItemData.photo4).then((snapshot) => {
-            snapshot.ref.getDownloadURL().then((downloadURL) => {
-              const data = updatedItemData.photo4 ? downloadURL : ""
-              docImgs.update({ photo4: data })
-            });
-          })
-        }
-
         updateUserItems('add', 'itemsPosted', itemDoc.id)
       })
       .catch(error => console.log("Error creating a new item: ", error))
@@ -76,8 +64,8 @@ const ItemCreatePage = () => {
 
   return (
     <Layout pageTitle="Create Listing">
-      <Content contentTitle="Edit your listing">
-        <ItemForm handleSubmit={createItem} />
+      <Content contentTitle="Add a new listing" titlePosition='center'>
+        <ItemFormInfo handleSubmit={createItem} />
       </Content>
       <SideNav />
     </Layout>

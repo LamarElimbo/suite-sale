@@ -8,15 +8,9 @@ const AccountSettingsPage = () => {
     return (
         <Layout pageTitle="Home Page" headerLink="Logout">
             <Content contentTitle="Your account settings" titlePosition='true'>
-                <Link to='/account/change-email'>
-                    <p className={FormCSS.inputItem__submit}>Change your email</p>
-                </Link>
-                <Link to='/account/change-password'>
-                    <p className={FormCSS.inputItem__submit}>Change your password</p>
-                </Link>
-                <Link to='/account/delete-account'>
-                    <p className={FormCSS.inputItem__submit}>Delete your account</p>
-                </Link>
+                <Link to='/account/change-email' className={FormCSS.lightButton}>Change your email</Link>
+                <Link to='/account/change-password' className={FormCSS.lightButton}>Change your password</Link>
+                <Link to='/account/delete-account' className={FormCSS.lightButton}>Delete your account</Link>
             </Content>
             <SideNav>
                 <SideNavContent type='account' />

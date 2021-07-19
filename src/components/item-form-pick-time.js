@@ -1,27 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { navigate } from "gatsby"
 import { firestore, firebase } from "../components/firebase"
-import { timeGrid, timeBox, form, available, unselected, inactive, inputItem, inputItem__submit } from '../css/form.module.css'
+import { timeGrid, timeBoxOuter, timeBoxInner, form, selected, unselected, inactive, inputItem, inputItem__submit } from '../css/form.module.css'
 import { useUser } from "../context/UserContext"
 import { notifyUser } from "./notifications"
 
-const DeliveryDateForm = ({ item, deliveryMethod }) => {
+const ItemFormPickTime = ({ item, deliveryMethod }) => {
     const [availableTimes, setAvailableTimes] = useState([])
     const [deliveryTime, setDeliveryTime] = useState('')
-    //const { userData, updateUserItems } = useUser()
 
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
     const updateUserItems = firebaseContext?.updateUserItems
     const timeSelection = ["12:00 am", "12:15 am", "12:30 am", "12:45 am", "1:00 am", "1:15 am", "1:30 am", "1:45 am", "2:00 am", "2:15 am", "2:30 am", "2:45 am", "3:00 am", "3:15 am", "3:30 am", "3:45 am", "4:00 am", "4:15 am", "4:30 am", "4:45 am", "5:00 am", "5:15 am", "5:30 am", "5:45 am", "6:00 am", "6:15 am", "6:30 am", "6:45 am", "7:00 am", "7:15 am", "7:30 am", "7:45 am", "8:00 am", "8:15 am", "8:30 am", "8:45 am", "9:00 am", "9:15 am", "9:30 am", "9:45 am", "10:00 am", "10:15 am", "10:30 am", "10:45 am", "11:00 am", "11:15 am", "11:30 am", "11:45 am", "12:00 pm", "12:15 pm", "12:30 pm", "12:45 pm", "1:00 pm", "1:15 pm", "1:30 pm", "1:45 pm", "2:00 pm", "2:15 pm", "2:30 pm", "2:45 pm", "3:00 pm", "3:15 pm", "3:30 pm", "3:45 pm", "4:00 pm", "4:15 pm", "4:30 pm", "4:45 pm", "5:00 pm", "5:15 pm", "5:30 pm", "5:45 pm", "6:00 pm", "6:15 pm", "6:30 pm", "6:45 pm", "7:00 pm", "7:15 pm", "7:30 pm", "7:45 pm", "8:00 pm", "8:15 pm", "8:30 pm", "8:45 pm", "9:00 pm", "9:15 pm", "9:30 pm", "9:45 pm", "10:00 pm", "10:15 pm", "10:30 pm", "10:45 pm", "11:00 pm", "11:15 pm", "11:30 pm", "11:45 pm"]
 
-    useEffect(() => {
-        if (item.transactionData?.status) { setAvailableTimes(item.transactionData.buyerAvailable) }
-    }, [item])
-
+    useEffect(() => item.transactionData?.status && setAvailableTimes(item.transactionData.buyerAvailable), [item])
 
     const handleTimeSelection = (e) => {
-        console.log("availableTimes: ", availableTimes)
         if (item.transactionData?.status === 'Awaiting Time Confirmation') {
             setDeliveryTime(e.target.id)
         } else {
@@ -43,22 +38,20 @@ const DeliveryDateForm = ({ item, deliveryMethod }) => {
             <>
                 <p>{day}</p>
                 <div className={timeGrid}>
-                    {timeSelection.map((time) => {
+                    {timeSelection.map(time => {
                         return (
-                            <>
+                            <div key={day + "-" + time.replace(/:| /g, '-')} className={timeBoxOuter}>
                                 {(!item?.transactionData?.status) &&
-                                    <div className={timeBox + " " + (availableTimes.includes(`${day} ${time}`) ? available : unselected)}
+                                    <div className={timeBoxInner + " " + (availableTimes.includes(`${day} ${time}`) ? selected : unselected)}
                                         id={`${day} ${time}`}
-                                        key={day + "-" + time.replace(/:| /g, '-')}
                                         onClick={handleTimeSelection}>{time}</div>}
                                 {(item?.transactionData?.status === 'Awaiting Time Confirmation' && availableTimes.includes(`${day} ${time}`)) &&
-                                    <div className={timeBox + " " + (deliveryTime === (`${day} ${time}`) ? available : unselected)}
+                                    <div className={timeBoxInner + " " + (deliveryTime === (`${day} ${time}`) ? selected : unselected)}
                                         id={`${day} ${time}`}
-                                        key={day + "-" + time.replace(/:| /g, '-')}
                                         onClick={handleTimeSelection}>{time}</div>}
                                 {(item?.transactionData?.status === 'Awaiting Time Confirmation' && !availableTimes.includes(`${day} ${time}`)) &&
-                                    <div className={timeBox + " " + inactive} key={day + "-" + time.replace(/:| /g, '-')}>{time}</div>}
-                            </>
+                                    <div className={timeBoxInner + " " + inactive}>{time}</div>}
+                            </div>
                         )
                     })}
                 </div>
@@ -86,12 +79,8 @@ const DeliveryDateForm = ({ item, deliveryMethod }) => {
 
         } else { // The buyer just ordered an item
             updateUserItems('add', 'itemsInProgress', item.itemId) // update the current user (the buyer)
+            updateUserItems('add', 'itemsInProgress', item.itemId, item.seller) // update the seller
             notifyUser(item.seller, 'newBuyer', item.itemId)
-
-            firestore
-                .collection("users")
-                .doc(item.seller)
-                .update({itemsInProgress: firebase.firestore.FieldValue.arrayUnion(item.itemId)})
 
             const transactionData = {
                 buyer: userData?.id,
@@ -121,4 +110,4 @@ const DeliveryDateForm = ({ item, deliveryMethod }) => {
     )
 }
 
-export default DeliveryDateForm
+export default ItemFormPickTime

@@ -27,6 +27,7 @@ const ChangePasswordPage = () => {
                             <p className={FormCSS.inputItem__label}>What you would like you new password to be?</p>
                             <input className={FormCSS.inputItem__textInput}
                                 type="text"
+                                placeholder="*****"
                                 ref={newPassword} />
                         </label>
                     </div>

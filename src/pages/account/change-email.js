@@ -7,13 +7,11 @@ import * as FormCSS from '../../css/form.module.css'
 
 const ChangeEmailPage = () => {
     const email = useRef()
-    //const { updateEmail } = useUser()
     const firebaseContext = useUser()
     const updateEmail = firebaseContext?.updateEmail
 
     const onSubmit = (e) => {
         e.preventDefault()
-
         updateEmail(email.current.value)
         navigate('/')
     }
@@ -24,8 +22,9 @@ const ChangeEmailPage = () => {
                 <form className={FormCSS.form} onSubmit={onSubmit}>
                     <div className={FormCSS.inputItem}>
                         <label>
-                            <p className={FormCSS.inputItem__label}>Email</p>
+                            <p className={FormCSS.inputItem__label}>Update your email</p>
                             <input className={FormCSS.inputItem__textInput}
+                                placeholder={firebaseContext?.userData.email}
                                 type="text"
                                 ref={email} />
                         </label>

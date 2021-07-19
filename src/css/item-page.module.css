@@ -1,5 +1,29 @@
+.itemStatus {
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    border: 2px dotted black;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.itemStatusButton {
+    background-color: white;
+    border-radius: 5px;
+    font-size: 18px;
+    padding: 5px 20px;
+    margin-left: 20px;
+    text-align: center;
+}
+
 .infoArea {
     width: 40%;
+    padding: 7px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .cost {
@@ -19,38 +43,125 @@
     margin-top: 30px;
 }
 
-.deliveryButton {
-    width: 90%;
+.interestMethods {
+    display: flex;
+    flex-direction: column;
+}
+
+.saveButton {
+    background-color: #c4c4c4;
+    border: 1px solid black;
+    border-radius: 5px;
+    width: 80%;
     font-size: 18px;
     padding: 10px 20px;
-    border: 1px soild black;
-    border-radius: 5px;
     margin-top: 30px;
+    text-align: center;
+}
+
+.buyItemButton {
+    background-color: white;
+    border-radius: 5px;
+    width: 80%;
+    font-size: 18px;
+    padding: 10px 20px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+
+.deleteItemButton {
+    background-color: white;
+    border-radius: 5px;
+    width: 80%;
+    font-size: 18px;
+    padding: 10px 20px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.instructions {
+    margin: 30px 0;
 }
 
 .imageArea {
-    width: 60%;
+    width: 55%;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
 }
 
-.photo1 {
-    width: 100%;
+.coverPhotoContainer {
+    width: 99%;
+    padding: 0 3px;
+    margin-bottom: 5px;
+}
+
+.coverPhoto {
+    width: 99%;
     border: 3px solid black;
-    margin: 5px;
+    border-radius: 5px;
+    margin-bottom: 5px;
 }
 
 .thumnailArea {
     display: flex;
-    justify-content: center;
-    width: 100%;
+    justify-content: space-between;
+}
+
+.thumnailPhotoContainer {
+    padding: 3px;
+    flex: 1 1 0px;
 }
 
 .thumnailPhoto {
+    width: 96%;
     height: 150px;
     border: 3px solid black;
+    border-radius: 5px;
     object-fit: cover;
-    flex: 1 0 30%;
-    margin: 5px;
+    cursor: pointer;
+}
+
+.thumnailPhotoEmpty {
+    height: 150px;
+    border: 3px solid black;
+    border-radius: 5px;
+    background: 
+         linear-gradient(to top left,
+             rgba(0,0,0,0) 0%,
+             rgba(0,0,0,0) calc(50% - 0.8px),
+             rgba(0,0,0,1) 50%,
+             rgba(0,0,0,0) calc(50% + 0.8px),
+             rgba(0,0,0,0) 100%),
+         linear-gradient(to top right,
+             rgba(0,0,0,0) 0%,
+             rgba(0,0,0,0) calc(50% - 0.8px),
+             rgba(0,0,0,1) 50%,
+             rgba(0,0,0,0) calc(50% + 0.8px),
+             rgba(0,0,0,0) 100%);
+    background-color: white;
+}
+
+.formStep {
+    width: 100%;
+    border: 2px dotted black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 60px;
+    padding: 30px;
+}
+
+.formStepTitle {
+    margin-bottom: 10px;
+}
+
+.deliveryButton {
+    width: 80%;
+    font-size: 18px;
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: none;
+    margin-top: 30px;
+    text-align: center;
 }

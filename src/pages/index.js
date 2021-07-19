@@ -6,7 +6,6 @@ import { useUser } from "../context/UserContext"
 
 const IndexPage = ({ location }) => {
   const [filter, setFilter] = useState('all items')
-  //const { userData } = useUser()
   const firebaseContext = useUser()
 
   useEffect(() => {

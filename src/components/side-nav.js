@@ -7,8 +7,6 @@ import * as SideNavCSS from '../css/side-nav.module.css'
 
 const SideNavContent = ({ type, tagSearch=null }) => {
     const [tags, setTags] = useState()
-    //const { userData, allItems } = useUser()
-
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
     const allItems = firebaseContext?.allItems
@@ -21,15 +19,13 @@ const SideNavContent = ({ type, tagSearch=null }) => {
                 content.push(
                     <Link to={`/?tag=${tag}`} key={tag} className={SideNavCSS.sideNavRow} onClick={tagSearch(tag)}>
                         <p className={SideNavCSS.sideNavRow__title}>{tag}</p>
-                        <p>{itemTags[tag]} Items</p>
+                        <p>{itemTags[tag]} Item{itemTags[tag].length > 1 && 's'}</p>
                     </Link>
                 )
             }
             setTags(content)
         }
-        if (tagSearch) {
-            getTags()
-        }
+        tagSearch && getTags()
     }, [tagSearch, allItems])
 
     switch (type) {
@@ -62,8 +58,8 @@ const SideNavContent = ({ type, tagSearch=null }) => {
         case 'notifications':
             return (
                 <>
-                    <div className={SideNavCSS.sideNavRow}>
-                        <p className={SideNavCSS.sideNavRow__title}>You have {userData?.notifications.length} {userData?.notifications.length > 1 ? 'notifications' : 'notification'}</p>
+                    <div className={SideNavCSS.sideNavNotificationRow}>
+                        <p className={SideNavCSS.sideNavNotificationRow__title}>You have {userData?.notifications.length} {userData?.notifications.length > 1 ? 'notifications' : 'notification'}</p>
                     </div>  
                     <NotificationsList/>
                 </>

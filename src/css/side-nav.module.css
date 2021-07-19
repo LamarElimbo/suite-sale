@@ -2,9 +2,26 @@
     padding: 20px;
     border-bottom: 5px solid black;
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
-    flex: 1;
+    flex: 1 1;
+    max-height: 45%;
+    flex-direction: column;
+}
+
+.sideNavNotificationRow {
+    padding: 20px;
+    border-bottom: 5px solid black;
+    display: flex;
+    justify-content: space-between;
+    flex: 1 1;
+    max-height: 45%;
+    flex-direction: column;
+}
+
+.sideNavNotificationRow__title {
+    color: white;
+    font-size: 26px;
+    text-transform: capitalize;
 }
 
 .sideNavRow__title {
@@ -15,4 +32,9 @@
 .sideNavRow__count {
     font-size: 16px;
     text-transform: uppercase;
+}
+
+.notes {
+    padding: 42px 30px;
+    font-size: 1.3em;
 }

@@ -79,32 +79,45 @@ export const sendEmail = async (notifyAt, message) => {
 
 export const NotificationsList = () => {
     const [notificationItems, setNotificationItems] = useState([])
-    //const { userData, allItems } = useUser()
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
     const allItems = firebaseContext?.allItems
 
     useEffect(() => {
-        console.log("userData.notifications: ", userData?.notifications)
-        console.log("allItems: ", allItems)
         userData?.notifications.forEach(notification => {
-            console.log("notification: ", notification)
             const item = allItems?.filter(item => item.itemId === notification.itemId)
-            console.log("item: ", item)
             notification['item'] = item ? item[0] : null
+
+            switch (notification.message) {
+                case "Your order has been cancelled":
+                    notification['fullMessage'] = `Your ${notification?.item?.item} order has been cancelled`
+                    notification['action'] = "Got it"
+                    break
+
+                case "You have a new buyer":
+                    notification['fullMessage'] = `You have a new buyer for your ${notification?.item?.item}`
+                    notification['action'] = "Next Step: Choose a time to meet"
+                    break
+
+                case "Your order has been confirmed":
+                    notification['fullMessage'] = `Your ${notification?.item?.item} order has been confirmed`
+                    notification['action'] = "Next Step: Mark your calendar"
+                    break
+
+                default:
+                    break
+            }
             setNotificationItems(prev => Array.from(new Set([...prev, notification])))
         })
     }, [userData, allItems])
-
-
-    console.log("notificationItems: ", notificationItems)
 
     return (
         <>
             {notificationItems.map(notificationItem => {
                 return (
                     <Link to={`/item?item=${notificationItem.itemId}`} state={{ item: notificationItem.item }} className={SideNavCSS.sideNavRow} key={notificationItem.itemId}>
-                        <p className={SideNavCSS.sideNavRow__title}>{notificationItem.message}</p>
+                        <p className={SideNavCSS.sideNavRow__title}>{notificationItem.fullMessage}</p>
+                        <p>{notificationItem.action}</p>
                     </Link>)
             })}
         </>

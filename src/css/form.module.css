@@ -1,18 +1,28 @@
+.accountFormArea {
+    flex: 1 0 40%;
+    padding: 20px;
+}
+
 .form {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
+    margin-top: 50px;
+}
+
+.formTitle {
+    text-align: center;
+    margin-bottom: 50px;
 }
 
 .formField {
-    height: 175px;
     width: 50%;
     border: 2px dotted black;
+    border-radius: 5px;
     padding: 15px;
     display: flex;
     justify-content: space-between;
     margin: 20px;
-    border-radius: 5px;
     flex: 1 0 40%;
     text-align: center;
     flex-wrap: wrap;
@@ -23,34 +33,43 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+label {
     width: 100%;
 }
 
 .inputItem__label {
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-size: 18px;
+    font-size: 16px;
     margin: 0;
-    text-align: left;
+    text-align: center;
     width: 100%;
+    margin-bottom: 20px;
+}
+
+.inputItem__desc {
+    margin-bottom: 20px;
 }
 
 .inputItem__textInput {
-    width: 90%;
-    height: 40px;
-    border: 1px solid black;
-    border-radius: 1px;
+    width: 96%;
+    height: 50px;
+    border: 2px solid black;
+    border-radius: 5px;
     text-align: center;
     font-size: 18px;
     padding: 5px;
 }
 
 .inputItem__textAreaInput {
-    width: 90%;
+    width: 96%;
     height: 80px;
-    border: 1px solid black;
-    border-radius: 1px;
+    border: 2px solid black;
+    border-radius: 5px;
     font-size: 18px;
     padding: 5px;
 }
@@ -77,21 +96,38 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 14px;
+    text-align: left;
 }
 
 .inputItem__submit {
-    width: 40%;
-    height: 50px;
-    background-color: white;
-    border: 3px solid black;
+    width: 100%;
+    height: 64px;
+    background-color: #333333;
+    border: 2px solid black;
     border-radius: 5px;
-    text-align: center;
-    font-size: 18px;
     padding: 5px;
     margin: 20px;
-    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 1px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.lightButton {
+    width: 100%;
+    height: 64px;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .inputItem__submitArea {
@@ -107,15 +143,21 @@
     flex-wrap: wrap;
 }
 
-.timeBox {
-    width: 20%;
+.timeBoxOuter {
+    width: 25%;
     height: 50px;
+}
+
+.timeBoxInner {
+    width: 100%;
+    height: 100%;
     background-color: white;
     border: 1px solid black;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
+    cursor: pointer;
 }
 
 .toggle {
@@ -201,14 +243,6 @@
     border-radius: 50%;
 }
 
-.available {
-    background-color: lightblue;
-}
-
-.unselected {
-    background-color: white;
-}
-
 .inactive {
     background-color: grey;
 }
@@ -225,14 +259,6 @@
 
 .tagSelection p {
     margin: 0;
-}
-
-.selected {
-    background-color: lightblue;
-}
-
-.notSelected {
-    background-color: white;
 }
 
 .addTagInput {
@@ -265,4 +291,14 @@
     border-radius: 5px;
     padding: 15px;
     cursor: pointer;
+}
+
+.selected {
+    background-color: black;
+    color: white;
+}
+
+.unselected {
+    background-color: white;
+    color: black;
 }

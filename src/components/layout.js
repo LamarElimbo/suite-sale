@@ -1,30 +1,29 @@
 import * as React from 'react'
 import { Link, useStaticQuery, graphql } from 'gatsby'
 import { useUser } from "../context/UserContext"
+import SideNavContent from '../components/side-nav'
 import * as LayoutCSS from '../css/layout.module.css'
-
 
 export const Content = ({ contentTitle, children, titlePosition }) => {
     return (
         <div className={LayoutCSS.leftCol}>
-            <h2 className={titlePosition && LayoutCSS.isCentered}>{contentTitle}</h2>
+            {contentTitle && <h2 className={titlePosition && LayoutCSS.isCentered}>{contentTitle}</h2>}
             <div className={LayoutCSS.leftColBody}>{children}</div>
         </div>
     )
 }
 
 export const SideNav = ({ children }) => {
+    const firebaseContext = useUser()
     return (
         <div className={LayoutCSS.rightCol}>
-            {children}
+            {firebaseContext?.userData?.notifications?.length > 0 ? <SideNavContent type='notifications' /> : children}
         </div>
     )
 }
 
 const HeaderLink = ({ headerLink }) => {
-    //const { userAuth, logout } = useUser()
     const firebaseContext = useUser()
-
     switch (headerLink) {
         case "Login":
             return (
@@ -39,6 +38,8 @@ const HeaderLink = ({ headerLink }) => {
                     <h1>Logout</h1>
                 </Link>
             )
+        case "None":
+            return null
         default:
             if (firebaseContext?.userAuth) {
                 return (
@@ -48,8 +49,8 @@ const HeaderLink = ({ headerLink }) => {
                 )
             } else {
                 return (
-                    <Link to="/create-account">
-                        <h1>Create Account</h1>
+                    <Link to="/sign-in">
+                        <h1>Sign In</h1>
                     </Link>
                 )
             }
@@ -77,9 +78,7 @@ export const Layout = ({ pageTitle, headerLink, children }) => {
                     </Link>
                     <HeaderLink headerLink={headerLink} />
                 </div>
-                <div className={LayoutCSS.content}>
-                    {children}
-                </div>
+                <div className={LayoutCSS.content}>{children}</div>
             </div>
         </main>
     )
