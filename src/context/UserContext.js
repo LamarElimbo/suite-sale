@@ -12,7 +12,7 @@ export function UserProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [windowCheck, setWindowCheck] = useState(false)
 
-  async function signup(email, password, apartment) {
+  async function signup(email, password) {
     return auth.createUserWithEmailAndPassword(email, password).then((response) => {
       if (response.user.uid) {
         firestore
@@ -21,7 +21,7 @@ export function UserProvider({ children }) {
           .set({
             id: response.user.uid,
             email: email,
-            apartment: apartment,
+            suite: "",
             itemsInProgress: [],
             itemsPosted: [],
             itemsPurchased: [],
@@ -43,6 +43,8 @@ export function UserProvider({ children }) {
   const updateEmail = email => userAuth.updateEmail(email)
 
   const updatePassword = password => userAuth.updatePassword(password)
+
+  const addSuite = (suite, userId) => firestore.collection('users').doc(userId).update({ suite })
 
   const getUserDocument = async (userAuth) => {
     if (!userAuth?.uid) return null;
@@ -121,7 +123,7 @@ export function UserProvider({ children }) {
       setUserData({
         id: "",
         email: "",
-        apartment: "",
+        suite: "",
         itemsInProgress: [],
         itemsPosted: [],
         itemsPurchased: [],
@@ -154,6 +156,7 @@ export function UserProvider({ children }) {
     signup,
     logout,
     resetPassword,
+    addSuite,
     updateEmail,
     updatePassword,
     updateUserItems

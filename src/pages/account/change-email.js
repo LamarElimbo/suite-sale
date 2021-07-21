@@ -30,7 +30,7 @@ const ChangeEmailPage = () => {
                         </label>
                     </div>
                     <div className={FormCSS.inputItem}>
-                        <input className={FormCSS.inputItem__submit}
+                        <input className={FormCSS.darkButton}
                             type="submit"
                             value="Submit" />
                     </div>

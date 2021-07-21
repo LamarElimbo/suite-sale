@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { navigate } from "gatsby"
+import { navigate, Link } from "gatsby"
 import { firebase, firestore } from "../components/firebase"
 import { useUser } from "../context/UserContext"
 import { Layout, Content, SideNav } from '../components/layout'
@@ -27,9 +27,9 @@ const ItemPage = ({ location }) => {
             setSaved(userData?.itemsSaved.includes(location.state.item.itemId))
         } else { // If user came to page directly from url
             const urlParams = new URLSearchParams(location.search);
-            const item = allItems.filter(item => item.itemId === urlParams.get('item'))
-            setItemData(item[0])
-            setSaved(userData?.itemsSaved.includes(item[0].itemId))
+            const item = allItems?.filter(item => item.itemId === urlParams.get('item'))
+            item && setItemData(item[0])
+            item && setSaved(userData?.itemsSaved.includes(item[0].itemId))
         }
     }, [location, userData, allItems])
 
@@ -41,6 +41,22 @@ const ItemPage = ({ location }) => {
             setUserType(sellerType)
         }
     }, [userData, itemData])
+
+    useEffect(() => {
+        if (itemData.transactionData?.status === 'Awaiting Delivery') {
+            const deliveryDateSting = itemData.transactionData?.deliveryTime
+            const deliveryDateArray = deliveryDateSting.split(" at ");
+            const deliveryDate = new Date(deliveryDateArray[0])
+            const today = new Date()
+            if (today.getDate() > deliveryDate.getDate()) {
+                firestore
+                    .collection("items")
+                    .doc(itemData.itemId)
+                    .update({ "transactionData.status": "Complete" })
+                    .catch(error => console.log("Error marking item status to complete: ", error))
+            }
+        }
+    }, [itemData])
 
     const toggleSave = () => {
         const action = saved ? 'remove' : 'add'
@@ -105,9 +121,17 @@ const ItemPage = ({ location }) => {
                     <div className={ItemCSS.interestMethods}>
                         {(['potential-buyer', 'buyer'].includes(userType)) && <button className={ItemCSS.saveButton} onClick={toggleSave}>{saved ? 'Remove from cart' : 'Add to cart'}</button>}
                         {(!itemData.transactionData?.status && !interestedBuyer && userType === 'potential-buyer') && <button className={ItemCSS.buyItemButton} onClick={onClickBuy}>Buy</button>}
+                        {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.saveButton}>Sign in to save this item</button></Link>}
+                        {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.buyItemButton}>Sign in to buy this item</button></Link>}
                         {interestedBuyer && <p className={ItemCSS.instructions}>Follow the steps below to setup an exchange with the seller</p>}
                         {userType === 'seller-without-buyer' && <button className={ItemCSS.deleteItemButton} onClick={deleteItem}>Delete this item</button>}
-                        {itemData.transactionData?.status && <button className={ItemCSS.deleteItemButton} onClick={cancelOrder}>Cancel this order</button>}
+                        {(itemData.transactionData?.status && itemData.transactionData?.status !== 'Complete') && <button className={ItemCSS.deleteItemButton} onClick={cancelOrder}>Cancel this order</button>}
+                        {(itemData.transactionData?.status === 'Complete') &&
+                            <>
+                                <p>Didn't end up selling your item?</p>
+                                <button className={ItemCSS.deleteItemButton} onClick={cancelOrder}>Make it live again</button>
+                            </>
+                        }
                     </div>
                 </div>
                 <div className={ItemCSS.imageArea}>

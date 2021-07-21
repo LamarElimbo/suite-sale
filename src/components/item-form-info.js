@@ -19,11 +19,12 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
     const [pickUp, setPickUp] = useState(false)
     const [dropOff, setDropOff] = useState(false)
     const [lobby, setLobby] = useState(false)
-    const [transport, setTransport] = useState(false)
+    const suite = useRef('')
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
+    const addSuite = firebaseContext?.addSuite
     const allItems = firebaseContext?.allItems
-    
+
     useEffect(() => {
         if (itemData) {
             item.current = itemData.item
@@ -36,7 +37,6 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
             setPickUp(itemData.pickUp)
             setDropOff(itemData.dropOff)
             setLobby(itemData.lobby)
-            setTransport(itemData.transport)
         }
     }, [itemData])
 
@@ -100,7 +100,7 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
     const onChangePickUp = () => setPickUp(!pickUp)
     const onChangeDropOff = () => setDropOff(!dropOff)
     const onChangeLobby = () => setLobby(!lobby)
-    const onChangeTransport = () => setTransport(!transport)
+    const submitSuite = () => addSuite(suite.current.value, userData?.id)
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -114,8 +114,7 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
             tags,
             pickUp,
             dropOff,
-            lobby,
-            transport
+            lobby
         }
 
         handleSubmit(updatedItemData)
@@ -151,7 +150,7 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                     <p className={FormCSS.inputItem__desc}>Upload up to 3 photos</p>
                     <div className={FormCSS.photoInputs}>
                         <div className={FormCSS.imgUpload}>
-                            {(typeof photo1 === 'object' || photo1?.length > 0 ) ?
+                            {(typeof photo1 === 'object' || photo1?.length > 0) ?
                                 <>
                                     <img src={itemData ? photo1 : URL.createObjectURL(photo1)} className={FormCSS.cameraIcon} alt="Item Preview" />
                                     <button onClick={onPhoto1Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove icon" /></button>
@@ -167,7 +166,7 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                             }
                         </div>
                         <div className={FormCSS.imgUpload}>
-                            {(typeof photo2 === 'object' || photo2?.length > 0 ) ?
+                            {(typeof photo2 === 'object' || photo2?.length > 0) ?
                                 <>
                                     <img src={itemData ? photo2 : URL.createObjectURL(photo2)} className={FormCSS.cameraIcon} alt="Item Preview" />
                                     <button onClick={onPhoto2Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove icon" /></button>
@@ -183,7 +182,7 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                             }
                         </div>
                         <div className={FormCSS.imgUpload}>
-                            {(typeof photo3 === 'object' || photo3?.length > 0 ) ?
+                            {(typeof photo3 === 'object' || photo3?.length > 0) ?
                                 <>
                                     <img src={itemData ? photo3 : URL.createObjectURL(photo3)} className={FormCSS.cameraIcon} alt="Item Preview" />
                                     <button onClick={onPhoto3Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove icon" /></button>
@@ -253,19 +252,24 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                             <input className={FormCSS.inputItem__checkbox}
                                 type="checkbox"
                                 onChange={onChangeLobby} />
-                            <span className={FormCSS.checkboxInput__label}>Meet in Lobby</span>
+                            <span className={FormCSS.checkboxInput__label}>Meet in lobby</span>
                         </div>
-                        <div className={FormCSS.inputItem__checkboxInput}>
-                            <input className={FormCSS.inputItem__checkbox}
-                                type="checkbox"
-                                onChange={onChangeTransport} />
-                            <span className={FormCSS.checkboxInput__label}>Help transport item from your suite to theirs</span>
-                        </div>
+                        {(pickUp === 'pickUp' && !userData?.suite) &&
+                            <>
+                                <p className={FormCSS.inputItem__label}>What's your suite number?</p>
+                                <input className={FormCSS.inputItem__textInput}
+                                    placeholder="###"
+                                    type="number"
+                                    maxLength="3"
+                                    ref={suite} />
+                                <button className={FormCSS.lightButton} onClick={submitSuite}>Submit</button>
+                            </>
+                        }
                     </div>
                 </div>
             </div>
             <div className={FormCSS.inputItem}>
-                <input className={FormCSS.inputItem__submit}
+                <input className={FormCSS.darkButton}
                     type="submit"
                     value="Submit" />
             </div>

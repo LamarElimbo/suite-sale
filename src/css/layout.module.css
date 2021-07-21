@@ -69,6 +69,12 @@ input[type="text"] {
     letter-spacing: 0.5px;
 }
 
+input[type="number"] {
+    font-family: "Rubik";
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
 button {
     font-family: "Rubik";
     font-weight: 700;
@@ -92,4 +98,26 @@ input[type="file"] {
 
 .isLightText {
     font-weight: 400;
+}
+
+.status {
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    border: 2px dotted black;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.statusButton {
+    background-color: #c4c4c4;
+    border: 1px solid black;
+    border-radius: 5px;
+    font-size: 18px;
+    padding: 10px 20px;
+    margin-top: 30px;
+    text-align: center;
 }

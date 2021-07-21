@@ -19,7 +19,7 @@ const SignIntoAccountPage = () => {
         </div>
       </Content>
       <SideNav>
-        <p className={SideNavCSS.notes}>Note about how your apartment number will be used.</p>
+        <p className={SideNavCSS.notes}>Note about how your suite number will be used.</p>
       </SideNav>
     </Layout>
   )

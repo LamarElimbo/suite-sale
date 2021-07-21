@@ -61,6 +61,7 @@
 
 .buyItemButton {
     background-color: white;
+    border: 1px solid black;
     border-radius: 5px;
     width: 80%;
     font-size: 18px;
@@ -72,6 +73,7 @@
 
 .deleteItemButton {
     background-color: white;
+    border: 1px solid black;
     border-radius: 5px;
     width: 80%;
     font-size: 18px;

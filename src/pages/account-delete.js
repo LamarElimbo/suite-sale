@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Layout, Content, SideNav } from '../components/layout'
-import { form, inputItem, inputItem__submit } from '../css/form.module.css'
+import { form, inputItem, darkButton } from '../css/form.module.css'
 
 const DeleteAccountPage = () => {
   return (
@@ -8,7 +8,7 @@ const DeleteAccountPage = () => {
       <Content>
         <form className={form}>
           <div className={inputItem}>
-            <input className={inputItem__submit}
+            <input className={darkButton}
               type="submit"
               value="Submit" />
           </div>

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { navigate } from "gatsby"
 import { useUser } from "../context/UserContext"
-import { form, formTitle, inputItem, inputItem__label, inputItem__textInput, inputItem__submit } from '../css/form.module.css'
+import { form, formTitle, inputItem, inputItem__label, inputItem__textInput, darkButton } from '../css/form.module.css'
 
 const LoginForm = () => {
   const email = useRef()
@@ -38,7 +38,7 @@ const LoginForm = () => {
             </label>
           </div>
           <div className={inputItem}>
-            <input className={inputItem__submit}
+            <input className={darkButton}
               type="submit"
               value="Submit" />
           </div>

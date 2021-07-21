@@ -18,8 +18,7 @@ const ItemCreatePage = () => {
       tags: updatedItemData.tags,
       pickUp: updatedItemData.pickUp,
       dropOff: updatedItemData.dropOff,
-      lobby: updatedItemData.lobby,
-      transport: updatedItemData.transport
+      lobby: updatedItemData.lobby
     }
 
     firestore

@@ -15,7 +15,7 @@ const DeleteAccountPage = () => {
                 <div className={FormCSS.form}>
                     <p className={FormCSS.inputItem__label}>Are you sure that you want to delete your account?</p>
                     <div className={FormCSS.inputItem__submitArea}>
-                        <button className={FormCSS.inputItem__submit} onClick={onDeleteAccount}>Delete your account</button>
+                        <button className={FormCSS.darkButton} onClick={onDeleteAccount}>Delete your account</button>
                     </div>
                 </div>
             </Content>

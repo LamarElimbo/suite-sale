@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { navigate } from "gatsby"
 import { useUser } from "../context/UserContext"
-import { form, formTitle, inputItem, inputItem__label, inputItem__textInput, inputItem__submit } from '../css/form.module.css'
+import { form, formTitle, inputItem, inputItem__label, inputItem__textInput, darkButton } from '../css/form.module.css'
 
 const CreateAccountForm = () => {
     const email = useRef('')
-    const apartment = useRef()
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [passwordMatch, setPasswordMatch] = useState('')
@@ -19,7 +18,7 @@ const CreateAccountForm = () => {
         e.preventDefault()
 
         try {
-            await signup(email.current.value, password, apartment.current.value)
+            await signup(email.current.value, password)
             navigate('/')
         } catch {
             console.log("Failed to sign up")
@@ -45,16 +44,6 @@ const CreateAccountForm = () => {
                 </div>
                 <div className={inputItem}>
                     <label>
-                        <p className={inputItem__label}>Your apartment number</p>
-                        <input className={inputItem__textInput}
-                            placeholder="###"
-                            type="text"
-                            maxLength="3"
-                            ref={apartment} />
-                    </label>
-                </div>
-                <div className={inputItem}>
-                    <label>
                         <p className={inputItem__label}>Password</p>
                         <input className={inputItem__textInput}
                             placeholder="*****"
@@ -75,7 +64,7 @@ const CreateAccountForm = () => {
                     <p>{(confirmPassword.length > 0) ? passwordMatch : ""}</p>
                 </div>
                 <div className={inputItem}>
-                    <input className={inputItem__submit}
+                    <input className={darkButton}
                         type="submit"
                         value="Submit" />
                 </div>
