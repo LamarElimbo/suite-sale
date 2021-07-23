@@ -13,16 +13,16 @@ const ChangeEmailPage = () => {
     const onSubmit = (e) => {
         e.preventDefault()
         updateEmail(email.current.value)
-        navigate('/')
+        navigate('/', {state: { message: "email"}})
     }
 
     return (
-        <Layout pageTitle="Home Page" headerLink="Logout">
-            <Content contentTitle="Your account settings" titlePosition='true'>
+        <Layout pageTitle="Change Your Email" headerLink="Logout">
+            <Content contentTitle="Change your email" titlePosition='center'>
                 <form className={FormCSS.form} onSubmit={onSubmit}>
                     <div className={FormCSS.inputItem}>
                         <label>
-                            <p className={FormCSS.inputItem__label}>Update your email</p>
+                            <p className={FormCSS.inputItem__label}>What's your new email?</p>
                             <input className={FormCSS.inputItem__textInput}
                                 placeholder={firebaseContext?.userData.email}
                                 type="text"
@@ -32,7 +32,7 @@ const ChangeEmailPage = () => {
                     <div className={FormCSS.inputItem}>
                         <input className={FormCSS.darkButton}
                             type="submit"
-                            value="Submit" />
+                            value="Update Your Email" />
                     </div>
                 </form>
             </Content>

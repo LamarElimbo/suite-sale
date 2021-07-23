@@ -5,7 +5,7 @@ import SideNavContent from '../../components/side-nav'
 
 const PostedItemsPage = () => {
   return (
-    <Layout pageTitle="Home Page" headerLink="Logout">
+    <Layout pageTitle="Items In Progress" headerLink="Logout">
       <Content contentTitle="Items in progress">
         <ItemCardList filter="in progress"/>
       </Content>

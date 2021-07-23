@@ -5,8 +5,8 @@ import SideNavContent from '../../components/side-nav'
 
 const PostedItemsPage = () => {
   return (
-    <Layout pageTitle="Home Page" headerLink="Logout">
-      <Content contentTitle="Your active listings">
+    <Layout pageTitle="Your Posted Items" headerLink="Logout">
+      <Content contentTitle="Your posted items">
         <ItemCardList filter="posted items"/>
       </Content>
       <SideNav>

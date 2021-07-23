@@ -4,9 +4,8 @@ import { Layout, Content, SideNav } from '../../components/layout'
 import SideNavContent from '../../components/side-nav'
 
 const AccountPage = () => {
-  console.log('account page')
   return (
-    <Layout pageTitle="Home Page" headerLink="Logout">
+    <Layout pageTitle="Account" headerLink="Logout">
       <Content contentTitle="Your active listings">
         <ItemCardList filter="posted items" />
       </Content>

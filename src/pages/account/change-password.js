@@ -7,7 +7,6 @@ import * as FormCSS from '../../css/form.module.css'
 
 const ChangePasswordPage = () => {
     const newPassword = useRef()
-    //const { updatePassword } = useUser()
     const firebaseContext = useUser()
     const updatePassword = firebaseContext?.updatePassword
     
@@ -15,16 +14,16 @@ const ChangePasswordPage = () => {
         e.preventDefault()
 
         updatePassword(newPassword.current.value)
-        navigate('/')
+        navigate('/', {state: { message: "password"}})
     }
 
     return (
-        <Layout pageTitle="Home Page" headerLink="Logout">
-            <Content contentTitle="Your account settings" titlePosition='true'>
+        <Layout pageTitle="Change Your Password" headerLink="Logout">
+            <Content contentTitle="Change your password" titlePosition='center'>
                 <form className={FormCSS.form} onSubmit={onSubmit}>
                     <div className={FormCSS.inputItem}>
                         <label>
-                            <p className={FormCSS.inputItem__label}>What you would like you new password to be?</p>
+                            <p className={FormCSS.inputItem__label}>What would you like your new password to be?</p>
                             <input className={FormCSS.inputItem__textInput}
                                 type="text"
                                 placeholder="*****"
@@ -34,7 +33,7 @@ const ChangePasswordPage = () => {
                     <div className={FormCSS.inputItem}>
                         <input className={FormCSS.darkButton}
                             type="submit"
-                            value="Submit" />
+                            value="Update Your Password" />
                     </div>
                 </form>
             </Content>

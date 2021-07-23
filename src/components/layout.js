@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Link, useStaticQuery, graphql } from 'gatsby'
+import { Link } from 'gatsby'
 import { useUser } from "../context/UserContext"
 import SideNavContent from '../components/side-nav'
 import * as LayoutCSS from '../css/layout.module.css'
@@ -25,12 +25,6 @@ export const SideNav = ({ children }) => {
 const HeaderLink = ({ headerLink }) => {
     const firebaseContext = useUser()
     switch (headerLink) {
-        case "Login":
-            return (
-                <Link to="/login">
-                    <h1>Login</h1>
-                </Link>
-            )
         case "Logout":
             const onLogout = () => firebaseContext?.logout()
             return (
@@ -58,19 +52,9 @@ const HeaderLink = ({ headerLink }) => {
 }
 
 export const Layout = ({ pageTitle, headerLink, children }) => {
-    const data = useStaticQuery(graphql`
-        query {
-            site {
-                siteMetadata {
-                    title
-                }
-            }
-        }  
-    `)
-
     return (
         <main>
-            <title>{pageTitle} | {data.site.siteMetadata.title}</title>
+            <title>{pageTitle} | Suite Sale</title>
             <div className={LayoutCSS.body}>
                 <div className={LayoutCSS.header}>
                     <Link to="/">

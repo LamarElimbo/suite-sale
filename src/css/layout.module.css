@@ -63,6 +63,10 @@ p, a {
     flex-direction: column;
 }
 
+label {
+    width: 100%;
+}
+
 input[type="text"] {
     font-family: "Rubik";
     font-weight: 700;

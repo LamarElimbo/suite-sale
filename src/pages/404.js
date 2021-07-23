@@ -8,12 +8,9 @@ const NotFoundPage = () => {
   }
 
   return (
-    <Layout pageTitle="Page Not Found" headerLink="Logout">
-      <Content>
-        <div>
-          <h1>Page not found</h1>
-          <p style={addMargin}>Sorry, but the page you were looking for couldn’t be found</p>
-        </div>
+    <Layout pageTitle="Page Not Found">
+      <Content contentTitle="Page not found">
+        <p style={addMargin}>Sorry, but the page you were looking for couldn’t be found</p>
       </Content>
       <SideNav>
         <SideNavContent type='account' />

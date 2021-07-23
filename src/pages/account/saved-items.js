@@ -5,8 +5,8 @@ import SideNavContent from '../../components/side-nav'
 
 const SavedItemsPage = () => {
   return (
-    <Layout pageTitle="Home Page" headerLink="Logout">
-      <Content contentTitle="Your saved items">
+    <Layout pageTitle="Your Cart" headerLink="Logout">
+      <Content contentTitle="Your cart">
         <ItemCardList filter="saved"/>
       </Content>
       <SideNav>

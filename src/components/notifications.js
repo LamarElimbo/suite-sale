@@ -10,15 +10,12 @@ export const notifyUser = (userId, notifyAbout, itemId) => {
         case 'cancelation':
             message = "Your order has been cancelled"
             break
-
         case 'newBuyer':
             message = "You have a new buyer"
             break
-
         case 'orderConfirmed':
             message = "Your order has been confirmed"
             break
-
         default:
             break
     }
@@ -46,9 +43,7 @@ export const sendSMS = async (notifyAt, message) => {
     const functionURL = "https://turquoise-octopus-1624.twil.io/send-sms"
     const response = await fetch(functionURL, {
         method: "post",
-        headers: {
-            "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-        },
+        headers: {"Content-type": "application/x-www-form-urlencoded; charset=UTF-8"},
         body: new URLSearchParams({ to: notifyAt, body: message }).toString(),
     })
     if (response.status === 200) {
@@ -64,9 +59,7 @@ export const sendEmail = async (notifyAt, message) => {
     const functionURL = "https://turquoise-octopus-1624.twil.io/send-email"
     const response = await fetch(functionURL, {
         method: "post",
-        headers: {
-            "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-        },
+        headers: {"Content-type": "application/x-www-form-urlencoded; charset=UTF-8"},
         body: new URLSearchParams({ to: "lamar_johnson133@yahoo.ca", subject: message, body: message }).toString(),
     })
     if (response.status === 200) {
@@ -91,19 +84,16 @@ export const NotificationsList = () => {
             switch (notification.message) {
                 case "Your order has been cancelled":
                     notification['fullMessage'] = `Your ${notification?.item?.item} order has been cancelled`
-                    notification['action'] = "Got it"
+                    notification['action'] = "Next Step: Remove notification"
                     break
-
                 case "You have a new buyer":
                     notification['fullMessage'] = `You have a new buyer for your ${notification?.item?.item}`
                     notification['action'] = "Next Step: Choose a time to meet"
                     break
-
                 case "Your order has been confirmed":
                     notification['fullMessage'] = `Your ${notification?.item?.item} order has been confirmed`
                     notification['action'] = "Next Step: Mark your calendar"
                     break
-
                 default:
                     break
             }

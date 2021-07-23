@@ -7,12 +7,6 @@
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-    margin-top: 50px;
-}
-
-.formTitle {
-    text-align: center;
-    margin-bottom: 50px;
 }
 
 .formField {
@@ -34,10 +28,6 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 30px;
-    width: 100%;
-}
-
-label {
     width: 100%;
 }
 
@@ -74,10 +64,6 @@ label {
     padding: 5px;
 }
 
-.inputItem__checkboxes {
-    width: 100%;
-}
-
 .inputItem__checkboxInput {
     display: flex;
     width: 100%;
@@ -92,11 +78,20 @@ label {
     flex-shrink: 0;
 }
 
+.inputItem__checkbox input:checked ~ .checkmark {
+    background-color: black;
+  }
+
 .checkboxInput__label {
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 14px;
     text-align: left;
+}
+
+.formError {
+    text-align: center;
+    color: red;
 }
 
 .darkButton {
@@ -109,6 +104,7 @@ label {
     margin: 20px;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-size: 18px;
     color: white;
     display: flex;
     justify-content: center;
@@ -125,6 +121,7 @@ label {
     margin: 20px;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-size: 18px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -158,89 +155,6 @@ label {
     justify-content: center;
     text-align: center;
     cursor: pointer;
-}
-
-.toggle {
-    position: relative;
-    display: inline-block;
-    width: 90px;
-    height: 34px;
-}
-  
-.toggle .toggleInput {
-    display:none;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ca2222;
-    -webkit-transition: .4s;
-    transition: .4s;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-}
-
-.toggleInput:checked + .slider {
-    background-color: #2ab934;
-}
-
-.toggleInput:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
-}
-
-.toggleInput:checked + .slider:before {
-    -webkit-transform: translateX(55px);
-    -ms-transform: translateX(55px);
-    transform: translateX(55px);
-}
-
-/*------ ADDED CSS ---------*/
-.t12 {
-    display: none;
-}
-
-.t12, .t24 {
-    color: white;
-    position: absolute;
-    transform: translate(-50%,-50%);
-    top: 50%;
-    left: 50%;
-    font-size: 10px;
-    font-family: Verdana, sans-serif;
-}
-
-.toggleInput:checked+ .slider .t12 {
-    display: block;
-}
-
-.toggleInput:checked + .slider .t24 {
-    display: none;
-}
-
-/*--------- END --------*/
-
-/* Rounded sliders */
-.slider.round {
-    border-radius: 34px;
-}
-
-.slider.round:before {
-    border-radius: 50%;
 }
 
 .inactive {

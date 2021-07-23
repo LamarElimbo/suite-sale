@@ -5,7 +5,7 @@ import SideNavContent from '../../components/side-nav'
 
 const PurchaseHistoryPage = () => {
   return (
-    <Layout pageTitle="Home Page" headerLink="Logout">
+    <Layout pageTitle="Your Purchase History" headerLink="Logout">
       <Content contentTitle="Your purchase history">
         <ItemCardList filter="purchase history"/>
       </Content>

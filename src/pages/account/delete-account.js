@@ -10,8 +10,8 @@ const DeleteAccountPage = () => {
     const onDeleteAccount = () => deleteAccount()
 
     return (
-        <Layout pageTitle="Delete Account" headerLink="Logout">
-            <Content contentTitle="Your account settings" titlePosition='true'>
+        <Layout pageTitle="Delete Your Account" headerLink="Logout">
+            <Content contentTitle="Delete your account" titlePosition='center'>
                 <div className={FormCSS.form}>
                     <p className={FormCSS.inputItem__label}>Are you sure that you want to delete your account?</p>
                     <div className={FormCSS.inputItem__submitArea}>

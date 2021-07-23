@@ -73,7 +73,7 @@ export const ItemCard = ({ create, item }) => {
             <Link to={firebaseContext?.userAuth ? '/item-create' : '/sign-in'} className={ItemsCSS.itemCardArea}>
                 <div className={ItemsCSS.itemCardCreate}>
                     <p className={ItemsCSS.itemCardCreate__text}>Create a <br />new listing</p>
-                    <img src={add_icon} className={ItemsCSS.itemCardCreate__icon} alt="Add icon" />
+                    <img src={add_icon} className={ItemsCSS.itemCardCreate__icon} alt="Add a new listing" />
                 </div>
             </Link>
         )

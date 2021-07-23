@@ -7,6 +7,7 @@ import ItemFormInfo from '../components/item-form-info'
 import ItemFormBuyItem from '../components/item-form-buy-item'
 import ItemFormPickTime from '../components/item-form-pick-time'
 import * as LayoutCSS from '../css/layout.module.css'
+import * as SideNavCSS from '../css/side-nav.module.css'
 import * as ItemCSS from '../css/item-page.module.css'
 
 const ItemPage = ({ location }) => {
@@ -43,7 +44,7 @@ const ItemPage = ({ location }) => {
     }, [userData, itemData])
 
     useEffect(() => {
-        if (itemData.transactionData?.status === 'Awaiting Delivery') {
+        if (itemData.transactionData?.status === 'Awaiting Meetup') {
             const deliveryDateSting = itemData.transactionData?.deliveryTime
             const deliveryDateArray = deliveryDateSting.split(" at ");
             const deliveryDate = new Date(deliveryDateArray[0])
@@ -69,14 +70,14 @@ const ItemPage = ({ location }) => {
             .collection("items")
             .doc(itemData.itemId)
             .update(updatedItemData)
-            .then(() => navigate('/'))
+            .then(() => navigate('/', { state: { message: "item-update" } }))
             .catch(error => console.log("Error updating item data: ", error))
     }
 
     const changeCoverPhoto = (e) => setCoverPhoto(e.target.src)
     const onClickBuy = () => setInterestedBuyer(true)
     const deleteNotification = () => updateUserItems('remove', 'buyerNotifications', itemData.itemId)
-    const deleteItem = () => firestore.collection("items").doc(itemData.itemId).delete()
+    const deleteItem = () => firestore.collection("items").doc(itemData.itemId).delete().then(() => navigate('/', { state: { message: "item-delete" } }))
     const cancelOrder = () => {
         let currentUserIsThe = (userData?.id === itemData.seller) ? 'seller' : 'buyer'
         let notCurrentUserId = (userData?.id === itemData.seller) ? itemData.transactionData?.buyer : itemData.seller
@@ -104,13 +105,6 @@ const ItemPage = ({ location }) => {
     return (
         <Layout pageTitle={itemData.item}>
             <Content>
-                {itemData.transactionData?.status && <p className={ItemCSS.itemStatus}>{itemData.transactionData.status + ' ' + itemData.transactionData?.deliveryMethod + ' ' + itemData.transactionData?.deliveryTime}</p>}
-                {userData?.notifications.some(doc => doc.itemId === itemData.id) &&
-                    <div className={ItemCSS.itemStatus}>
-                        <p>Have you marked your calendar?</p>
-                        <button className={ItemCSS.itemStatusButton} onClick={deleteNotification}>Yes</button>
-                    </div>
-                }
                 <div className={ItemCSS.infoArea}>
                     <div>
                         <p className={ItemCSS.cost}><sup className={ItemCSS.dollarSign}>$</sup>{itemData.cost}</p>
@@ -119,19 +113,11 @@ const ItemPage = ({ location }) => {
                         <p className={LayoutCSS.isLightText}>{itemData.itemNotes}</p>
                     </div>
                     <div className={ItemCSS.interestMethods}>
-                        {(['potential-buyer', 'buyer'].includes(userType)) && <button className={ItemCSS.saveButton} onClick={toggleSave}>{saved ? 'Remove from cart' : 'Add to cart'}</button>}
+                        {(['potential-buyer', 'buyer'].includes(userType)) && <button className={ItemCSS.saveButton} onClick={toggleSave}>{saved ? 'Remove From cart' : 'Add To cart'}</button>}
                         {(!itemData.transactionData?.status && !interestedBuyer && userType === 'potential-buyer') && <button className={ItemCSS.buyItemButton} onClick={onClickBuy}>Buy</button>}
-                        {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.saveButton}>Sign in to save this item</button></Link>}
-                        {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.buyItemButton}>Sign in to buy this item</button></Link>}
+                        {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.saveButton}>Sign In To Save Item</button></Link>}
+                        {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.buyItemButton}>Sign In To Buy Item</button></Link>}
                         {interestedBuyer && <p className={ItemCSS.instructions}>Follow the steps below to setup an exchange with the seller</p>}
-                        {userType === 'seller-without-buyer' && <button className={ItemCSS.deleteItemButton} onClick={deleteItem}>Delete this item</button>}
-                        {(itemData.transactionData?.status && itemData.transactionData?.status !== 'Complete') && <button className={ItemCSS.deleteItemButton} onClick={cancelOrder}>Cancel this order</button>}
-                        {(itemData.transactionData?.status === 'Complete') &&
-                            <>
-                                <p>Didn't end up selling your item?</p>
-                                <button className={ItemCSS.deleteItemButton} onClick={cancelOrder}>Make it live again</button>
-                            </>
-                        }
                     </div>
                 </div>
                 <div className={ItemCSS.imageArea}>
@@ -163,7 +149,40 @@ const ItemPage = ({ location }) => {
                 }
                 {interestedBuyer && <ItemFormBuyItem itemData={itemData} />}
             </Content>
-            <SideNav></SideNav>
+            <SideNav>
+                <div className={SideNavCSS.status}>
+                    <p style={{marginBottom: "30px"}}>Item Status</p>
+                    {(!itemData.transactionData) &&
+                        <p className={SideNavCSS.sideNavRow__text}>This item doesn't have any buyers yet.</p>
+                    }
+                    {(itemData.transactionData && userType === 'potential-buyer') &&
+                        <p className={SideNavCSS.sideNavRow__text}>This item already has a buyer.</p>
+                    }
+                    {(itemData.transactionData?.status === "Awaiting Time Confirmation" && userType === 'buyer') &&
+                        <p className={SideNavCSS.sideNavRow__text}>The seller has been notified of your interest in this item. Once they confirm their ideal delivery time and then you'll be notified with the final details.</p>
+                    }
+                    {(itemData.transactionData?.status === "Awaiting Meetup" && ['seller', 'buyer'].includes(userType)) &&
+                        <>
+                            <p className={SideNavCSS.sideNavRow__text}>{itemData.transactionData.status}</p>
+                            <p className={SideNavCSS.sideNavRow__text}>{itemData.transactionData?.deliveryMethod + ' ' + itemData.transactionData?.deliveryTime}</p>
+                        </>
+                    }
+                    {(itemData.transactionData?.status === "Awaiting Meetup" && userData?.notifications.some(doc => doc.itemId === itemData.id)) &&
+                        <>
+                            <p className={SideNavCSS.sideNavRow__text}>Have you marked your calendar?</p>
+                            <button className={SideNavCSS.statusButton} onClick={deleteNotification}>Yes, Remove Notification</button>
+                        </>
+                    }
+                    {userType === 'seller-without-buyer' && <button className={ItemCSS.deleteItemButton} onClick={deleteItem}>Delete This Item</button>}
+                        {(itemData.transactionData?.status && itemData.transactionData?.status !== 'Complete') && <button className={SideNavCSS.statusButton} onClick={cancelOrder}>Cancel Order</button>}
+                        {(itemData.transactionData?.status === 'Complete') &&
+                            <>
+                                <p className={SideNavCSS.sideNavRow__text}>Didn't end up selling your item?</p>
+                                <button className={ItemCSS.deleteItemButton} onClick={cancelOrder}>Make Live Again</button>
+                            </>
+                        }
+                </div>
+            </SideNav>
         </Layout>
     )
 }

@@ -20,6 +20,13 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
     const [dropOff, setDropOff] = useState(false)
     const [lobby, setLobby] = useState(false)
     const suite = useRef('')
+    const [itemError, setItemError] = useState('')
+    const [costError, setCostError] = useState('')
+    const [itemNotesError, setItemNotesError] = useState('')
+    const [tagError, setTagError] = useState('')
+    const [locationExchangeError, setLocationExchangeError] = useState('')
+    const [suiteError, setSuiteError] = useState('')
+
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
     const addSuite = firebaseContext?.addSuite
@@ -43,10 +50,7 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
     useEffect(() => {
         function getTags() {
             let content = []
-
-            for (let tag in getAllItemTags(allItems)) {
-                content.push(tag)
-            }
+            for (let tag in getAllItemTags(allItems)) { content.push(tag) }
             setExistingTags(content)
         }
         getTags()
@@ -100,26 +104,44 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
     const onChangePickUp = () => setPickUp(!pickUp)
     const onChangeDropOff = () => setDropOff(!dropOff)
     const onChangeLobby = () => setLobby(!lobby)
-    const submitSuite = () => addSuite(suite.current.value, userData?.id)
 
     const onSubmit = (e) => {
         e.preventDefault()
-
-        const updatedItemData = {
-            seller: userData?.id,
-            item: item.current.value,
-            cost: cost.current.value,
-            photo1, photo2, photo3,
-            itemNotes: itemNotes.current.value,
-            tags,
-            pickUp,
-            dropOff,
-            lobby
+        setItemError("")
+        setCostError("")
+        setItemNotesError("")
+        setTagError("")
+        setLocationExchangeError("")
+        setSuiteError("")
+        const locationExchange = (pickUp || dropOff || lobby) ? true : false
+        let suiteErr = false
+        if (!item.current.value) setItemError("You'll have to enter an item")
+        if (!cost.current.value) setCostError("You'll have to enter a cost")
+        if (!itemNotes.current.value) setItemNotesError("You'll have to enter a note")
+        if (tags.length === 0) setTagError("You'll have to enter a tag")
+        if (!locationExchange) setLocationExchangeError("You'll have to select a meet up location")
+        if (!userData?.apartment && !suite.current.value && pickUp) {
+            setSuiteError("You'll have to enter your suite number or remove 'Pick up from your suite' as one of your meet up options")
+        } else {
+            addSuite(suite.current.value, userData?.id)
         }
-
-        handleSubmit(updatedItemData)
+        if (item.current.value && cost.current.value && itemNotes.current.value && (tags.length === 0) && locationExchange && suite && !suiteErr) {
+            const updatedItemData = {
+                seller: userData?.id,
+                item: item.current.value,
+                cost: cost.current.value,
+                photo1, photo2, photo3,
+                itemNotes: itemNotes.current.value,
+                tags,
+                pickUp,
+                dropOff,
+                lobby
+            }
+            handleSubmit(updatedItemData)
+        }
     }
 
+    const padding30 = {padding: "30px"}
     return (
         <form className={FormCSS.form} onSubmit={onSubmit}>
             <div className={FormCSS.formField}>
@@ -127,21 +149,23 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                     <p className={FormCSS.inputItem__label}>Item</p>
                     <p className={FormCSS.inputItem__desc}>What are you selling?</p>
                     <input className={FormCSS.inputItem__textInput}
-                        placeholder="Item"
+                        placeholder="Blue Balloons"
                         type="text"
                         ref={item}
                         defaultValue={itemData && item.current} />
+                    {itemError && <p className={FormCSS.formError}>{itemError}</p>}
                 </div>
             </div>
             <div className={FormCSS.formField}>
                 <div className={FormCSS.inputItem}>
-                    <p className={FormCSS.inputItem__label}>Costs</p>
+                    <p className={FormCSS.inputItem__label}>Cost</p>
                     <p className={FormCSS.inputItem__desc}>How much are you charging?</p>
                     <input className={FormCSS.inputItem__textInput}
                         placeholder="$$$"
                         type="text"
                         ref={cost}
                         defaultValue={itemData && cost.current} />
+                    {costError && <p className={FormCSS.formError}>{costError}</p>}
                 </div>
             </div>
             <div className={FormCSS.formField}>
@@ -153,12 +177,12 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                             {(typeof photo1 === 'object' || photo1?.length > 0) ?
                                 <>
                                     <img src={itemData ? photo1 : URL.createObjectURL(photo1)} className={FormCSS.cameraIcon} alt="Item Preview" />
-                                    <button onClick={onPhoto1Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove icon" /></button>
+                                    <button onClick={onPhoto1Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove this item preview" /></button>
                                 </>
                                 :
                                 <>
                                     <label htmlFor="itemImg1">
-                                        <img src={camera_icon} className={FormCSS.cameraIcon} alt="Upload icon" />
+                                        <img src={camera_icon} className={FormCSS.cameraIcon} alt="Upload a preview of what your item looks like" />
                                         <div className="action-area__text">Add<br />Image</div>
                                     </label>
                                     <input id="itemImg1" type="file" onChange={onPhoto1Upload} />
@@ -169,12 +193,12 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                             {(typeof photo2 === 'object' || photo2?.length > 0) ?
                                 <>
                                     <img src={itemData ? photo2 : URL.createObjectURL(photo2)} className={FormCSS.cameraIcon} alt="Item Preview" />
-                                    <button onClick={onPhoto2Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove icon" /></button>
+                                    <button onClick={onPhoto2Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove this item preview" /></button>
                                 </>
                                 :
                                 <>
                                     <label htmlFor="itemImg2">
-                                        <img src={camera_icon} className={FormCSS.cameraIcon} alt="Upload icon" />
+                                        <img src={camera_icon} className={FormCSS.cameraIcon} alt="Upload a preview of what your item looks like" />
                                         <div className="action-area__text">Add<br />Image</div>
                                     </label>
                                     <input id="itemImg2" type="file" onChange={onPhoto2Upload} />
@@ -185,12 +209,12 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                             {(typeof photo3 === 'object' || photo3?.length > 0) ?
                                 <>
                                     <img src={itemData ? photo3 : URL.createObjectURL(photo3)} className={FormCSS.cameraIcon} alt="Item Preview" />
-                                    <button onClick={onPhoto3Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove icon" /></button>
+                                    <button onClick={onPhoto3Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove this item preview" /></button>
                                 </>
                                 :
                                 <>
                                     <label htmlFor="itemImg3">
-                                        <img src={camera_icon} className={FormCSS.cameraIcon} alt="Upload icon" />
+                                        <img src={camera_icon} className={FormCSS.cameraIcon} alt="Upload a preview of what your item looks like" />
                                         <div className="action-area__text">Add<br />Image</div>
                                     </label>
                                     <input id="itemImg3" type="file" onChange={onPhoto3Upload} />
@@ -203,11 +227,12 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
             <div className={FormCSS.formField}>
                 <div className={FormCSS.inputItem}>
                     <p className={FormCSS.inputItem__label}>Notes</p>
-                    <p className={FormCSS.inputItem__desc}>What would you like potential buyers to know about the item you're selling?</p>
+                    <p className={FormCSS.inputItem__desc}>What would you like buyers to know?</p>
                     <textarea className={FormCSS.inputItem__textAreaInput}
-                        placeholder="Notes"
+                        placeholder="Ex: item quality/description, accept cash/credit, ideal meet up times"
                         ref={itemNotes}
                         defaultValue={itemData && itemNotes.current}></textarea>
+                    {itemNotesError && <p className={FormCSS.formError}>{itemNotesError}</p>}
                 </div>
             </div>
             <div className={FormCSS.formField}>
@@ -217,6 +242,7 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                     <div id='box'>
                         {existingTags.map(tag =>
                             <button className={FormCSS.tagSelection + " " + (tags?.includes(tag) ? FormCSS.selected : FormCSS.unselected)}
+                                type="button"
                                 id={tag}
                                 key={tag}
                                 onClick={onTagSelection}>{tag}</button>
@@ -227,51 +253,55 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                             placeholder="Enter a new tag"
                             type="text"
                             ref={newTag} />
-                        <div className={FormCSS.addTagButton} onClick={onAddTag} onKeyDown={onAddTag} role="button" tabIndex={0}>Add</div>
+                        <div className={FormCSS.addTagButton} onClick={onAddTag} onKeyDown={onAddTag} role="button" tabIndex={0}>Add Tag</div>
                     </div>
+                    {tagError && <p className={FormCSS.formError}>{tagError}</p>}
                 </div>
             </div>
             <div className={FormCSS.formField}>
                 <div className={FormCSS.inputItem}>
-                    <p className={FormCSS.inputItem__label}>Preferred Delivery Method</p>
-                    <p className={FormCSS.inputItem__desc}>How would you like to exchange with your buyer?</p>
-                    <div className={FormCSS.inputItem__checkboxes}>
+                    <p className={FormCSS.inputItem__label}>Exchange Location</p>
+                    <p className={FormCSS.inputItem__desc}>Where are you comfortable meeting with your buyer?</p>
+                    <div style={{width: "100%"}}>
                         <div className={FormCSS.inputItem__checkboxInput}>
                             <input className={FormCSS.inputItem__checkbox}
                                 type="checkbox"
                                 onChange={onChangePickUp} />
-                            <span className={FormCSS.checkboxInput__label}>Pick up from your suite</span>
+                            <span className={FormCSS.checkboxInput__label}>Your suite</span>
                         </div>
                         <div className={FormCSS.inputItem__checkboxInput}>
                             <input className={FormCSS.inputItem__checkbox}
                                 type="checkbox"
                                 onChange={onChangeDropOff} />
-                            <span className={FormCSS.checkboxInput__label}>Drop off at buyer's suite</span>
+                            <span className={FormCSS.checkboxInput__label}>Buyer's suite</span>
                         </div>
                         <div className={FormCSS.inputItem__checkboxInput}>
                             <input className={FormCSS.inputItem__checkbox}
                                 type="checkbox"
                                 onChange={onChangeLobby} />
-                            <span className={FormCSS.checkboxInput__label}>Meet in lobby</span>
+                            <span className={FormCSS.checkboxInput__label}>Lobby</span>
                         </div>
                         {(pickUp === 'pickUp' && !userData?.suite) &&
-                            <>
+                            <div style={padding30}>
                                 <p className={FormCSS.inputItem__label}>What's your suite number?</p>
                                 <input className={FormCSS.inputItem__textInput}
                                     placeholder="###"
                                     type="number"
                                     maxLength="3"
                                     ref={suite} />
-                                <button className={FormCSS.lightButton} onClick={submitSuite}>Submit</button>
-                            </>
+                            </div>
                         }
                     </div>
+                    {locationExchangeError && <p className={FormCSS.formError}>{locationExchangeError}</p>}
+                    {suiteError && <p className={FormCSS.formError}>{suiteError}</p>}
                 </div>
             </div>
             <div className={FormCSS.inputItem}>
                 <input className={FormCSS.darkButton}
                     type="submit"
-                    value="Submit" />
+                    value="Submit Listing" />
+                {(itemError || costError || itemNotesError || tagError || locationExchangeError || suiteError) && <p className={FormCSS.formError}>Looks like you missed a spot</p>}
+
             </div>
         </form>
     )

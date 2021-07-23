@@ -7,13 +7,13 @@ import * as SideNavCSS from '../css/side-nav.module.css'
 
 const SignIntoAccountPage = () => {
   return (
-    <Layout pageTitle="Create Account Page" headerLink="None">
-      <Content>
+    <Layout pageTitle="Sign In" headerLink="None">
+      <Content contentTitle="Create a new account" titlePosition='center'>
         <div className={FormsCSS.accountFormArea}>
           <CreateAccountForm />
         </div>
       </Content>
-      <Content>
+      <Content contentTitle="Log into your account" titlePosition='center'>
         <div className={FormsCSS.accountFormArea}>
           <LoginForm />
         </div>

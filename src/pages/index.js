@@ -21,24 +21,19 @@ const IndexPage = ({ location }) => {
   }, [location, filter])
 
   return (
-    <Layout pageTitle="Home Page">
+    <Layout pageTitle="Home">
       <Content>
-        {!firebaseContext?.userAuth &&
-          <div className={LayoutCSS.status}>
-            <p>Welcome to Suite Sale! Built exclusively for the residents of 665 Roselawn Ave. The next time you want to sell something, consider going local and avoid packaging, long delivery times, and best of all keep 100% of your profits!</p>
-            <Link to="/about">
-              <button className={LayoutCSS.statusButton}>Learn More</button>
-            </Link>
-          </div>
-        }
         <ItemCard create='true' />
         <ItemCardList filter={filter} />
       </Content>
       <SideNav>
-        {firebaseContext?.userData?.notifications.length > 0 ?
+        {firebaseContext?.userData?.notifications.length > 0 &&
           <SideNavContent type='notifications' />
-          :
+        }
+        {firebaseContext?.userAuth ?
           <SideNavContent tagSearch={setFilter} />
+          :
+          <SideNavContent tagSearch={setFilter} message='welcome' />
         }
       </SideNav>
     </Layout>

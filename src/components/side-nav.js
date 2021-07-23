@@ -5,7 +5,7 @@ import { getAllItemTags } from './items'
 import { NotificationsList } from './notifications'
 import * as SideNavCSS from '../css/side-nav.module.css'
 
-const SideNavContent = ({ type, tagSearch=null }) => {
+const SideNavContent = ({ type, tagSearch = null, message = null }) => {
     const [tags, setTags] = useState()
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
@@ -28,9 +28,46 @@ const SideNavContent = ({ type, tagSearch=null }) => {
         tagSearch && getTags()
     }, [tagSearch, allItems])
 
+    const getMessage = () => {
+        switch (message) {
+            default:
+                return null
+            case 'item-create':
+                return <p className={SideNavCSS.messageText}>Your item has been added! You can find all of your posted items in your account page</p>
+            case 'item-update':
+                return <p className={SideNavCSS.messageText}>Your item has been successfully updated!</p>
+            case 'item-delete':
+                return <p className={SideNavCSS.messageText}>Your item has been successfully deleted!</p>
+            case 'email-update':
+                return <p className={SideNavCSS.messageText}>Your email has been successfully updated!</p>
+            case 'password-update':
+                return <p className={SideNavCSS.messageText}>Your password has been successfully update!</p>
+            case 'item-buy':
+                return <p className={SideNavCSS.messageText}>The seller has been notified of your interest in this item. Once they confirm their ideal delivery time and then you'll be notified with the final details.</p>
+            case 'welcome':
+                return (
+                    <>
+                        <p className={SideNavCSS.messageText}>Welcome to Suite Sale! Built exclusively for the residents of 665 Roselawn Ave. The next time you want to sell something, consider going local and avoid packaging, long delivery times, and best of all keep 100% of your profits!</p>
+                        <Link to="/about">
+                            <button className={SideNavCSS.statusButton}>Learn More</button>
+                        </Link>
+                    </>
+                )
+        }
+    }
+
     switch (type) {
         default:
-            return <>{tags}</> //return all tags
+            return (
+                <>
+                    {message &&
+                        <div className={SideNavCSS.messageRow}>
+                            <div className={SideNavCSS.message}>{getMessage()}</div>
+                        </div>
+                    }
+                    {tags}
+                </>
+            ) //return all tags
         case 'account':
             return (
                 <>
@@ -47,7 +84,7 @@ const SideNavContent = ({ type, tagSearch=null }) => {
                         <p>{userData?.itemsPurchased.length} Items</p>
                     </Link>
                     <Link to="/account/saved-items" className={SideNavCSS.sideNavRow}>
-                        <p className={SideNavCSS.sideNavRow__title}>Your saved items</p>
+                        <p className={SideNavCSS.sideNavRow__title}>Your cart</p>
                         <p>{userData?.itemsSaved.length} Items</p>
                     </Link>
                     <Link to="/account/account-settings" className={SideNavCSS.sideNavRow}>
@@ -58,10 +95,15 @@ const SideNavContent = ({ type, tagSearch=null }) => {
         case 'notifications':
             return (
                 <>
+                    {message &&
+                        <div className={SideNavCSS.messageRow}>
+                            <div className={SideNavCSS.message}>{getMessage()}</div>
+                        </div>
+                    }
                     <div className={SideNavCSS.sideNavNotificationRow}>
                         <p className={SideNavCSS.sideNavNotificationRow__title}>You have {userData?.notifications.length} {userData?.notifications.length > 1 ? 'notifications' : 'notification'}</p>
-                    </div>  
-                    <NotificationsList/>
+                    </div>
+                    <NotificationsList />
                 </>
             )
     }
