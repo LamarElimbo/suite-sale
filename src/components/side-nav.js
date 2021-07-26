@@ -19,7 +19,7 @@ const SideNavContent = ({ type, tagSearch = null, message = null }) => {
                 content.push(
                     <Link to={`/?tag=${tag}`} key={tag} className={SideNavCSS.sideNavRow} onClick={tagSearch(tag)}>
                         <p className={SideNavCSS.sideNavRow__title}>{tag}</p>
-                        <p>{itemTags[tag]} Item{itemTags[tag].length > 1 && 's'}</p>
+                        <p className={SideNavCSS.sideNavRow__itemCount}>{itemTags[tag]} Item{itemTags[tag].length > 1 && 's'}</p>
                     </Link>
                 )
             }
@@ -44,15 +44,6 @@ const SideNavContent = ({ type, tagSearch = null, message = null }) => {
                 return <p className={SideNavCSS.messageText}>Your password has been successfully update!</p>
             case 'item-buy':
                 return <p className={SideNavCSS.messageText}>The seller has been notified of your interest in this item. Once they confirm their ideal delivery time and then you'll be notified with the final details.</p>
-            case 'welcome':
-                return (
-                    <>
-                        <p className={SideNavCSS.messageText}>Welcome to Suite Sale! Built exclusively for the residents of 665 Roselawn Ave. The next time you want to sell something, consider going local and avoid packaging, long delivery times, and best of all keep 100% of your profits!</p>
-                        <Link to="/about">
-                            <button className={SideNavCSS.statusButton}>Learn More</button>
-                        </Link>
-                    </>
-                )
         }
     }
 
@@ -73,19 +64,19 @@ const SideNavContent = ({ type, tagSearch = null, message = null }) => {
                 <>
                     <Link to="/account/items-in-progress" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Items in progress</p>
-                        <p>{userData?.itemsInProgress.length} Items</p>
+                        <p className={SideNavCSS.sideNavRow__itemCount}>{userData?.itemsInProgress.length} Items</p>
                     </Link>
                     <Link to="/account/posted-items" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Your posted listings</p>
-                        <p>{userData?.itemsPosted.length} Items</p>
+                        <p className={SideNavCSS.sideNavRow__itemCount}>{userData?.itemsPosted.length} Items</p>
                     </Link>
                     <Link to="/account/purchase-history" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Your purchase history</p>
-                        <p>{userData?.itemsPurchased.length} Items</p>
+                        <p className={SideNavCSS.sideNavRow__itemCount}>{userData?.itemsPurchased.length} Items</p>
                     </Link>
                     <Link to="/account/saved-items" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Your cart</p>
-                        <p>{userData?.itemsSaved.length} Items</p>
+                        <p className={SideNavCSS.sideNavRow__itemCount}>{userData?.itemsSaved.length} Items</p>
                     </Link>
                     <Link to="/account/account-settings" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Your account settings</p>

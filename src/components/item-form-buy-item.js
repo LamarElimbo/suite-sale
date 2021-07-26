@@ -87,7 +87,7 @@ const ItemFormBuyItem = ({ itemData }) => {
             </div>
             <div className={ItemCSS.formStep}>
                 <p className={ItemCSS.formStepTitle}>Step 2 of 2</p>
-                <p>At which times are you free to meet the seller?</p>
+                <p>Select the times that you're free to meet the seller in the next 48 hours</p>
                 {availableTimesError && <p className={FormCSS.formError}>{availableTimesError}</p>}
                 <ItemFormPickTime item={itemData} availableTimes={availableTimes} setAvailableTimes={setAvailableTimes} />
             </div>

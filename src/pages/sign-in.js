@@ -13,14 +13,11 @@ const SignIntoAccountPage = () => {
           <CreateAccountForm />
         </div>
       </Content>
-      <Content contentTitle="Log into your account" titlePosition='center'>
+      <Content contentTitle="Log into your account" titlePosition='center' sideNav={false}>
         <div className={FormsCSS.accountFormArea}>
           <LoginForm />
         </div>
       </Content>
-      <SideNav>
-        <p className={SideNavCSS.notes}>Note about how your suite number will be used.</p>
-      </SideNav>
     </Layout>
   )
 }

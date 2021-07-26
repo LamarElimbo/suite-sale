@@ -262,25 +262,28 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                 <div className={FormCSS.inputItem}>
                     <p className={FormCSS.inputItem__label}>Exchange Location</p>
                     <p className={FormCSS.inputItem__desc}>Where are you comfortable meeting with your buyer?</p>
-                    <div style={{width: "100%"}}>
-                        <div className={FormCSS.inputItem__checkboxInput}>
+                    <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+                        <label className={FormCSS.inputItem__checkboxContainer}>
                             <input className={FormCSS.inputItem__checkbox}
                                 type="checkbox"
                                 onChange={onChangePickUp} />
+                            <span class={FormCSS.checkboxInput__checkmark}></span>
                             <span className={FormCSS.checkboxInput__label}>Your suite</span>
-                        </div>
-                        <div className={FormCSS.inputItem__checkboxInput}>
+                        </label>
+                        <label className={FormCSS.inputItem__checkboxContainer}>
                             <input className={FormCSS.inputItem__checkbox}
                                 type="checkbox"
                                 onChange={onChangeDropOff} />
+                            <span class={FormCSS.checkboxInput__checkmark}></span>
                             <span className={FormCSS.checkboxInput__label}>Buyer's suite</span>
-                        </div>
-                        <div className={FormCSS.inputItem__checkboxInput}>
+                        </label>
+                        <label className={FormCSS.inputItem__checkboxContainer}>
                             <input className={FormCSS.inputItem__checkbox}
                                 type="checkbox"
                                 onChange={onChangeLobby} />
+                            <span class={FormCSS.checkboxInput__checkmark}></span>
                             <span className={FormCSS.checkboxInput__label}>Lobby</span>
-                        </div>
+                        </label>
                         {(pickUp === 'pickUp' && !userData?.suite) &&
                             <div style={padding30}>
                                 <p className={FormCSS.inputItem__label}>What's your suite number?</p>

@@ -4,9 +4,9 @@ import { useUser } from "../context/UserContext"
 import SideNavContent from '../components/side-nav'
 import * as LayoutCSS from '../css/layout.module.css'
 
-export const Content = ({ contentTitle, children, titlePosition }) => {
+export const Content = ({ contentTitle, children, titlePosition, sideNav=true }) => {
     return (
-        <div className={LayoutCSS.leftCol}>
+        <div className={LayoutCSS.leftCol} style={sideNav ? {borderRight: "2px solid black", marginRight: "-1px"} : {border: "none"}}>
             {contentTitle && <h2 className={titlePosition && LayoutCSS.isCentered}>{contentTitle}</h2>}
             <div className={LayoutCSS.leftColBody}>{children}</div>
         </div>

@@ -105,55 +105,57 @@ const ItemPage = ({ location }) => {
     return (
         <Layout pageTitle={itemData.item}>
             <Content>
-                <div className={ItemCSS.infoArea}>
-                    <div>
-                        <p className={ItemCSS.cost}><sup className={ItemCSS.dollarSign}>$</sup>{itemData.cost}</p>
-                        <p className={ItemCSS.item}>{itemData.item}</p>
-                        <p className={ItemCSS.notes}>Seller's Notes:</p>
-                        <p className={LayoutCSS.isLightText}>{itemData.itemNotes}</p>
+                <div className={ItemCSS.itemPage}>
+                    <div className={ItemCSS.infoArea}>
+                        <div>
+                            <p className={ItemCSS.cost}><sup className={ItemCSS.dollarSign}>$</sup>{itemData.cost}</p>
+                            <p className={ItemCSS.item}>{itemData.item}</p>
+                            <p className={ItemCSS.notes}>Seller's Notes:</p>
+                            <p className={LayoutCSS.isLightText}>{itemData.itemNotes}</p>
+                        </div>
+                        <div className={ItemCSS.interestMethods}>
+                            {(['potential-buyer', 'buyer'].includes(userType)) && <button className={ItemCSS.saveButton} onClick={toggleSave}>{saved ? 'Remove From cart' : 'Add To cart'}</button>}
+                            {(!itemData.transactionData?.status && !interestedBuyer && userType === 'potential-buyer') && <button className={ItemCSS.buyItemButton} onClick={onClickBuy}>Buy</button>}
+                            {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.saveButton}>Sign In To Save Item</button></Link>}
+                            {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.buyItemButton}>Sign In To Buy Item</button></Link>}
+                            {interestedBuyer && <p className={ItemCSS.instructions}>Follow the steps below to setup an exchange with the seller</p>}
+                        </div>
                     </div>
-                    <div className={ItemCSS.interestMethods}>
-                        {(['potential-buyer', 'buyer'].includes(userType)) && <button className={ItemCSS.saveButton} onClick={toggleSave}>{saved ? 'Remove From cart' : 'Add To cart'}</button>}
-                        {(!itemData.transactionData?.status && !interestedBuyer && userType === 'potential-buyer') && <button className={ItemCSS.buyItemButton} onClick={onClickBuy}>Buy</button>}
-                        {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.saveButton}>Sign In To Save Item</button></Link>}
-                        {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.buyItemButton}>Sign In To Buy Item</button></Link>}
-                        {interestedBuyer && <p className={ItemCSS.instructions}>Follow the steps below to setup an exchange with the seller</p>}
+                    <div className={ItemCSS.imageArea}>
+                        <div className={ItemCSS.coverPhotoContainer}><img src={coverPhoto} alt="Item Preview" className={ItemCSS.coverPhoto} /></div>
+                        <div className={ItemCSS.thumnailArea}>
+                            <div className={ItemCSS.thumnailPhotoContainer}>
+                                {itemData.photo1 ?
+                                    <img src={itemData.photo1} alt="Item Preview" className={ItemCSS.thumnailPhoto} onClick={changeCoverPhoto} />
+                                    : <div className={ItemCSS.thumnailPhotoEmpty}></div>
+                                }
+                            </div>
+                            <div className={ItemCSS.thumnailPhotoContainer}>
+                                {itemData.photo2 ?
+                                    <img src={itemData.photo2} alt="Item Preview" className={ItemCSS.thumnailPhoto} onClick={changeCoverPhoto} />
+                                    : <div className={ItemCSS.thumnailPhotoEmpty}></div>
+                                }
+                            </div>
+                            <div className={ItemCSS.thumnailPhotoContainer}>
+                                {itemData.photo3 ?
+                                    <img src={itemData.photo3} alt="Item Preview" className={ItemCSS.thumnailPhoto} onClick={changeCoverPhoto} />
+                                    : <div className={ItemCSS.thumnailPhotoEmpty}></div>
+                                }
+                            </div>
+                        </div>
                     </div>
+                    {userType === 'seller-without-buyer' && <ItemFormInfo itemData={itemData} handleSubmit={handleSubmit} />}
+                    {(userType === 'seller-with-buyer' && itemData.transactionData?.status === 'Awaiting Time Confirmation') &&
+                        <ItemFormPickTime item={itemData} deliveryMethod={itemData.transactionData?.deliveryMethod} />
+                    }
+                    {interestedBuyer && <ItemFormBuyItem itemData={itemData} />}
                 </div>
-                <div className={ItemCSS.imageArea}>
-                    <div className={ItemCSS.coverPhotoContainer}><img src={coverPhoto} alt="Item Preview" className={ItemCSS.coverPhoto} /></div>
-                    <div className={ItemCSS.thumnailArea}>
-                        <div className={ItemCSS.thumnailPhotoContainer}>
-                            {itemData.photo1 ?
-                                <img src={itemData.photo1} alt="Item Preview" className={ItemCSS.thumnailPhoto} onClick={changeCoverPhoto} />
-                                : <div className={ItemCSS.thumnailPhotoEmpty}></div>
-                            }
-                        </div>
-                        <div className={ItemCSS.thumnailPhotoContainer}>
-                            {itemData.photo2 ?
-                                <img src={itemData.photo2} alt="Item Preview" className={ItemCSS.thumnailPhoto} onClick={changeCoverPhoto} />
-                                : <div className={ItemCSS.thumnailPhotoEmpty}></div>
-                            }
-                        </div>
-                        <div className={ItemCSS.thumnailPhotoContainer}>
-                            {itemData.photo3 ?
-                                <img src={itemData.photo3} alt="Item Preview" className={ItemCSS.thumnailPhoto} onClick={changeCoverPhoto} />
-                                : <div className={ItemCSS.thumnailPhotoEmpty}></div>
-                            }
-                        </div>
-                    </div>
-                </div>
-                {userType === 'seller-without-buyer' && <ItemFormInfo itemData={itemData} handleSubmit={handleSubmit} />}
-                {(userType === 'seller-with-buyer' && itemData.transactionData?.status === 'Awaiting Time Confirmation') &&
-                    <ItemFormPickTime item={itemData} deliveryMethod={itemData.transactionData?.deliveryMethod} />
-                }
-                {interestedBuyer && <ItemFormBuyItem itemData={itemData} />}
             </Content>
             <SideNav>
                 <div className={SideNavCSS.status}>
-                    <p style={{marginBottom: "30px"}}>Item Status</p>
+                    <p style={{ marginBottom: "15px" }}>Item Status</p>
                     {(!itemData.transactionData) &&
-                        <p className={SideNavCSS.sideNavRow__text}>This item doesn't have any buyers yet.</p>
+                        <p className={SideNavCSS.sideNavRow__text}>This item doesn't have a buyer yet.</p>
                     }
                     {(itemData.transactionData && userType === 'potential-buyer') &&
                         <p className={SideNavCSS.sideNavRow__text}>This item already has a buyer.</p>
@@ -174,13 +176,13 @@ const ItemPage = ({ location }) => {
                         </>
                     }
                     {userType === 'seller-without-buyer' && <button className={ItemCSS.deleteItemButton} onClick={deleteItem}>Delete This Item</button>}
-                        {(itemData.transactionData?.status && itemData.transactionData?.status !== 'Complete') && <button className={SideNavCSS.statusButton} onClick={cancelOrder}>Cancel Order</button>}
-                        {(itemData.transactionData?.status === 'Complete') &&
-                            <>
-                                <p className={SideNavCSS.sideNavRow__text}>Didn't end up selling your item?</p>
-                                <button className={ItemCSS.deleteItemButton} onClick={cancelOrder}>Make Live Again</button>
-                            </>
-                        }
+                    {(itemData.transactionData?.status && itemData.transactionData?.status !== 'Complete') && <button className={SideNavCSS.statusButton} onClick={cancelOrder}>Cancel Order</button>}
+                    {(itemData.transactionData?.status === 'Complete') &&
+                        <>
+                            <p className={SideNavCSS.sideNavRow__text}>Didn't end up selling your item?</p>
+                            <button className={ItemCSS.deleteItemButton} onClick={cancelOrder}>Make Live Again</button>
+                        </>
+                    }
                 </div>
             </SideNav>
         </Layout>

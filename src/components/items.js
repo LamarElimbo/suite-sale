@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'gatsby'
 import { useUser } from "../context/UserContext"
 import * as ItemsCSS from '../css/items.module.css'
-import * as ItemCSS from '../css/item-page.module.css'
 import add_icon from '../images/add_icon.png'
 
 export const getAllItemTags = allItems => {
@@ -58,9 +57,13 @@ export const ItemCardList = ({ filter }) => {
     }, [filter, userData, allItems])
 
     if (filteredItems?.length === 0) {
-        return <p className={ItemCSS.itemStatus}>You don't have any items under this category</p>
+        return <p className={ItemsCSS.itemStatus}>You don't have any items under this category</p>
     } else {
-        return <>{filteredItems?.map(item => <ItemCard create='false' item={item} key={item.itemId} />)}</>
+        return <>
+            {filteredItems?.map(item => <ItemCard create='false' item={item} key={item.itemId} />)}
+            <div className={ItemsCSS.itemBuffer1}></div>
+            <div className={ItemsCSS.itemBuffer2}></div>
+        </>
     }
 }
 
@@ -71,7 +74,7 @@ export const ItemCard = ({ create, item }) => {
     if (create === 'true') {
         return (
             <Link to={firebaseContext?.userAuth ? '/item-create' : '/sign-in'} className={ItemsCSS.itemCardArea}>
-                <div className={ItemsCSS.itemCardCreate}>
+                <div className={ItemsCSS.itemCard}>
                     <p className={ItemsCSS.itemCardCreate__text}>Create a <br />new listing</p>
                     <img src={add_icon} className={ItemsCSS.itemCardCreate__icon} alt="Add a new listing" />
                 </div>

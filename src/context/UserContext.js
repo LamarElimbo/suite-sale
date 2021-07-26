@@ -36,7 +36,10 @@ export function UserProvider({ children }) {
 
   const logout = () => auth.signOut()
 
-  const deleteAccount = () => auth.delete()
+  const deleteAccount = () => {
+    firestore.collection('users').doc(userAuth.uid).delete()
+    auth.delete()
+  }
 
   const resetPassword = email => auth.sendPasswordResetEmail(email)
 

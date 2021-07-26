@@ -35,7 +35,7 @@ const ItemCreatePage = () => {
             snapshot.ref.getDownloadURL().then((downloadURL) => {
               const data = updatedItemData.photo1 ? downloadURL : ""
               docImgs.update({ photo1: data })
-              .then(() => navigate('/', {state: { message: "item-create"}}))
+                .then(() => navigate('/', { state: { message: "item-create" } }))
             });
           })
         }
@@ -64,10 +64,11 @@ const ItemCreatePage = () => {
 
   return (
     <Layout pageTitle="Create New Listing">
-      <Content contentTitle="Create a new listing" titlePosition='center'>
-        <ItemFormInfo handleSubmit={createItem} />
+      <Content contentTitle="Create a new listing" titlePosition='center' sideNav={false}>
+        <div style={{width: "100%", display: "flex", justifyContent: "center"}}>
+          <ItemFormInfo handleSubmit={createItem} />
+        </div>
       </Content>
-      <SideNav />
     </Layout>
   )
 }

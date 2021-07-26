@@ -1,40 +1,42 @@
-.itemCardCreate {
+.itemCardArea {
+    height: 250px;
+    flex: 1 0 45%;
+}
+
+.itemCard {
     height: 100%;
+    box-sizing: border-box;
+    border: 2px solid black;
     padding: 15px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-radius: 5px;
-    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23000' stroke-width='7' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+    text-align: center;
 }
 
-.item-card-create__text {
+.itemBuffer1 {
+    height: 250px;
+    box-sizing: border-box;
+    border: 2px solid black;
+    flex: 1 0 45%;
+}
+
+.itemBuffer2 {
+    height: 40%;
+    box-sizing: border-box;
+    border: 2px solid black;
+    flex: 1 0 100%;
+}
+
+.itemCardCreate__text {
     font-size: 28px;
     margin-left: 15px;
+    text-align: left;
 }
 
 .itemCardCreate__icon {
     width: 50px;
     margin-right: 15px;
-}
-
-.itemCardArea {
-    height: 190px;
-    max-width: 45%;
-    margin-bottom: 20px;
-    padding: 20px;
-    flex: 1 0 45%;
-}
-
-.item-card {
-    height: 97%;
-    border: 3px solid black;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    border-radius: 5px;
-    background-color: white;
-    text-align: center;
 }
 
 .itemCard__Info {
@@ -45,6 +47,7 @@
     width: 30%;
     margin-right: 15px;
 }
+
 .cardInfo__cost {
     font-size: 40px;
     margin-bottom: 5px;
@@ -70,13 +73,47 @@
 
 .itemCard__imgArea {
     border: 3px solid black;
-    height: 98%;
+    height: 80%;
     min-width: 200px;
-    width: 70%;
+    width: 50%;
 }
 
 .itemCard__img {
     object-fit: cover;
     width: 100%;
     height: 100%;
+}
+
+@media only screen and (max-width: 900px) {
+    .itemCard {
+        flex-direction: column;
+    }
+
+    .itemCard__Info {
+        width: 100%;
+        margin: 0px;
+    }
+
+    .cardInfo__cost {
+        font-size: 30px;
+    }
+    
+    .dollarSign {
+        font-size: 14px;
+    }
+
+    .itemCard__imgArea {
+        height: 50%;
+        min-width: 200px;
+    }
+    
+    .itemCardCreate__text {
+        font-size: 28px;
+        margin: 0;
+        text-align: center;
+    }
+
+    .itemStatus {
+        padding: 15px;
+    }
 }

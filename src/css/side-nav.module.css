@@ -1,10 +1,11 @@
 .sideNavRow {
     padding: 20px;
-    border-bottom: 5px solid black;
+    box-sizing: border-box;
+    border: 2px solid black;
     display: flex;
     justify-content: space-between;
     flex: 1 1;
-    max-height: 45%;
+    min-height: 200px;
     flex-direction: column;
 }
 
@@ -14,7 +15,7 @@
     display: flex;
     justify-content: space-between;
     flex: 1 1;
-    max-height: 45%;
+    min-height: 200px;
     flex-direction: column;
 }
 
@@ -40,6 +41,7 @@
 }
 
 .status {
+    width: 100%;
     padding: 20px;
     margin-bottom: 30px;
     display: flex;
@@ -57,9 +59,9 @@
     background-color: white;
     border: 2px solid black;
     border-radius: 5px;
-    padding: 5px;
+    padding: 25px;
     margin-top: 50px;
-    font-size: 18px;
+    font-size: 16px;
     text-transform: uppercase;
     letter-spacing: 1px;
     display: flex;
@@ -69,13 +71,13 @@
 
 .messageRow {
     padding: 20px;
-    border-bottom: 5px solid black;
+    box-sizing: border-box;
+    border: 2px solid black;
     display: flex;
     justify-content: space-between;
     flex: 1 1;
     min-height: 45%;
     flex-direction: column;
-    background-color: #333333;
 }
 
 .message {
@@ -88,6 +90,26 @@
 
 .messageText {
     text-align: center;
-    color: white;
-    letter-spacing: 1px;
+    font-weight: 400;
+    line-height: 150%
 }
+
+@media only screen and (max-width: 900px) {
+    .sideNavRow {
+        padding: 20px;
+        box-sizing: border-box;
+        border: 2px solid black;
+        border-top: 4px solid black;
+        display: inline-block;
+        flex: 1 0 40%;
+        min-width: 40%;
+    }
+
+    .sideNavRow__title {
+        font-size: 20px;
+    }
+
+    .sideNavRow__itemCount {
+        display: none;
+    }
+  }

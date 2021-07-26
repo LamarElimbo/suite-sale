@@ -5,6 +5,7 @@
 
 .form {
     width: 100%;
+    max-width: 1000px;
     display: flex;
     flex-wrap: wrap;
 }
@@ -64,22 +65,66 @@
     padding: 5px;
 }
 
-.inputItem__checkboxInput {
+.inputItem__checkboxContainer {
     display: flex;
-    width: 100%;
-    align-items: center;
-  }
-  
-.inputItem__checkbox {
-    width: 30px;
-    height: 30px;
-    margin: 5px;
+    position: relative;
+    padding: 7px 0 0 40px;
+    margin-bottom: 20px;
     cursor: pointer;
-    flex-shrink: 0;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
-.inputItem__checkbox input:checked ~ .checkmark {
+/* Hide the browser's default checkbox */
+.inputItem__checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Create a custom checkbox */
+.checkboxInput__checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 30px;
+    width: 30px;
+    background-color: white;
+}
+
+/* When the checkbox is checked, add a black background */
+.inputItem__checkboxContainer input:checked ~ .checkboxInput__checkmark {
     background-color: black;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkboxInput__checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.inputItem__checkboxContainer input:checked ~ .checkboxInput__checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.inputItem__checkboxContainer .checkboxInput__checkmark:after {
+    left: 11px;
+    top: 5px;
+    width: 5px;
+    height: 13px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
   }
 
 .checkboxInput__label {
@@ -134,27 +179,30 @@
 }
 
 .timeGrid {
-    width: 100%;
+    width: 450px;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
 }
 
 .timeBoxOuter {
-    width: 25%;
-    height: 50px;
+    width: 90px;
+    height: 60px;
+    margin: 20px 0px 0 10px;
 }
 
-.timeBoxInner {
+.timeBoxInner {    
     width: 100%;
     height: 100%;
     background-color: white;
-    border: 1px solid black;
+    border: 2px solid black;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
 }
 
 .inactive {
