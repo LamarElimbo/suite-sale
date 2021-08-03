@@ -13,7 +13,7 @@ const ChangeNotificationMethodPage = () => {
     const firebaseContext = useUser()
 
     useEffect(() => {
-        (firebaseContext.userData?.notifyMethod?.by === "email") ? setNotificationMethod("email") : setNotificationMethod("phone")
+        (firebaseContext?.userData?.notifyMethod?.by === "email") ? setNotificationMethod("email") : setNotificationMethod("phone")
     }, [firebaseContext])
 
     const onChangeNotifyByEmail = () => setNotificationMethod("email")
@@ -25,11 +25,11 @@ const ChangeNotificationMethodPage = () => {
         setNotificationMethodError("")
         setPhoneNumberError("")
         //if user only wants to update their phone number
-        if (notificationMethod === "phone" && firebaseContext.userData?.notifyMethod?.by === "phone" && phoneNumber !== firebaseContext.userData?.notifyMethod?.at && phoneNumber.length > 0) {
+        if (notificationMethod === "phone" && ?.userData?.notifyMethod?.by === "phone" && phoneNumber !== firebaseContext?.userData?.notifyMethod?.at && phoneNumber.length > 0) {
             firebaseContext?.updateNotificationMethod("phone", phoneNumber)
             if (typeof window !== 'undefined') navigate('/', { state: { message: "notificationMethod" } })
         }
-        if (notificationMethod !== firebaseContext.userData?.notifyMethod?.by) {
+        if (notificationMethod !== firebaseContext?.userData?.notifyMethod?.by) {
             if (notificationMethod === "phone") {
                 if (phoneNumber.length > 0) {
                     firebaseContext?.updateNotificationMethod(notificationMethod, phoneNumber)

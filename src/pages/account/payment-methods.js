@@ -13,9 +13,9 @@ const ChangePaymentMethodPage = () => {
     const firebaseContext = useUser()
 
     useEffect(() => {
-        if (firebaseContext.userData?.acceptedPaymentMethods?.includes("wealthsimple cash")) setWealthsimpleCashPayments(true)
-        if (firebaseContext.userData?.acceptedPaymentMethods?.length === 2) {
-            const otherPaymentMethod = firebaseContext.userData?.acceptedPaymentMethods?.filter((method) => method !== "wealthsimple cash")
+        if (firebaseContext?.userData?.acceptedPaymentMethods?.includes("wealthsimple cash")) setWealthsimpleCashPayments(true)
+        if (firebaseContext?.userData?.acceptedPaymentMethods?.length === 2) {
+            const otherPaymentMethod = firebaseContext?.userData?.acceptedPaymentMethods?.filter((method) => method !== "wealthsimple cash")
             setOtherPaymentCheckbox(true)
             setOtherPayment(otherPaymentMethod[0])
         }
