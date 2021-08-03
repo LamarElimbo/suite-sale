@@ -25,7 +25,7 @@ const ChangeNotificationMethodPage = () => {
         setNotificationMethodError("")
         setPhoneNumberError("")
         //if user only wants to update their phone number
-        if (notificationMethod === "phone" && ?.userData?.notifyMethod?.by === "phone" && phoneNumber !== firebaseContext?.userData?.notifyMethod?.at && phoneNumber.length > 0) {
+        if (notificationMethod === "phone" && firebaseContext?.userData?.notifyMethod?.by === "phone" && phoneNumber !== firebaseContext?.userData?.notifyMethod?.at && phoneNumber.length > 0) {
             firebaseContext?.updateNotificationMethod("phone", phoneNumber)
             if (typeof window !== 'undefined') navigate('/', { state: { message: "notificationMethod" } })
         }
@@ -52,7 +52,7 @@ const ChangeNotificationMethodPage = () => {
             <Content contentTitle="Update your notification method" titlePosition='center'>
                 <form className={FormCSS.form} onSubmit={onSubmit}>
                     <div className={FormCSS.formField}>
-                        <p style={{ opacity: "50%" }}>You are currently getting notified by {firebaseContext.userData?.notifyMethod?.by}</p>
+                        <p style={{ opacity: "50%" }}>You are currently getting notified by {firebaseContext?.userData?.notifyMethod?.by}</p>
                         <p className={FormCSS.inputItem__label}>How would you like to be<br />notified of order updates?</p>
                         <div className={FormCSS.inputItem} style={{ justifyContent: "center" }}>
                             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -71,7 +71,7 @@ const ChangeNotificationMethodPage = () => {
                                         <p className={FormCSS.inputItem__label}>What's your cell phone number?</p>
                                         <input className={FormCSS.inputItem__textInput}
                                             type="tel"
-                                            placeholder={firebaseContext.userData?.notifyMethod?.at}
+                                            placeholder={firebaseContext?.userData?.notifyMethod?.at}
                                             pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                                             value={phoneNumber || ""}
                                             onChange={onChangePhoneNumber} />
