@@ -8,7 +8,7 @@ import SideNavContent from '../../components/side-nav'
 const SavedItemsPage = () => {
 
   const firebaseContext = useUser()
-  !firebaseContext?.userAuth && navigate('/sign-in')
+  if (!firebaseContext?.userAuth && typeof window !== 'undefined') navigate('/sign-in')
   return (
     <Layout pageTitle="Your Cart" headerLink="Logout">
       <Content contentTitle="Your cart">

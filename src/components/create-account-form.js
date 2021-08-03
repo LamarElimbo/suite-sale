@@ -27,7 +27,7 @@ const CreateAccountForm = () => {
         if (email.current.value && password && confirmPassword) {
             try {
                 await signup(email.current.value, password)
-                navigate('/')
+                if (typeof window !== 'undefined') navigate('/')
             } catch {
                 console.log("Failed to sign up")
             }

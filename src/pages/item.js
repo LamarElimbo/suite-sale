@@ -30,7 +30,7 @@ const ItemPage = ({ location }) => {
 
     const changeCoverPhoto = (e) => setCoverPhoto(e.target.src)
     const onClickBuy = () => setInterestedBuyer(true)
-    const deleteItem = () => firestore.collection("items").doc(itemData.itemId).delete().then(() => navigate('/', { state: { message: "item-delete" } }))
+    const deleteItem = () => firestore.collection("items").doc(itemData.itemId).delete().then(() => (typeof window !== 'undefined') && navigate('/', { state: { message: "item-delete" } }))
     const cancelOrder = () => {
         let notCurrentUserId = (userData?.id === itemData.seller) ? itemData.transactionData?.buyer : itemData.seller
 
@@ -53,7 +53,7 @@ const ItemPage = ({ location }) => {
             .update({ transactionData: firebase.firestore.FieldValue.delete() })
             .catch(error => console.log("Error updating item cancellation status: ", error))
 
-        navigate('/', { state: { message: "item-cancel" } })
+            if (typeof window !== 'undefined') navigate('/', { state: { message: "item-cancel" } })
     }
 
     useEffect(() => {

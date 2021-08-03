@@ -16,13 +16,13 @@ const DeleteAccountPage = () => {
         const reauthentication = firebaseContext?.reauthenticateUser(currentPassword.current.value, 'delete')
         console.log("reauthentication: ", reauthentication)
         if (reauthentication === "success") {
-            navigate('/', { state: { message: "delete" } })
+            if (typeof window !== 'undefined') navigate('/', { state: { message: "delete" } })
         } else {
             setCurrentPasswordError("It looks like the password you entered was incorrect.")
         }
     }
 
-    !firebaseContext?.userAuth && navigate('/sign-in')
+    if (!firebaseContext?.userAuth && typeof window !== 'undefined') navigate('/sign-in')
     return (
         <Layout pageTitle="Delete Your Account" headerLink="Logout">
             <Content contentTitle="Delete your account" titlePosition='center'>

@@ -7,7 +7,7 @@ import SideNavContent from '../../components/side-nav'
 
 const AccountPage = () => {
   const firebaseContext = useUser()
-  !firebaseContext?.userAuth && navigate('/sign-in')
+  if (!firebaseContext?.userAuth && typeof window !== 'undefined') navigate('/sign-in')
   return (
     <Layout pageTitle="Account" headerLink="Logout">
       <Content contentTitle="Your items in progress">

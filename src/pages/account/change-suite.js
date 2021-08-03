@@ -17,13 +17,13 @@ const ChangeSuitePage = () => {
         setSuiteError("")
         if (suite.length > 0) {
             firebaseContext?.addSuite(suite)
-            navigate('/', { state: { message: "suite" } })
+            if (typeof window !== 'undefined') navigate('/', { state: { message: "suite" } })
         } else {
             setSuiteError("You'll have to enter a suite number")
         }
     }
 
-    !firebaseContext?.userAuth && navigate('/sign-in')
+    if (!firebaseContext?.userAuth && typeof window !== 'undefined') navigate('/sign-in')
     return (
         <Layout pageTitle="Update Your Suite Number" headerLink="Logout">
             <Content contentTitle="Update your suite number" titlePosition='center'>

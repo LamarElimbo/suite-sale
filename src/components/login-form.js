@@ -12,7 +12,7 @@ const LoginForm = () => {
   const firebaseContext = useUser()
   const login = firebaseContext?.login
 
-  useEffect(() => { firebaseContext?.userAuth && navigate('/') })
+  useEffect(() => { (firebaseContext?.userAuth && typeof window !== 'undefined') && navigate('/') })
 
   function onSubmitLogin(e) {
     e.preventDefault()

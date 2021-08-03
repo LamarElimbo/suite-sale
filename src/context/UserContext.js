@@ -75,7 +75,7 @@ export function UserProvider({ children }) {
 
   const deleteAccount = () => {
     firestore.collection('users').doc(userAuth.uid).delete()
-    auth.currentUser.delete().then(() => navigate('/'))
+    auth.currentUser.delete().then(() => {if (typeof window !== 'undefined') navigate('/')})
     setUserData(null)
   }
 

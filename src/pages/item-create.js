@@ -6,7 +6,7 @@ import ItemFormInfo from '../components/item-form-info'
 
 const ItemCreatePage = () => {
   const firebaseContext = useUser()
-  !firebaseContext?.userAuth && navigate('/sign-in')
+  if (!firebaseContext?.userAuth && typeof window !== 'undefined') navigate('/sign-in')
   return (
     <Layout pageTitle="Create New Listing">
       <Content contentTitle="Create a new listing" titlePosition='center' sideNav={false}>

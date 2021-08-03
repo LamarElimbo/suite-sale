@@ -27,26 +27,26 @@ const ChangeNotificationMethodPage = () => {
         //if user only wants to update their phone number
         if (notificationMethod === "phone" && firebaseContext.userData?.notifyMethod?.by === "phone" && phoneNumber !== firebaseContext.userData?.notifyMethod?.at && phoneNumber.length > 0) {
             firebaseContext?.updateNotificationMethod("phone", phoneNumber)
-            navigate('/', { state: { message: "notificationMethod" } })
+            if (typeof window !== 'undefined') navigate('/', { state: { message: "notificationMethod" } })
         }
         if (notificationMethod !== firebaseContext.userData?.notifyMethod?.by) {
             if (notificationMethod === "phone") {
                 if (phoneNumber.length > 0) {
                     firebaseContext?.updateNotificationMethod(notificationMethod, phoneNumber)
-                    navigate('/', { state: { message: "notificationMethod" } })
+                    if (typeof window !== 'undefined') navigate('/', { state: { message: "notificationMethod" } })
                 } else {
                     setPhoneNumberError("You'll have to enter a cell phone number")
                 }
             } else {
                 firebaseContext?.updateNotificationMethod("email", "")
-                navigate('/', { state: { message: "notificationMethod" } })
+                if (typeof window !== 'undefined') navigate('/', { state: { message: "notificationMethod" } })
             }
         } else {
             setNotificationMethodError("It looks like you didn't make any changes")
         }
     }
 
-    !firebaseContext?.userAuth && navigate('/sign-in')
+    if (!firebaseContext?.userAuth && typeof window !== 'undefined') navigate('/sign-in')
     return (
         <Layout pageTitle="Update Your Notification Method" headerLink="Logout">
             <Content contentTitle="Update your notification method" titlePosition='center'>

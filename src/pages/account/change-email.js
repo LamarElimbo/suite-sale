@@ -20,14 +20,14 @@ const ChangeEmailPage = () => {
         const reauthentication = firebaseContext?.reauthenticateUser(currentPassword.current.value, 'email', email.current.value)
         console.log("reauthentication: ", reauthentication)
         if (reauthentication === "success") {
-            navigate('/', { state: { message: "email" } })
+            if (typeof window !== 'undefined') navigate('/', { state: { message: "email" } })
         } else {
             setCurrentPasswordError("It looks like the password you entered was incorrect.")
         }
         if (email.current.value.length === 0) setNewEmailError("You're going to have to enter a new email")
     }
 
-    !firebaseContext?.userAuth && navigate('/sign-in')
+    if (!firebaseContext?.userAuth && typeof window !== 'undefined') navigate('/sign-in')
     return (
         <Layout pageTitle="Change Your Email" headerLink="Logout">
             <Content contentTitle="Change your email" titlePosition='center'>

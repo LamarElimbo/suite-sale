@@ -163,7 +163,7 @@ const ItemFormInfo = ({ itemData }) => {
             }
             firebaseContext?.getAllItems()
             const message = itemData ? "item-update" : "item-create"
-            navigate('/', { state: { message } })
+            if (typeof window !== 'undefined') navigate('/', { state: { message } })
         }
     }
 

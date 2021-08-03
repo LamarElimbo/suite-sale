@@ -20,14 +20,14 @@ const ChangePasswordPage = () => {
         const reauthentication = firebaseContext?.reauthenticateUser(currentPassword.current.value, 'password')
         console.log("reauthentication: ", reauthentication)
         if (reauthentication === "success") {
-            navigate('/', { state: { message: "password" } })
+            if (typeof window !== 'undefined') navigate('/', { state: { message: "password" } })
         } else {
             setCurrentPasswordError("It looks like the password you entered was incorrect.")
         }
         if (newPassword.current.value.length === 0) setNewPasswordError("You're going to have to enter a new password")
     }
 
-    !firebaseContext?.userAuth && navigate('/sign-in')
+    if (!firebaseContext?.userAuth && typeof window !== 'undefined') navigate('/sign-in')
     return (
         <Layout pageTitle="Change Your Password" headerLink="Logout">
             <Content contentTitle="Change your password" titlePosition='center'>

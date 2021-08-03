@@ -64,7 +64,7 @@ const ItemFormBuyItem = ({ itemData }) => {
                 .collection("items")
                 .doc(itemData.itemId)
                 .update({ transactionData })
-                .then(() => navigate('/', { state: { message: "item-buy" } }))
+                .then(() => {if (typeof window !== 'undefined') navigate('/', { state: { message: "item-buy" } })})
                 .catch(error => console.log("Error updating item's transactionData: ", error))
         }
     }

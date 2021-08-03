@@ -41,7 +41,7 @@ const ItemFormConfirmOrder = ({ item }) => {
                     "transactionData.deliveryTime": deliveryInfo,
                     "transactionData.status": "Awaiting Meetup"
                 })
-                .then(() => navigate('/', { state: { message: "item-confirm" } }))
+                .then(() => {if (typeof window !== 'undefined') navigate('/', { state: { message: "item-confirm" } })})
                 .catch(error => console.log("Error updating transaction data: ", error))
         }
     }

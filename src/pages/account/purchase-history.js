@@ -8,7 +8,7 @@ import SideNavContent from '../../components/side-nav'
 const PurchaseHistoryPage = () => {
 
   const firebaseContext = useUser()
-  !firebaseContext?.userAuth && navigate('/sign-in')
+  if (!firebaseContext?.userAuth && typeof window !== 'undefined') navigate('/sign-in')
   return (
     <Layout pageTitle="Your Purchase History" headerLink="Logout">
       <Content contentTitle="Your purchase history">

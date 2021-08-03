@@ -35,10 +35,10 @@ const ChangePaymentMethodPage = () => {
         if (wealthsimpleCashPayments) acceptedPayments.push('wealthsimple cash')
         if (otherPayment) acceptedPayments.push(otherPayment)
         firebaseContext?.updateAcceptedPaymentMethods(acceptedPayments)
-        navigate('/', { state: { message: "paymentMethod" } })
+        if (typeof window !== 'undefined') navigate('/', { state: { message: "paymentMethod" } })
     }
 
-    !firebaseContext?.userAuth && navigate('/sign-in')
+    if (!firebaseContext?.userAuth && typeof window !== 'undefined') navigate('/sign-in')
     return (
         <Layout pageTitle="Update Payments You Accept" headerLink="Logout">
             <Content contentTitle="Update the payment methods you accept" titlePosition='center'>

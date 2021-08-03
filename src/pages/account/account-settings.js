@@ -7,7 +7,7 @@ import * as ItemsCSS from '../../css/items.module.css'
 
 const AccountSettingsPage = () => {
     const firebaseContext = useUser()
-    !firebaseContext?.userAuth && navigate('/sign-in')
+    if (!firebaseContext?.userAuth && typeof window !== 'undefined') navigate('/sign-in')
     return (
         <Layout pageTitle="Account Settings" headerLink="Logout">
             <Content contentTitle="Your account settings" titlePosition='center'>

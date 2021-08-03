@@ -8,7 +8,7 @@ import SideNavContent from '../../components/side-nav'
 const PostedItemsPage = () => {
 
   const firebaseContext = useUser()
-  !firebaseContext?.userAuth && navigate('/sign-in')
+  if (!firebaseContext?.userAuth && typeof window !== 'undefined') navigate('/sign-in')
   return (
     <Layout pageTitle="Your Posted Items" headerLink="Logout">
       <Content contentTitle="Your posted items">
