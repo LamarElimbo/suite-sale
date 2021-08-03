@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react"
+import { navigate } from "gatsby"
 import { firebase, auth, firestore } from "../components/firebase"
 
 const UserContext = React.createContext()
@@ -26,7 +27,9 @@ export function UserProvider({ children }) {
             itemsPosted: [],
             itemsPurchased: [],
             itemsSaved: [],
-            notifications: []
+            notifyMethod: { "by": "email", "at": "" },
+            acceptedPaymentMethods: [],
+            notifications: [],
           })
       }
     })
@@ -34,28 +37,80 @@ export function UserProvider({ children }) {
 
   const login = (email, password) => auth.signInWithEmailAndPassword(email, password)
 
-  const logout = () => auth.signOut()
+  const reauthenticateUser = (password, action, email) => {
+    const user = firebase.auth().currentUser;
+
+    // TODO(you): prompt the user to re-provide their sign-in credentials
+    const credentials = firebase.auth.EmailAuthProvider.credential(userAuth.email, password)
+
+    console.log("credentials: ", userAuth.email)
+    console.log("password: ", password)
+    user.reauthenticateWithCredential(credentials).then(() => {
+      // User re-authenticated.
+      console.log('reauthenticated')
+      switch (action) {
+        case 'password':
+          console.log("Updating password")
+          updatePassword(password).then((result) => console.log(result))
+          break
+        case 'email':
+          console.log("Updating email: ", email)
+          updateEmail(email).then((result) => console.log(result))
+          break
+        default:
+          return null
+      }
+      return 'success'
+    }).catch((error) => {
+      // An error ocurred
+      console.log('reauthenticated failed: ', error)
+      return 'error'
+    });
+  }
+
+  const logout = () => {
+    auth.signOut()
+    setUserData(null)
+  }
 
   const deleteAccount = () => {
     firestore.collection('users').doc(userAuth.uid).delete()
-    auth.delete()
+    auth.currentUser.delete().then(() => navigate('/'))
+    setUserData(null)
   }
 
-  const resetPassword = email => auth.sendPasswordResetEmail(email)
+  const updateEmail = email => {
+    userAuth.updateEmail(email)
+    firestore.collection('users').doc(userAuth.uid).update({ email })
+  }
 
-  const updateEmail = email => userAuth.updateEmail(email)
+  const updatePassword = password => {
+    const user = firebase.auth().currentUser
+    user.updatePassword(password)
+      .then(() => { return 'success' })
+      .catch(() => { return 'error' })
+  }
 
-  const updatePassword = password => userAuth.updatePassword(password)
+  const addSuite = suite => {
+    firestore.collection('users').doc(userAuth.uid).update({ suite })
+    setUserData(prevState => ({ ...prevState, suite }))
+  }
 
-  const addSuite = (suite, userId) => firestore.collection('users').doc(userId).update({ suite })
+  const updateNotificationMethod = (by, at) => {
+    firestore.collection('users').doc(userAuth.uid).update({ notifyMethod: { "by": by, "at": at } })
+    setUserData(prevState => ({ ...prevState, notifyMethod: { "by": by, "at": at } }))
+  }
+
+  const updateAcceptedPaymentMethods = acceptedPaymentMethods => {
+    firestore.collection('users').doc(userAuth.uid).update({ acceptedPaymentMethods })
+    setUserData(prevState => ({ ...prevState, acceptedPaymentMethods }))
+  }
 
   const getUserDocument = async (userAuth) => {
+    console.log('getting user data')
     if (!userAuth?.uid) return null;
     try {
-      const userDocument = await firestore
-        .collection('users')
-        .doc(userAuth.uid)
-        .get()
+      const userDocument = await firestore.collection('users').doc(userAuth.uid).get()
       setUserData(userDocument.data())
     } catch (error) {
       console.log("Error fetching user", error)
@@ -71,15 +126,19 @@ export function UserProvider({ children }) {
           return null
         case 'itemsInProgress':
           userDoc.update({ itemsInProgress: firebase.firestore.FieldValue.arrayUnion(itemId) })
+          setUserData(prevState => ({ ...prevState, itemsInProgress: [...prevState.itemsInProgress, itemId] }))
           break
         case 'itemsPosted':
           userDoc.update({ itemsPosted: firebase.firestore.FieldValue.arrayUnion(itemId) })
+          setUserData(prevState => ({ ...prevState, itemsPosted: [...prevState.itemsPosted, itemId] }))
           break
         case 'itemsPurchased':
           userDoc.update({ itemsPurchased: firebase.firestore.FieldValue.arrayUnion(itemId) })
+          setUserData(prevState => ({ ...prevState, itemsPurchased: [...prevState.itemsPurchased, itemId] }))
           break
         case 'itemsSaved':
           userDoc.update({ itemsSaved: firebase.firestore.FieldValue.arrayUnion(itemId) })
+          setUserData(prevState => ({ ...prevState, itemsSaved: [...prevState.itemsSaved, itemId] }))
           break
       }
     } else {
@@ -88,19 +147,26 @@ export function UserProvider({ children }) {
           return null
         case 'itemsInProgress':
           userDoc.update({ itemsInProgress: firebase.firestore.FieldValue.arrayRemove(itemId) })
+          setUserData(prevState => ({ ...prevState, itemsInProgress: prevState.itemsInProgress.filter(item => item !== itemId) }))
           break
         case 'itemsSaved':
           userDoc.update({ itemsSaved: firebase.firestore.FieldValue.arrayRemove(itemId) })
+          setUserData(prevState => ({ ...prevState, itemsSaved: prevState.itemsSaved.filter(item => item !== itemId) }))
           break
-        case 'sellerNotifications':
-          userDoc.update({ notifications: firebase.firestore.FieldValue.arrayRemove({ message: "You have a buyer", itemId }) })
+        case 'newOrderNotification':
+          userDoc.update({ notifications: firebase.firestore.FieldValue.arrayRemove({ message: "You have a new buyer", itemId }) })
+          setUserData(prevState => ({ ...prevState, notifications: prevState.notifications.filter(notification => notification !== { message: "You have a buyer", itemId }) }))
           break
-        case 'buyerNotifications':
+        case 'orderConfirmationNotification':
           userDoc.update({ notifications: firebase.firestore.FieldValue.arrayRemove({ message: "Your order has been confirmed", itemId }) })
+          setUserData(prevState => ({ ...prevState, notifications: prevState.notifications.filter(notification => notification !== { message: "Your order has been confirmed", itemId }) }))
+          break
+        case 'orderCancellationNotification':
+          userDoc.update({ notifications: firebase.firestore.FieldValue.arrayRemove({ message: "Your order has been cancelled", itemId }) })
+          setUserData(prevState => ({ ...prevState, notifications: prevState.notifications.filter(notification => notification !== { message: "Your order has been cancelled", itemId }) }))
           break
       }
     }
-    getUserDocument(userAuth)
   }
 
   const getAllItems = async () => {
@@ -154,12 +220,15 @@ export function UserProvider({ children }) {
     userAuth,
     userData,
     allItems,
+    getAllItems,
     login,
+    reauthenticateUser,
     deleteAccount,
     signup,
     logout,
-    resetPassword,
     addSuite,
+    updateNotificationMethod,
+    updateAcceptedPaymentMethods,
     updateEmail,
     updatePassword,
     updateUserItems

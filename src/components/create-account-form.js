@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { navigate } from "gatsby"
 import { useUser } from "../context/UserContext"
-import { form, inputItem, inputItem__label, inputItem__textInput, darkButton, formError } from '../css/form.module.css'
+import * as FormCSS from '../css/form.module.css'
 
 const CreateAccountForm = () => {
     const email = useRef('')
@@ -39,49 +39,47 @@ const CreateAccountForm = () => {
     }, [password, confirmPassword])
 
     return (
-        <>
-            <form className={form} onSubmit={onSubmit}>
-                <div className={inputItem}>
+        <form className={FormCSS.form} onSubmit={onSubmit}>
+            <div className={FormCSS.formField} style={{ flexDirection: "column" }}>
+                <div className={FormCSS.inputItem}>
                     <label>
-                        <p className={inputItem__label}>Email</p>
-                        <input className={inputItem__textInput}
+                        <p className={FormCSS.inputItem__label}>Email</p>
+                        <input className={FormCSS.inputItem__textInput}
                             placeholder="example@gmail.com"
                             type="text"
                             ref={email} />
-                        {emailError && <p className={formError}>{emailError}</p>}
+                        {emailError && <p className={FormCSS.formError}>{emailError}</p>}
                     </label>
                 </div>
-                <div className={inputItem}>
+                <div className={FormCSS.inputItem}>
                     <label>
-                        <p className={inputItem__label}>Password</p>
-                        <input className={inputItem__textInput}
+                        <p className={FormCSS.inputItem__label}>Password</p>
+                        <input className={FormCSS.inputItem__textInput}
                             placeholder="*****"
                             type="password"
                             value={password || ""}
                             onChange={onChangePassword} />
-                        {passwordError && <p className={formError}>{passwordError}</p>}
+                        {passwordError && <p className={FormCSS.formError}>{passwordError}</p>}
                     </label>
                 </div>
-                <div className={inputItem}>
+                <div className={FormCSS.inputItem}>
                     <label>
-                        <p className={inputItem__label}>Confirm Password</p>
-                        <input className={inputItem__textInput}
+                        <p className={FormCSS.inputItem__label}>Confirm Password</p>
+                        <input className={FormCSS.inputItem__textInput}
                             placeholder="*****"
                             type="password"
                             value={confirmPassword || ""}
                             onChange={onChangeConfirmPassword} />
-                        {confirmPasswordError && <p className={formError}>{confirmPasswordError}</p>}
+                        {confirmPasswordError && <p className={FormCSS.formError}>{confirmPasswordError}</p>}
                     </label>
-                    <p>{(confirmPassword.length > 0) ? passwordMatch : ""}</p>
+                    <p style={{ marginTop: "10px" }}>{(confirmPassword.length > 0) ? passwordMatch : ""}</p>
                 </div>
-                <div className={inputItem}>
-                    <input className={darkButton}
-                        type="submit"
-                        value="Create Your Account" />
-                    {(emailError || passwordError || confirmPasswordError) && <p className={formError}>Looks like you missed a spot</p>}
-                </div>
-            </form>
-        </>
+                {(emailError || passwordError || confirmPasswordError) && <p className={FormCSS.formError}>Looks like you missed a spot</p>}
+            </div>
+            <input className={FormCSS.submitButton}
+                type="submit"
+                value="Create Your Account" />
+        </form>
     )
 }
 

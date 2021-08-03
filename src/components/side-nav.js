@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'gatsby'
 import { useUser } from "../context/UserContext"
 import { getAllItemTags } from './items'
-import { NotificationsList } from './notifications'
 import * as SideNavCSS from '../css/side-nav.module.css'
 
-const SideNavContent = ({ type, tagSearch = null, message = null }) => {
+const SideNavContent = ({ type, query = null }) => {
     const [tags, setTags] = useState()
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
@@ -17,7 +16,7 @@ const SideNavContent = ({ type, tagSearch = null, message = null }) => {
             let content = []
             for (let tag in itemTags) {
                 content.push(
-                    <Link to={`/?tag=${tag}`} key={tag} className={SideNavCSS.sideNavRow} onClick={tagSearch(tag)}>
+                    <Link to={`/?tag=${tag}`} key={tag} className={SideNavCSS.sideNavRow} onClick={query(tag)}>
                         <p className={SideNavCSS.sideNavRow__title}>{tag}</p>
                         <p className={SideNavCSS.sideNavRow__itemCount}>{itemTags[tag]} Item{itemTags[tag].length > 1 && 's'}</p>
                     </Link>
@@ -25,40 +24,12 @@ const SideNavContent = ({ type, tagSearch = null, message = null }) => {
             }
             setTags(content)
         }
-        tagSearch && getTags()
-    }, [tagSearch, allItems])
-
-    const getMessage = () => {
-        switch (message) {
-            default:
-                return null
-            case 'item-create':
-                return <p className={SideNavCSS.messageText}>Your item has been added! You can find all of your posted items in your account page</p>
-            case 'item-update':
-                return <p className={SideNavCSS.messageText}>Your item has been successfully updated!</p>
-            case 'item-delete':
-                return <p className={SideNavCSS.messageText}>Your item has been successfully deleted!</p>
-            case 'email-update':
-                return <p className={SideNavCSS.messageText}>Your email has been successfully updated!</p>
-            case 'password-update':
-                return <p className={SideNavCSS.messageText}>Your password has been successfully update!</p>
-            case 'item-buy':
-                return <p className={SideNavCSS.messageText}>The seller has been notified of your interest in this item. Once they confirm their ideal delivery time and then you'll be notified with the final details.</p>
-        }
-    }
+        if (type !== 'account' && type !== 'notifications' && query) getTags()
+    }, [type, query, allItems])
 
     switch (type) {
         default:
-            return (
-                <>
-                    {message &&
-                        <div className={SideNavCSS.messageRow}>
-                            <div className={SideNavCSS.message}>{getMessage()}</div>
-                        </div>
-                    }
-                    {tags}
-                </>
-            ) //return all tags
+            return <>{tags}</> //return all tags
         case 'account':
             return (
                 <>
@@ -81,20 +52,6 @@ const SideNavContent = ({ type, tagSearch = null, message = null }) => {
                     <Link to="/account/account-settings" className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>Your account settings</p>
                     </Link>
-                </>
-            )
-        case 'notifications':
-            return (
-                <>
-                    {message &&
-                        <div className={SideNavCSS.messageRow}>
-                            <div className={SideNavCSS.message}>{getMessage()}</div>
-                        </div>
-                    }
-                    <div className={SideNavCSS.sideNavNotificationRow}>
-                        <p className={SideNavCSS.sideNavNotificationRow__title}>You have {userData?.notifications.length} {userData?.notifications.length > 1 ? 'notifications' : 'notification'}</p>
-                    </div>
-                    <NotificationsList />
                 </>
             )
     }

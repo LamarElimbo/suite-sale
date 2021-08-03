@@ -5,24 +5,7 @@
     display: flex;
     justify-content: space-between;
     flex: 1 1;
-    min-height: 200px;
     flex-direction: column;
-}
-
-.sideNavNotificationRow {
-    padding: 20px;
-    border-bottom: 5px solid black;
-    display: flex;
-    justify-content: space-between;
-    flex: 1 1;
-    min-height: 200px;
-    flex-direction: column;
-}
-
-.sideNavNotificationRow__title {
-    color: white;
-    font-size: 26px;
-    text-transform: capitalize;
 }
 
 .sideNavRow__title {
@@ -94,6 +77,10 @@
     line-height: 150%
 }
 
+.sideNavRow__itemCount {
+    margin-bottom: 10px;
+}
+
 @media only screen and (max-width: 900px) {
     .sideNavRow {
         padding: 20px;
@@ -109,7 +96,12 @@
         font-size: 20px;
     }
 
+    .sideNavRow__text {
+        font-size: 18px;
+    }
+
     .sideNavRow__itemCount {
         display: none;
+        margin-bottom: 10px;
     }
   }

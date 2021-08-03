@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
+import { navigate } from "gatsby"
 import { useUser } from "../context/UserContext"
 import { getAllItemTags } from '../components/items'
-import { imgStorage } from "../components/firebase"
+import { firestore, imgStorage } from "../components/firebase"
 import * as FormCSS from '../css/form.module.css'
 import camera_icon from '../images/camera_icon.png'
-import remove_icon from '../images/remove_icon.png'
 
-const ItemFormInfo = ({ itemData, handleSubmit }) => {
-    const item = useRef()
-    const cost = useRef('')
-    const itemNotes = useRef('')
-    const newTag = useRef('')
+const ItemFormInfo = ({ itemData }) => {
+    const [item, setItem] = useState()
+    const [cost, setCost] = useState('')
+    const [itemNotes, setItemNotes] = useState('')
+    const [newTag, setNewTag] = useState('')
     const [tags, setTags] = useState([])
     const [existingTags, setExistingTags] = useState([])
     const [photo1, setPhoto1] = useState('')
@@ -19,24 +19,23 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
     const [pickUp, setPickUp] = useState(false)
     const [dropOff, setDropOff] = useState(false)
     const [lobby, setLobby] = useState(false)
-    const suite = useRef('')
+    const [suite, setSuite] = useState('')
     const [itemError, setItemError] = useState('')
     const [costError, setCostError] = useState('')
     const [itemNotesError, setItemNotesError] = useState('')
     const [tagError, setTagError] = useState('')
     const [locationExchangeError, setLocationExchangeError] = useState('')
     const [suiteError, setSuiteError] = useState('')
-
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
-    const addSuite = firebaseContext?.addSuite
     const allItems = firebaseContext?.allItems
 
     useEffect(() => {
         if (itemData) {
-            item.current = itemData.item
-            cost.current = itemData.cost
-            itemNotes.current = itemData.itemNotes
+            setItem(itemData.item)
+            setCost(itemData.cost)
+            setItemNotes(itemData.itemNotes)
+            setSuite(userData?.suite)
             setTags(itemData.tags)
             setPhoto1(itemData.photo1)
             setPhoto2(itemData.photo2)
@@ -45,7 +44,7 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
             setDropOff(itemData.dropOff)
             setLobby(itemData.lobby)
         }
-    }, [itemData])
+    }, [itemData, userData])
 
     useEffect(() => {
         function getTags() {
@@ -55,6 +54,10 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
         }
         getTags()
     }, [allItems])
+
+    const onChangeItem = (e) => setItem(e.target.value)
+    const onChangeCost = (e) => setCost(e.target.value)
+    const onChangeItemNotes = (e) => setItemNotes(e.target.value)
 
     const onTagSelection = (e) => {
         let selectedTags = tags
@@ -70,40 +73,33 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
     }
 
     const onAddTag = () => {
-        setExistingTags([...existingTags, newTag.current.value])
-        setTags([...tags, newTag.current.value])
-        newTag.current.value = ""
+        setExistingTags([...existingTags, newTag])
+        setTags([...tags, newTag])
+        setNewTag("")
     }
 
+    const onChangeNewTag = (e) => setNewTag(e.target.value)
     const onPhoto1Upload = (e) => setPhoto1(e.target.files[0])
     const onPhoto2Upload = (e) => setPhoto2(e.target.files[0])
     const onPhoto3Upload = (e) => setPhoto3(e.target.files[0])
 
     const onPhoto1Remove = () => {
         setPhoto1('')
-        if (itemData) {
-            const img1Ref = imgStorage.child(`${itemData.id}/1`)
-            img1Ref.delete()
-        }
+        itemData && imgStorage.child(`${itemData.itemId}/1`).delete()
     }
     const onPhoto2Remove = () => {
         setPhoto2('')
-        if (itemData) {
-            const img2Ref = imgStorage.child(`${itemData.id}/2`)
-            img2Ref.delete()
-        }
+        itemData && imgStorage.child(`${itemData.itemId}/2`).delete()
     }
     const onPhoto3Remove = () => {
         setPhoto3('')
-        if (itemData) {
-            const img3Ref = imgStorage.child(`${itemData.id}/3`)
-            img3Ref.delete()
-        }
+        itemData && imgStorage.child(`${itemData.itemId}/3`).delete()
     }
 
     const onChangePickUp = () => setPickUp(!pickUp)
     const onChangeDropOff = () => setDropOff(!dropOff)
     const onChangeLobby = () => setLobby(!lobby)
+    const onChangeSuite = (e) => setSuite(e.target.value)
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -115,33 +111,63 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
         setSuiteError("")
         const locationExchange = (pickUp || dropOff || lobby) ? true : false
         let suiteErr = false
-        if (!item.current.value) setItemError("You'll have to enter an item")
-        if (!cost.current.value) setCostError("You'll have to enter a cost")
-        if (!itemNotes.current.value) setItemNotesError("You'll have to enter a note")
+        if (!item) setItemError("You'll have to enter an item")
+        if (!cost) setCostError("You'll have to enter a cost")
+        if (!itemNotes) setItemNotesError("You'll have to enter a note")
         if (tags.length === 0) setTagError("You'll have to enter a tag")
         if (!locationExchange) setLocationExchangeError("You'll have to select a meet up location")
-        if (!userData?.apartment && !suite.current.value && pickUp) {
-            setSuiteError("You'll have to enter your suite number or remove 'Pick up from your suite' as one of your meet up options")
-        } else {
-            addSuite(suite.current.value, userData?.id)
+        if (pickUp) {
+            (!userData?.suite && !suite) && setSuiteError("You'll have to enter your suite number or remove 'Pick up from your suite' as one of your meet up options")
+                (!userData?.suite && suite) && firebaseContext?.addSuite(suite)
         }
-        if (item.current.value && cost.current.value && itemNotes.current.value && (tags.length === 0) && locationExchange && suite && !suiteErr) {
-            const updatedItemData = {
-                seller: userData?.id,
-                item: item.current.value,
-                cost: cost.current.value,
-                photo1, photo2, photo3,
-                itemNotes: itemNotes.current.value,
-                tags,
-                pickUp,
-                dropOff,
-                lobby
+        if (item && cost && itemNotes && (tags.length > 0) && (pickUp || dropOff || lobby) && !suiteErr) {
+            const updatedItemData = { seller: userData?.id, item, cost, itemNotes, tags, pickUp, dropOff, lobby }
+
+            const updateImages = itemId => {
+                if (typeof photo1 === 'object') {
+                    imgStorage.child(`${itemId}/1`).put(photo1).then((snapshot) => {
+                        snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            firestore.collection("items").doc(itemId).update({ photo1: downloadURL, itemId })
+                        });
+                    })
+                }
+
+                if (typeof photo2 === 'object') {
+                    imgStorage.child(`${itemId}/2`).put(photo2).then((snapshot) => {
+                        snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            firestore.collection("items").doc(itemId).update({ photo2: downloadURL })
+                        });
+                    })
+                }
+
+                if (typeof photo3 === 'object') {
+                    imgStorage.child(`${itemId}/3`).put(photo3).then((snapshot) => {
+                        snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            firestore.collection("items").doc(itemId).update({ photo3: downloadURL })
+                        });
+                    })
+                }
             }
-            handleSubmit(updatedItemData)
+
+            if (itemData) {
+                firestore.collection("items").doc(itemData.itemId).update(updatedItemData)
+                    .then(() => { updateImages(itemData.itemId) })
+                    .catch(error => console.log("Error updating a new item: ", error))
+            } else {
+                firestore.collection("items").add(updatedItemData)
+                    .then(itemDoc => {
+                        updateImages(itemDoc.id)
+                        firebaseContext?.updateUserItems('add', 'itemsPosted', itemDoc.id)
+                    })
+                    .catch(error => console.log("Error creating a new item: ", error))
+            }
+            firebaseContext?.getAllItems()
+            const message = itemData ? "item-update" : "item-create"
+            navigate('/', { state: { message } })
         }
     }
 
-    const padding30 = {padding: "30px"}
+    const padding30 = { padding: "30px" }
     return (
         <form className={FormCSS.form} onSubmit={onSubmit}>
             <div className={FormCSS.formField}>
@@ -151,8 +177,8 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                     <input className={FormCSS.inputItem__textInput}
                         placeholder="Blue Balloons"
                         type="text"
-                        ref={item}
-                        defaultValue={itemData && item.current} />
+                        onChange={onChangeItem}
+                        value={item || ""} />
                     {itemError && <p className={FormCSS.formError}>{itemError}</p>}
                 </div>
             </div>
@@ -162,9 +188,9 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                     <p className={FormCSS.inputItem__desc}>How much are you charging?</p>
                     <input className={FormCSS.inputItem__textInput}
                         placeholder="$$$"
-                        type="text"
-                        ref={cost}
-                        defaultValue={itemData && cost.current} />
+                        type="number"
+                        onChange={onChangeCost}
+                        value={cost || ""} />
                     {costError && <p className={FormCSS.formError}>{costError}</p>}
                 </div>
             </div>
@@ -176,8 +202,8 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                         <div className={FormCSS.imgUpload}>
                             {(typeof photo1 === 'object' || photo1?.length > 0) ?
                                 <>
-                                    <img src={itemData ? photo1 : URL.createObjectURL(photo1)} className={FormCSS.cameraIcon} alt="Item Preview" />
-                                    <button onClick={onPhoto1Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove this item preview" /></button>
+                                    <img src={typeof photo1 === 'string' ? photo1 : URL.createObjectURL(photo1)} className={FormCSS.cameraIcon} alt="Item Preview" />
+                                    <button onClick={onPhoto1Remove}>Remove</button>
                                 </>
                                 :
                                 <>
@@ -192,8 +218,8 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                         <div className={FormCSS.imgUpload}>
                             {(typeof photo2 === 'object' || photo2?.length > 0) ?
                                 <>
-                                    <img src={itemData ? photo2 : URL.createObjectURL(photo2)} className={FormCSS.cameraIcon} alt="Item Preview" />
-                                    <button onClick={onPhoto2Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove this item preview" /></button>
+                                    <img src={typeof photo2 === 'string' ? photo2 : URL.createObjectURL(photo2)} className={FormCSS.cameraIcon} alt="Item Preview" />
+                                    <button onClick={onPhoto2Remove}>Remove</button>
                                 </>
                                 :
                                 <>
@@ -208,8 +234,8 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                         <div className={FormCSS.imgUpload}>
                             {(typeof photo3 === 'object' || photo3?.length > 0) ?
                                 <>
-                                    <img src={itemData ? photo3 : URL.createObjectURL(photo3)} className={FormCSS.cameraIcon} alt="Item Preview" />
-                                    <button onClick={onPhoto3Remove}><img src={remove_icon} className={FormCSS.cameraIcon} alt="Remove this item preview" /></button>
+                                    <img src={typeof photo3 === 'string' ? photo3 : URL.createObjectURL(photo3)} className={FormCSS.cameraIcon} alt="Item Preview" />
+                                    <button onClick={onPhoto3Remove}>Remove</button>
                                 </>
                                 :
                                 <>
@@ -230,8 +256,8 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                     <p className={FormCSS.inputItem__desc}>What would you like buyers to know?</p>
                     <textarea className={FormCSS.inputItem__textAreaInput}
                         placeholder="Ex: item quality/description, accept cash/credit, ideal meet up times"
-                        ref={itemNotes}
-                        defaultValue={itemData && itemNotes.current}></textarea>
+                        onChange={onChangeItemNotes}
+                        value={itemNotes || ""}></textarea>
                     {itemNotesError && <p className={FormCSS.formError}>{itemNotesError}</p>}
                 </div>
             </div>
@@ -252,7 +278,8 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                         <input className={FormCSS.inputItem__textInput}
                             placeholder="Enter a new tag"
                             type="text"
-                            ref={newTag} />
+                            value={newTag || ""}
+                            onChange={onChangeNewTag} />
                         <div className={FormCSS.addTagButton} onClick={onAddTag} onKeyDown={onAddTag} role="button" tabIndex={0}>Add Tag</div>
                     </div>
                     {tagError && <p className={FormCSS.formError}>{tagError}</p>}
@@ -262,50 +289,42 @@ const ItemFormInfo = ({ itemData, handleSubmit }) => {
                 <div className={FormCSS.inputItem}>
                     <p className={FormCSS.inputItem__label}>Exchange Location</p>
                     <p className={FormCSS.inputItem__desc}>Where are you comfortable meeting with your buyer?</p>
-                    <div style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                         <label className={FormCSS.inputItem__checkboxContainer}>
-                            <input className={FormCSS.inputItem__checkbox}
-                                type="checkbox"
-                                onChange={onChangePickUp} />
-                            <span class={FormCSS.checkboxInput__checkmark}></span>
+                            <input className={FormCSS.inputItem__checkbox} type="checkbox" checked={pickUp || false} onChange={onChangePickUp} />
+                            <span className={FormCSS.checkboxInput__checkmark}></span>
                             <span className={FormCSS.checkboxInput__label}>Your suite</span>
                         </label>
                         <label className={FormCSS.inputItem__checkboxContainer}>
-                            <input className={FormCSS.inputItem__checkbox}
-                                type="checkbox"
-                                onChange={onChangeDropOff} />
-                            <span class={FormCSS.checkboxInput__checkmark}></span>
+                            <input className={FormCSS.inputItem__checkbox} type="checkbox" checked={dropOff || false} onChange={onChangeDropOff} />
+                            <span className={FormCSS.checkboxInput__checkmark}></span>
                             <span className={FormCSS.checkboxInput__label}>Buyer's suite</span>
                         </label>
                         <label className={FormCSS.inputItem__checkboxContainer}>
-                            <input className={FormCSS.inputItem__checkbox}
-                                type="checkbox"
-                                onChange={onChangeLobby} />
-                            <span class={FormCSS.checkboxInput__checkmark}></span>
+                            <input className={FormCSS.inputItem__checkbox} type="checkbox" checked={lobby || false} onChange={onChangeLobby} />
+                            <span className={FormCSS.checkboxInput__checkmark}></span>
                             <span className={FormCSS.checkboxInput__label}>Lobby</span>
                         </label>
-                        {(pickUp === 'pickUp' && !userData?.suite) &&
+                        {(pickUp === true && !userData?.suite) &&
                             <div style={padding30}>
                                 <p className={FormCSS.inputItem__label}>What's your suite number?</p>
                                 <input className={FormCSS.inputItem__textInput}
                                     placeholder="###"
                                     type="number"
                                     maxLength="3"
-                                    ref={suite} />
+                                    value={suite || ""}
+                                    onChange={onChangeSuite} />
                             </div>
                         }
                     </div>
                     {locationExchangeError && <p className={FormCSS.formError}>{locationExchangeError}</p>}
                     {suiteError && <p className={FormCSS.formError}>{suiteError}</p>}
                 </div>
-            </div>
-            <div className={FormCSS.inputItem}>
-                <input className={FormCSS.darkButton}
-                    type="submit"
-                    value="Submit Listing" />
                 {(itemError || costError || itemNotesError || tagError || locationExchangeError || suiteError) && <p className={FormCSS.formError}>Looks like you missed a spot</p>}
-
             </div>
+            <input className={FormCSS.submitButton}
+                type="submit"
+                value="Submit Listing" />
         </form>
     )
 }

@@ -22,8 +22,8 @@ const AboutPage = () => {
           </section>
           <section className={AboutCSS.sectionStyle}>
             <h2 className={AboutCSS.headerStyle}>What if you don't keep cash on hand?</h2>
-            <p className={AboutCSS.paragraphStyle}>Consider giving the Wealthsimple Cash app a try. Canada's fastest and simplest way to send and receive money. No fees and totally secure. You can get a free $25 if you sign up with <a href="https://my.wealthsimple.com/app/public/cash-referral-signup?handle=$lamarelimbo" className={AboutCSS.linkStyle}>my referral link</a></p>
-            <p className={AboutCSS.paragraphStyle}>You can learn more about it here: <a href="https://www.wealthsimple.com/en-ca/magazine/cash" className={AboutCSS.linkStyle}>https://www.wealthsimple.com/en-ca/magazine/cash</a></p>
+            <p className={AboutCSS.paragraphStyle}>Consider giving the Wealthsimple Cash app a try. Canada's fastest and simplest way to send and receive money. No fees and totally secure. You can get a free $25 if you sign up with <a href="https://my.wealthsimple.com/app/public/cash-referral-signup?handle=$lamarelimbo" target="_blank" className={AboutCSS.linkStyle} rel="noreferrer">my referral link</a></p>
+            <p className={AboutCSS.paragraphStyle}>You can learn more about it here: <a href="https://www.wealthsimple.com/en-ca/magazine/cash" target="_blank" className={AboutCSS.linkStyle} rel="noreferrer">https://www.wealthsimple.com/en-ca/magazine/cash</a></p>
             <br />
           </section>
         </div>

@@ -1,9 +1,14 @@
 import * as React from 'react'
+import { navigate } from "gatsby"
+import { useUser } from "../../context/UserContext"
 import {ItemCardList} from '../../components/items'
 import {Layout, Content, SideNav} from '../../components/layout'
 import SideNavContent from '../../components/side-nav'
 
 const PurchaseHistoryPage = () => {
+
+  const firebaseContext = useUser()
+  !firebaseContext?.userAuth && navigate('/sign-in')
   return (
     <Layout pageTitle="Your Purchase History" headerLink="Logout">
       <Content contentTitle="Your purchase history">

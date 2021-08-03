@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { timeGrid, timeBoxOuter, timeBoxInner, selected, unselected, inactive } from '../css/form.module.css'
+import * as FormCSS from '../css/form.module.css'
+import toggle_right_icon from '../images/toggle_right_icon.png'
+import toggle_down_icon from '../images/toggle_down_icon.png'
 
 const ItemFormPickTime = ({ item, availableTimes, setAvailableTimes }) => {
+    const [day1Display, setDay1Display] = useState(true)
+    const [day2Display, setDay2Display] = useState(false)
+    const [day3Display, setDay3Display] = useState(false)
     const [day1, setDay1] = useState('')
     const [day2, setDay2] = useState('')
     const [day3, setDay3] = useState('')
@@ -9,9 +14,24 @@ const ItemFormPickTime = ({ item, availableTimes, setAvailableTimes }) => {
     const timeDate = new Date()
     const timeString = timeDate.toLocaleTimeString()
 
+    const toggleDay1Display = () => {
+        setDay1Display(!day1Display)
+        setDay2Display(false)
+        setDay3Display(false)
+    }
+    const toggleDay2Display = () => {
+        setDay1Display(false)
+        setDay2Display(!day2Display)
+        setDay3Display(false)
+    }
+    const toggleDay3Display = () => {
+        setDay1Display(false)
+        setDay2Display(false)
+        setDay3Display(!day3Display)
+    }
+
     useEffect(() => {
-        if (item.transactionData?.status) {
-            setAvailableTimes(item.transactionData.buyerAvailable)
+        if (item.transactionData) {
             setDay1(item.transactionData.day1)
             setDay2(item.transactionData.day2)
             setDay3(item.transactionData.day3)
@@ -44,6 +64,7 @@ const ItemFormPickTime = ({ item, availableTimes, setAvailableTimes }) => {
         }
     }
 
+    
     const displayTimes = (day) => {
         let date = ""
         let timeRange = []
@@ -51,12 +72,17 @@ const ItemFormPickTime = ({ item, availableTimes, setAvailableTimes }) => {
         switch (day) {
             case 'day1':
                 date = day1
+                console.log("timeString: ", timeString.slice(0, 4))
                 for (let i = 0; i < timeSelection.length; i++) {
+                    console.log("timeSelection: ", timeSelection[i]['t24'])
                     if (timeSelection[i]['t24'].slice(0, 4) === timeString.slice(0, 4)) {
+                        console.log("cutting")
                         timeRange = timeSelection.slice(i + 1)
+                        console.log("time range: ", timeRange)
                         break
                     }
                 }
+                
                 break
             case 'day2':
                 date = day2
@@ -78,23 +104,23 @@ const ItemFormPickTime = ({ item, availableTimes, setAvailableTimes }) => {
         return (
             <>
                 <p style={{ marginTop: "50px" }}>{date}</p>
-                <div className={timeGrid}>
-                    {(timeString.slice(3, 5) > '0' && timeString.slice(3, 5) <= '15' && day === "day1") && <div className={timeBoxOuter}></div>}
-                    {(timeString.slice(3, 5) > '15' && timeString.slice(3, 5) <= '30' && day === "day1") && <><div className={timeBoxOuter}></div></>}
-                    {(timeString.slice(3, 5) > '30' && timeString.slice(3, 5) <= '45' && day === "day1") && <><div className={timeBoxOuter}></div><div className={timeBoxOuter}></div><div className={timeBoxOuter}></div></>}
+                <div className={FormCSS.timeGrid}>
+                    {(timeString.slice(3, 5) > '0' && timeString.slice(3, 5) <= '15' && day === "day1") && <div className={FormCSS.timeBoxOuter}></div>}
+                    {(timeString.slice(3, 5) > '15' && timeString.slice(3, 5) <= '30' && day === "day1") && <><div className={FormCSS.timeBoxOuter}></div></>}
+                    {(timeString.slice(3, 5) > '30' && timeString.slice(3, 5) <= '45' && day === "day1") && <><div className={FormCSS.timeBoxOuter}></div><div className={FormCSS.timeBoxOuter}></div><div className={FormCSS.timeBoxOuter}></div></>}
                     {timeRange.map(time => {
                         return (
-                            <div key={day + "-" + time.t12.replace(/:| /g, '-')} className={timeBoxOuter}>
+                            <div key={day + "-" + time.t12.replace(/:| /g, '-')} className={FormCSS.timeBoxOuter}>
                                 {(!item?.transactionData?.status) &&
-                                    <div className={timeBoxInner + " " + (availableTimes.includes(`${day} ${time.t12}`) ? selected : unselected)}
+                                    <div className={FormCSS.timeBoxInner + " " + (availableTimes?.includes(`${day} ${time.t12}`) ? FormCSS.selected : FormCSS.unselected)}
                                         id={`${day} ${time.t12}`}
-                                        onClick={handleTimeSelection}>{time.t12}</div>}
-                                {(item?.transactionData?.status === 'Awaiting Time Confirmation' && availableTimes.includes(`${day} ${time.t12}`)) &&
-                                    <div className={timeBoxInner + " " + (availableTimes === (`${day} ${time.t12}`) ? selected : unselected)}
+                                        onClick={handleTimeSelection} onkeydown={handleTimeSelection} role="button" tabIndex="0">{time.t12}</div>}
+                                {(item?.transactionData?.status === 'Awaiting Time Confirmation' && item?.transactionData?.buyerAvailable?.includes(`${day} ${time.t12}`)) &&
+                                    <div className={FormCSS.timeBoxInner + " " + (availableTimes === (`${day} ${time.t12}`) ? FormCSS.selected : FormCSS.unselected)}
                                         id={`${day} ${time.t12}`}
-                                        onClick={handleTimeSelection}>{time.t12}</div>}
-                                {(item?.transactionData?.status === 'Awaiting Time Confirmation' && !availableTimes.includes(`${day} ${time.t12}`)) &&
-                                    <div className={timeBoxInner + " " + inactive}>{time.t12}</div>}
+                                        onClick={handleTimeSelection} onkeydown={handleTimeSelection} role="button" tabIndex="0">{time.t12}</div>}
+                                {(item?.transactionData?.status === 'Awaiting Time Confirmation' && !item?.transactionData?.buyerAvailable.includes(`${day} ${time.t12}`)) &&
+                                    <div className={FormCSS.timeBoxInner + " " + FormCSS.inactive} id={`${day} ${time.t12}`}>{time.t12}</div>}
                             </div>
                         )
                     })}
@@ -105,11 +131,32 @@ const ItemFormPickTime = ({ item, availableTimes, setAvailableTimes }) => {
 
     return (
         <>
-            {displayTimes('day1')}
-            <div style={{width: '100%', borderBottom: "1px solid black", marginTop: "50px"}}></div>
-            {displayTimes('day2')}
-            <div style={{width: '100%', borderBottom: "1px solid black", marginTop: "50px"}}></div>
-            {displayTimes('day3')}
+            <div className={FormCSS.displayButtonArea}>
+                <div className={FormCSS.displayButton} role="button" tabIndex="0" onClick={toggleDay1Display} onKeyDown={toggleDay1Display}>{day1}
+                    {!day1Display ?
+                        <img src={toggle_right_icon} className={FormCSS.displayButton__icon} alt="Open time display" />
+                        :
+                        <img src={toggle_down_icon} className={FormCSS.displayButton__icon} alt="Close time display" />
+                    }
+                </div>
+                <div className={FormCSS.displayButton} role="button" tabIndex="0" onClick={toggleDay2Display} onKeyDown={toggleDay2Display}>{day2}
+                    {!day2Display ?
+                        <img src={toggle_right_icon} className={FormCSS.displayButton__icon} alt="Open time display" />
+                        :
+                        <img src={toggle_down_icon} className={FormCSS.displayButton__icon} alt="Close time display" />
+                    }
+                </div>
+                <div className={FormCSS.displayButton} role="button" tabIndex="0" onClick={toggleDay3Display} onKeyDown={toggleDay3Display}>{day3}
+                    {!day3Display ?
+                        <img src={toggle_right_icon} className={FormCSS.displayButton__icon} alt="Open time display" />
+                        :
+                        <img src={toggle_down_icon} className={FormCSS.displayButton__icon} alt="Close time display" />
+                    }
+                </div>
+            </div>
+            <div style={day1Display ? { display: "block" } : { display: "none" }}>{displayTimes('day1')}</div>
+            <div style={day2Display ? { display: "block" } : { display: "none" }}>{displayTimes('day2')}</div>
+            <div style={day3Display ? { display: "block" } : { display: "none" }}>{displayTimes('day3')}</div>
         </>
     )
 }

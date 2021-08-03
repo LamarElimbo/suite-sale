@@ -5,13 +5,14 @@ import { useUser } from "../context/UserContext"
 import { Layout, Content, SideNav } from '../components/layout'
 import ItemFormInfo from '../components/item-form-info'
 import ItemFormBuyItem from '../components/item-form-buy-item'
-import ItemFormPickTime from '../components/item-form-pick-time'
+import ItemFormConfirmOrder from '../components/item-form-confirm-order'
 import * as LayoutCSS from '../css/layout.module.css'
 import * as SideNavCSS from '../css/side-nav.module.css'
 import * as ItemCSS from '../css/item-page.module.css'
 
 const ItemPage = ({ location }) => {
     const [itemData, setItemData] = useState({})
+    const [seller, setSeller] = useState()
     const [saved, setSaved] = useState(false) // add to cart feature
     const [userType, setUserType] = useState('non-user') // non-user, potential-buyer, buyer, seller-with-buyer, seller-without-buyer
     const [coverPhoto, setCoverPhoto] = useState('')
@@ -20,6 +21,40 @@ const ItemPage = ({ location }) => {
     const userData = firebaseContext?.userData
     const updateUserItems = firebaseContext?.updateUserItems
     const allItems = firebaseContext?.allItems
+
+    const toggleSave = () => {
+        const action = saved ? 'remove' : 'add'
+        updateUserItems(action, 'itemsSaved', itemData.itemId)
+        setSaved(!saved)
+    }
+
+    const changeCoverPhoto = (e) => setCoverPhoto(e.target.src)
+    const onClickBuy = () => setInterestedBuyer(true)
+    const deleteItem = () => firestore.collection("items").doc(itemData.itemId).delete().then(() => navigate('/', { state: { message: "item-delete" } }))
+    const cancelOrder = () => {
+        let notCurrentUserId = (userData?.id === itemData.seller) ? itemData.transactionData?.buyer : itemData.seller
+
+        updateUserItems('remove', 'itemsInProgress', itemData.itemId)
+        updateUserItems('remove', 'newOrderNotification', itemData.itemId)
+        updateUserItems('remove', 'orderConfirmationNotification', itemData.itemId)
+
+        const notificationsToRemove = [{ message: "You have a new buyer", itemId: itemData.itemId }, { message: "Your order has been confirmed", itemId: itemData.itemId }, { message: `Your order has been cancelled`, itemId: itemData.itemId }]
+        firestore.collection("users")
+            .doc(notCurrentUserId)
+            .update({
+                itemsInProgress: firebase.firestore.FieldValue.arrayRemove(itemData.itemId),
+                notifications: firebase.firestore.FieldValue.arrayRemove(notificationsToRemove)
+            })
+            .catch(error => console.log("Error updating user for item cancellation: ", error))
+
+        firestore
+            .collection('items')
+            .doc(itemData.itemId)
+            .update({ transactionData: firebase.firestore.FieldValue.delete() })
+            .catch(error => console.log("Error updating item cancellation status: ", error))
+
+        navigate('/', { state: { message: "item-cancel" } })
+    }
 
     useEffect(() => {
         if (location.state) { // If user came from a previous page
@@ -30,12 +65,13 @@ const ItemPage = ({ location }) => {
             const urlParams = new URLSearchParams(location.search);
             const item = allItems?.filter(item => item.itemId === urlParams.get('item'))
             item && setItemData(item[0])
+            item && setCoverPhoto(item[0].photo1)
             item && setSaved(userData?.itemsSaved.includes(item[0].itemId))
         }
     }, [location, userData, allItems])
 
     useEffect(() => {
-        userData ? setUserType('potential-buyer') : setUserType('non-user')
+        userData?.id ? setUserType('potential-buyer') : setUserType('non-user')
         if (userData?.id === itemData.transactionData?.buyer) { setUserType('buyer') }
         if (userData?.id === itemData.seller) {
             const sellerType = (itemData.transactionData?.status) ? 'seller-with-buyer' : 'seller-without-buyer'
@@ -53,136 +89,130 @@ const ItemPage = ({ location }) => {
                 firestore
                     .collection("items")
                     .doc(itemData.itemId)
-                    .update({ "transactionData.status": "Complete" })
+                    .update({
+                        "transactionData.buyer": userData?.id,
+                        "transactionData.deliveryMethod": itemData.transactionData.deliveryMethod,
+                        "transactionData.day1": itemData.transactionData.day1,
+                        "transactionData.day2": itemData.transactionData.day2,
+                        "transactionData.day3": itemData.transactionData.day3,
+                        "transactionData.buyerAvailable": itemData.transactionData.buyerAvailable,
+                        "transactionData.deliveryTime": itemData.transactionData.deliveryTime,
+                        "transactionData.status": "Complete"
+                    })
                     .catch(error => console.log("Error marking item status to complete: ", error))
             }
         }
+
+        if (itemData.transactionData?.status === 'Awaiting Time Confirmation') {
+            const deliveryDate = new Date(itemData.transactionData?.day3)
+            const today = new Date()
+            if (today > deliveryDate) cancelOrder()
+        }
+
+        firestore.collection('users').doc(itemData.seller).get().then(doc => setSeller(doc.data()))
     }, [itemData])
-
-    const toggleSave = () => {
-        const action = saved ? 'remove' : 'add'
-        updateUserItems(action, 'itemsSaved', itemData.itemId)
-        setSaved(!saved)
-    }
-
-    const handleSubmit = (updatedItemData) => {
-        firestore
-            .collection("items")
-            .doc(itemData.itemId)
-            .update(updatedItemData)
-            .then(() => navigate('/', { state: { message: "item-update" } }))
-            .catch(error => console.log("Error updating item data: ", error))
-    }
-
-    const changeCoverPhoto = (e) => setCoverPhoto(e.target.src)
-    const onClickBuy = () => setInterestedBuyer(true)
-    const deleteNotification = () => updateUserItems('remove', 'buyerNotifications', itemData.itemId)
-    const deleteItem = () => firestore.collection("items").doc(itemData.itemId).delete().then(() => navigate('/', { state: { message: "item-delete" } }))
-    const cancelOrder = () => {
-        let currentUserIsThe = (userData?.id === itemData.seller) ? 'seller' : 'buyer'
-        let notCurrentUserId = (userData?.id === itemData.seller) ? itemData.transactionData?.buyer : itemData.seller
-
-        updateUserItems('remove', 'itemsInProgress', itemData.id)
-
-        firestore.collection("users")
-            .doc(notCurrentUserId)
-            .update({
-                itemsInProgress: firebase.firestore.FieldValue.arrayRemove(itemData.itemId),
-                notifications: firebase.firestore.FieldValue.arrayUnion({
-                    message: `This order has been cancelled by the ${currentUserIsThe}`,
-                    itemId: itemData.id
-                })
-            })
-            .catch(error => console.log("Error updating user for item cancellation: ", error))
-
-        firestore
-            .collection("items")
-            .doc(itemData.id)
-            .update({ "transactionData.status": `${currentUserIsThe} Cancelled` })
-            .catch(error => console.log("Error updating item cancellation status: ", error))
-    }
 
     return (
         <Layout pageTitle={itemData.item}>
             <Content>
-                <div className={ItemCSS.itemPage}>
-                    <div className={ItemCSS.infoArea}>
-                        <div>
-                            <p className={ItemCSS.cost}><sup className={ItemCSS.dollarSign}>$</sup>{itemData.cost}</p>
-                            <p className={ItemCSS.item}>{itemData.item}</p>
-                            <p className={ItemCSS.notes}>Seller's Notes:</p>
-                            <p className={LayoutCSS.isLightText}>{itemData.itemNotes}</p>
-                        </div>
-                        <div className={ItemCSS.interestMethods}>
-                            {(['potential-buyer', 'buyer'].includes(userType)) && <button className={ItemCSS.saveButton} onClick={toggleSave}>{saved ? 'Remove From cart' : 'Add To cart'}</button>}
-                            {(!itemData.transactionData?.status && !interestedBuyer && userType === 'potential-buyer') && <button className={ItemCSS.buyItemButton} onClick={onClickBuy}>Buy</button>}
-                            {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.saveButton}>Sign In To Save Item</button></Link>}
-                            {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.buyItemButton}>Sign In To Buy Item</button></Link>}
-                            {interestedBuyer && <p className={ItemCSS.instructions}>Follow the steps below to setup an exchange with the seller</p>}
+                <div className={LayoutCSS.aboutSection}>
+                    <div className={ItemCSS.moneySection}>
+                        <p className={ItemCSS.cost}><sup className={ItemCSS.dollarSign}>$</sup>{itemData.cost}</p>
+                        <div className={ItemCSS.acceptedPayments}>
+                            <p className={ItemCSS.acceptedPaymentsLabel}>This seller accepts</p>
+                            <p className={ItemCSS.acceptedPaymentsMethods}>Cash</p>
+                            {seller?.acceptedPaymentMethods?.includes("wealthsimple cash") && <p className={ItemCSS.acceptedPaymentsMethods}>Wealthsimple Cash</p>}
+                            {seller?.acceptedPaymentMethods?.filter(method => method !== "wealthsimple cash").map(method => (<p className={ItemCSS.acceptedPaymentsMethods}>{method}</p>))}
                         </div>
                     </div>
-                    <div className={ItemCSS.imageArea}>
-                        <div className={ItemCSS.coverPhotoContainer}><img src={coverPhoto} alt="Item Preview" className={ItemCSS.coverPhoto} /></div>
-                        <div className={ItemCSS.thumnailArea}>
-                            <div className={ItemCSS.thumnailPhotoContainer}>
-                                {itemData.photo1 ?
-                                    <img src={itemData.photo1} alt="Item Preview" className={ItemCSS.thumnailPhoto} onClick={changeCoverPhoto} />
-                                    : <div className={ItemCSS.thumnailPhotoEmpty}></div>
-                                }
-                            </div>
-                            <div className={ItemCSS.thumnailPhotoContainer}>
-                                {itemData.photo2 ?
-                                    <img src={itemData.photo2} alt="Item Preview" className={ItemCSS.thumnailPhoto} onClick={changeCoverPhoto} />
-                                    : <div className={ItemCSS.thumnailPhotoEmpty}></div>
-                                }
-                            </div>
-                            <div className={ItemCSS.thumnailPhotoContainer}>
-                                {itemData.photo3 ?
-                                    <img src={itemData.photo3} alt="Item Preview" className={ItemCSS.thumnailPhoto} onClick={changeCoverPhoto} />
-                                    : <div className={ItemCSS.thumnailPhotoEmpty}></div>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    {userType === 'seller-without-buyer' && <ItemFormInfo itemData={itemData} handleSubmit={handleSubmit} />}
-                    {(userType === 'seller-with-buyer' && itemData.transactionData?.status === 'Awaiting Time Confirmation') &&
-                        <ItemFormPickTime item={itemData} deliveryMethod={itemData.transactionData?.deliveryMethod} />
-                    }
-                    {interestedBuyer && <ItemFormBuyItem itemData={itemData} />}
+                    <p className={LayoutCSS.aboutTagline}>{itemData.item}</p>
+                    <p className={LayoutCSS.aboutDescription}>Seller's Notes: {itemData.itemNotes}</p>
+                    {(['potential-buyer', 'buyer'].includes(userType)) && <div className={LayoutCSS.aboutLink} onClick={toggleSave} onKeyDown={toggleSave} role="button" tabIndex="0">{saved ? 'Remove From Cart' : 'Add To Cart'}</div>}
+                    {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in" className={LayoutCSS.aboutLink}>Sign In To Save Item</Link>}
                 </div>
+                <div className={ItemCSS.imageArea}>
+                    <div className={ItemCSS.coverPhotoContainer}>
+                        {itemData.photo1 || itemData.photo2 || itemData.photo3 ?
+                            <img src={coverPhoto} alt="Item Preview" className={ItemCSS.coverPhoto} />
+                            : <div className={ItemCSS.thumnailPhotoEmpty}></div>
+                        }
+                    </div>
+                    <div className={ItemCSS.thumnailArea}>
+                        <div className={ItemCSS.thumnailPhotoContainer}>
+                            {itemData.photo1 ?
+                                <img src={itemData.photo1} alt="Item Preview" className={ItemCSS.thumnailPhoto} onClick={changeCoverPhoto} onKeyDown={changeCoverPhoto} />
+                                : <div className={ItemCSS.thumnailPhotoEmpty}></div>
+                            }
+                        </div>
+                        <div className={ItemCSS.thumnailPhotoContainer}>
+                            {itemData.photo2 ?
+                                <img src={itemData.photo2} alt="Item Preview" className={ItemCSS.thumnailPhoto} onClick={changeCoverPhoto} onKeyDown={changeCoverPhoto} />
+                                : <div className={ItemCSS.thumnailPhotoEmpty}></div>
+                            }
+                        </div>
+                        <div className={ItemCSS.thumnailPhotoContainer}>
+                            {itemData.photo3 ?
+                                <img src={itemData.photo3} alt="Item Preview" className={ItemCSS.thumnailPhoto} onClick={changeCoverPhoto} onKeyDown={changeCoverPhoto} />
+                                : <div className={ItemCSS.thumnailPhotoEmpty}></div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                {userType === 'seller-without-buyer' &&
+                    <>
+                        <div className={LayoutCSS.title}>
+                            <h2 className={LayoutCSS.isCentered}>Edit Item Form</h2>
+                        </div>
+                        <ItemFormInfo itemData={itemData} />
+                    </>
+                }
+                {(userType === 'seller-with-buyer' && itemData.transactionData?.status === 'Awaiting Time Confirmation') && <ItemFormConfirmOrder item={itemData} />}
+                {interestedBuyer && <ItemFormBuyItem itemData={itemData} />}
             </Content>
             <SideNav>
-                <div className={SideNavCSS.status}>
-                    <p style={{ marginBottom: "15px" }}>Item Status</p>
-                    {(!itemData.transactionData) &&
-                        <p className={SideNavCSS.sideNavRow__text}>This item doesn't have a buyer yet.</p>
-                    }
-                    {(itemData.transactionData && userType === 'potential-buyer') &&
-                        <p className={SideNavCSS.sideNavRow__text}>This item already has a buyer.</p>
-                    }
-                    {(itemData.transactionData?.status === "Awaiting Time Confirmation" && userType === 'buyer') &&
-                        <p className={SideNavCSS.sideNavRow__text}>The seller has been notified of your interest in this item. Once they confirm their ideal delivery time and then you'll be notified with the final details.</p>
-                    }
-                    {(itemData.transactionData?.status === "Awaiting Meetup" && ['seller', 'buyer'].includes(userType)) &&
+                <div className={SideNavCSS.sideNavRow}>
+                    <p className={SideNavCSS.sideNavRow__itemCount}>Item Status</p>
+                    {(!itemData.transactionData) && <p className={SideNavCSS.sideNavRow__text}>This item doesn't have a buyer yet.</p>}
+                    {(itemData.transactionData && ['potential-buyer', 'non-user'].includes(userType)) && <p className={SideNavCSS.sideNavRow__text}>This item already has a buyer.</p>}
+                    {(itemData.transactionData?.status === "Awaiting Time Confirmation" && userType === 'buyer') && <p className={SideNavCSS.sideNavRow__text}>The seller has been notified of your interest. Once they confirm their availability, you'll be notified with the final details.</p>}
+                    {(itemData.transactionData?.status === "Awaiting Meetup" && ['seller-with-buyer', 'buyer'].includes(userType)) &&
                         <>
-                            <p className={SideNavCSS.sideNavRow__text}>{itemData.transactionData.status}</p>
-                            <p className={SideNavCSS.sideNavRow__text}>{itemData.transactionData?.deliveryMethod + ' ' + itemData.transactionData?.deliveryTime}</p>
+                            {itemData.transactionData?.deliveryMethod === 'lobby' && <p className={SideNavCSS.sideNavRow__text}>Meet in the lobby</p>}
+                            {itemData.transactionData?.deliveryMethod === 'pickUp' && <p className={SideNavCSS.sideNavRow__text}>Meet at suite {seller?.suite}</p>}
+                            {itemData.transactionData?.deliveryMethod === 'dropOff' && <p className={SideNavCSS.sideNavRow__text}>Meet at suite {userData?.suite}</p>}
+                            <p className={SideNavCSS.sideNavRow__text}>on {itemData.transactionData?.deliveryTime}</p>
                         </>
                     }
-                    {(itemData.transactionData?.status === "Awaiting Meetup" && userData?.notifications.some(doc => doc.itemId === itemData.id)) &&
-                        <>
-                            <p className={SideNavCSS.sideNavRow__text}>Have you marked your calendar?</p>
-                            <button className={SideNavCSS.statusButton} onClick={deleteNotification}>Yes, Remove Notification</button>
-                        </>
-                    }
-                    {userType === 'seller-without-buyer' && <button className={ItemCSS.deleteItemButton} onClick={deleteItem}>Delete This Item</button>}
-                    {(itemData.transactionData?.status && itemData.transactionData?.status !== 'Complete') && <button className={SideNavCSS.statusButton} onClick={cancelOrder}>Cancel Order</button>}
-                    {(itemData.transactionData?.status === 'Complete') &&
-                        <>
-                            <p className={SideNavCSS.sideNavRow__text}>Didn't end up selling your item?</p>
-                            <button className={ItemCSS.deleteItemButton} onClick={cancelOrder}>Make Live Again</button>
-                        </>
-                    }
+                    {(itemData.transactionData?.status === "Complete" && ['seller-with-buyer', 'buyer'].includes(userType)) && <p className={SideNavCSS.sideNavRow__text}>This item has already been bought.</p>}
+                    {(!itemData.transactionData?.status && !interestedBuyer && userType === 'potential-buyer') && <button className={ItemCSS.transactionButton} onClick={onClickBuy}>Buy</button>}
+                    {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in"><button className={ItemCSS.transactionButton}>Sign In To Buy Item</button></Link>}
+                    {(userType === 'seller-without-buyer') && <button className={ItemCSS.transactionButton} onClick={deleteItem}>Delete This Item</button>}
+                    {(itemData.transactionData?.status && itemData.transactionData?.status !== 'Complete' && ['seller-with-buyer', 'buyer'].includes(userType)) && <button className={SideNavCSS.statusButton} onClick={cancelOrder}>Cancel Order</button>}
+                </div>
+                <div className={SideNavCSS.sideNavRow}>
+                    <div style={((["Awaiting Time Confirmation", "Awaiting Meetup", "Complete"].includes(itemData.transactionData?.status) && ['seller-with-buyer', 'buyer'].includes(userType)) || interestedBuyer) ? { opacity: "100%" } : { opacity: "40%" }}>
+                        <p className={SideNavCSS.sideNavRow__itemCount}>Step 1</p>
+                        <p className={SideNavCSS.sideNavRow__text}>{['potential-buyer', 'non-user'].includes(userType) ? "Select when and where you’d like to meet the seller" : "An order has been placed"}</p>
+                        {(userType === 'potential-buyer' && interestedBuyer) && <p className={ItemCSS.instructions}>Follow the steps at the bottom of this page</p>}
+                    </div>
+                </div>
+                <div className={SideNavCSS.sideNavRow}>
+                    <div style={["Awaiting Time Confirmation", "Awaiting Meetup", "Complete"].includes(itemData.transactionData?.status) && ['seller-with-buyer', 'buyer'].includes(userType) ? { opacity: "100%" } : { opacity: "40%" }}>
+                        <p className={SideNavCSS.sideNavRow__itemCount}>Step 2</p>
+                        <p className={SideNavCSS.sideNavRow__text}>{userType === 'buyer' ? "Wait for the seller to confirm the time of your meeting" : "Select when and where you’d like to meet the buyer"}</p>
+                    </div>
+                </div>
+                <div className={SideNavCSS.sideNavRow}>
+                    <div style={["Awaiting Meetup", "Complete"].includes(itemData.transactionData?.status) && ['seller-with-buyer', 'buyer'].includes(userType) ? { opacity: "100%" } : { opacity: "40%" }}>
+                        <p className={SideNavCSS.sideNavRow__itemCount}>Step 3</p>
+                        <p className={SideNavCSS.sideNavRow__text}>Mark your calendar & {userType === 'buyer' ? "meet the seller" : "meet the buyer"}</p>
+                        {(itemData.transactionData?.status === 'Complete' && userType === 'seller-with-buyer') &&
+                            <>
+                                <p className={SideNavCSS.sideNavRow__text}>Didn't end up selling your item?</p>
+                                <button className={SideNavCSS.statusButton} onClick={cancelOrder}>Make Live Again</button>
+                            </>
+                        }
+                    </div>
                 </div>
             </SideNav>
         </Layout>

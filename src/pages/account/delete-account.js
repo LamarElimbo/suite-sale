@@ -1,22 +1,47 @@
-import * as React from 'react'
+import React, { useState, useRef } from 'react'
+import { navigate } from "gatsby"
 import { useUser } from "../../context/UserContext"
 import { Layout, Content, SideNav } from '../../components/layout'
 import SideNavContent from '../../components/side-nav'
 import * as FormCSS from '../../css/form.module.css'
 
 const DeleteAccountPage = () => {
+    const currentPassword = useRef()
+    const [currentPasswordError, setCurrentPasswordError] = useState("")
     const firebaseContext = useUser()
-    const deleteAccount = firebaseContext?.deleteAccount
-    const onDeleteAccount = () => deleteAccount()
 
+    const onSubmit = (e) => {
+        e.preventDefault()
+        setCurrentPasswordError("")
+        const reauthentication = firebaseContext?.reauthenticateUser(currentPassword.current.value, 'delete')
+        console.log("reauthentication: ", reauthentication)
+        if (reauthentication === "success") {
+            navigate('/', { state: { message: "delete" } })
+        } else {
+            setCurrentPasswordError("It looks like the password you entered was incorrect.")
+        }
+    }
+
+    !firebaseContext?.userAuth && navigate('/sign-in')
     return (
         <Layout pageTitle="Delete Your Account" headerLink="Logout">
             <Content contentTitle="Delete your account" titlePosition='center'>
-                <div className={FormCSS.form}>
-                    <p className={FormCSS.inputItem__label}>Are you sure that you want to delete your account?</p>
-                    <div className={FormCSS.inputItem__submitArea}>
-                        <button className={FormCSS.darkButton} onClick={onDeleteAccount}>Delete your account</button>
+                <div className={FormCSS.form} onSubmit={onSubmit}>
+                    <div className={FormCSS.formField}>
+                        <div className={FormCSS.inputItem} style={{ justifyContent: "center" }}>
+                            <label>
+                                <p className={FormCSS.inputItem__label}>Enter your<br />current password</p>
+                                <input className={FormCSS.inputItem__textInput}
+                                    type="text"
+                                    placeholder="*****"
+                                    ref={currentPassword} />
+                                {currentPasswordError && <p className={FormCSS.formError}>{currentPasswordError}</p>}
+                            </label>
+                        </div>
                     </div>
+                    <input className={FormCSS.submitButton}
+                        type="submit"
+                        value="Delete your account" />
                 </div>
             </Content>
             <SideNav>

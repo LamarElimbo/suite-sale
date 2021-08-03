@@ -1,16 +1,15 @@
 import * as React from "react"
 import { Layout, Content, SideNav } from '../components/layout'
 import SideNavContent from '../components/side-nav'
+import * as ItemsCSS from '../css/items.module.css'
 
 const NotFoundPage = () => {
-  const addMargin = {
-    marginTop: "30px"
-  }
-
   return (
     <Layout pageTitle="Page Not Found">
       <Content contentTitle="Page not found">
-        <p style={addMargin}>Sorry, but the page you were looking for couldn’t be found</p>
+        <div className={ItemsCSS.itemBuffer2}>
+          <p className={ItemsCSS.itemStatus} style={{ color: 'white' }}>Sorry, but the page you were looking for couldn’t be found</p>
+        </div>
       </Content>
       <SideNav>
         <SideNavContent type='account' />

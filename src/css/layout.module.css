@@ -19,7 +19,7 @@ h1 {
 }
 
 h2 {
-    margin: 0 0 30px 0;
+    margin: 30px 0;
     padding-left: 15px;
     padding-right: 15px;
 }
@@ -43,6 +43,7 @@ p, a {
     width: 100%;
     background-color: #c4c4c4;
     height: 52px;
+    z-index: 10;
 }
 
 .content {
@@ -114,6 +115,13 @@ input[type="file"] {
     font-weight: 400;
 }
 
+.title {
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    border: 2px black solid;
+}
+
 .status {
     width: 100%;
     padding: 20px;
@@ -127,7 +135,7 @@ input[type="file"] {
 }
 
 .statusButton {
-    background-color: #c4c4c4;
+    background-color: rgba(255, 255, 255, 40%);
     border: 1px solid black;
     border-radius: 5px;
     font-size: 18px;
@@ -137,18 +145,19 @@ input[type="file"] {
 }
 
 .aboutSection {
-    height: 50%; 
+    width: 100%;
     padding: 50px;
+    box-sizing: border-box;
     border: 2px black solid;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end
+
 }
 
 .aboutTagline {
     font-size: 28px;
     padding: 10px;
-    margin-bottom: 20px
+    margin: 100px 0 20px 0;
 }
 
 .aboutDescription {
@@ -161,6 +170,24 @@ input[type="file"] {
     text-transform: uppercase;
     margin-top: 30px;
     padding-left: 10px;
+    cursor: pointer;
+}
+
+.notificationLink {
+    font-size: 18px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 15%);
+    border-radius: 5px;
+}
+
+.notificationMessage {
+    padding-bottom: 5px;
+}
+
+.notificationAction {
+    font-size: 16px;
+    font-weight: 400;
 }
 
 /* If the screen size is 600px or less, set the font-size of <div> to 30px */
@@ -172,11 +199,19 @@ input[type="file"] {
 
     h2 {
         margin: 20px 0 20px 0;
-        font-size: 18px;
+        font-size: 20px;
     }
 
     .header {
         height: 50px;
+    }
+
+    .title {
+        text-align: center;
+    }
+
+    .address {
+        display: none;
     }
 
     .content {
@@ -219,6 +254,7 @@ input[type="file"] {
     .aboutTagline {
         font-size: 20px;
         margin-bottom: 0px;
+        margin: 50px 0 0 0
     }
 
     .aboutLink {

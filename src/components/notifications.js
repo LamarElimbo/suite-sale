@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'gatsby'
 import { firestore, firebase } from "./firebase"
 import { useUser } from "../context/UserContext"
-import * as SideNavCSS from '../css/side-nav.module.css'
+import * as LayoutCSS from '../css/layout.module.css'
 
 export const notifyUser = (userId, notifyAbout, itemId) => {
     let message = ""
@@ -43,7 +43,7 @@ export const sendSMS = async (notifyAt, message) => {
     const functionURL = "https://turquoise-octopus-1624.twil.io/send-sms"
     const response = await fetch(functionURL, {
         method: "post",
-        headers: {"Content-type": "application/x-www-form-urlencoded; charset=UTF-8"},
+        headers: { "Content-type": "application/x-www-form-urlencoded; charset=UTF-8" },
         body: new URLSearchParams({ to: notifyAt, body: message }).toString(),
     })
     if (response.status === 200) {
@@ -59,7 +59,7 @@ export const sendEmail = async (notifyAt, message) => {
     const functionURL = "https://turquoise-octopus-1624.twil.io/send-email"
     const response = await fetch(functionURL, {
         method: "post",
-        headers: {"Content-type": "application/x-www-form-urlencoded; charset=UTF-8"},
+        headers: { "Content-type": "application/x-www-form-urlencoded; charset=UTF-8" },
         body: new URLSearchParams({ to: "lamar_johnson133@yahoo.ca", subject: message, body: message }).toString(),
     })
     if (response.status === 200) {
@@ -73,18 +73,18 @@ export const sendEmail = async (notifyAt, message) => {
 export const NotificationsList = () => {
     const [notificationItems, setNotificationItems] = useState([])
     const firebaseContext = useUser()
-    const userData = firebaseContext?.userData
-    const allItems = firebaseContext?.allItems
+    const deleteNotification = (e) => firebaseContext?.updateUserItems('remove', "orderCancellationNotification", e.target.id)
+    const confirmNotification = (e) => firebaseContext?.updateUserItems('remove', "orderConfirmationNotification", e.target.id)
 
     useEffect(() => {
-        userData?.notifications.forEach(notification => {
-            const item = allItems?.filter(item => item.itemId === notification.itemId)
+        firebaseContext?.userData?.notifications.forEach(notification => {
+            const item = firebaseContext?.allItems?.filter(item => item.itemId === notification.itemId)
             notification['item'] = item ? item[0] : null
 
             switch (notification.message) {
                 case "Your order has been cancelled":
                     notification['fullMessage'] = `Your ${notification?.item?.item} order has been cancelled`
-                    notification['action'] = "Next Step: Remove notification"
+                    notification['action'] = ""
                     break
                 case "You have a new buyer":
                     notification['fullMessage'] = `You have a new buyer for your ${notification?.item?.item}`
@@ -99,16 +99,29 @@ export const NotificationsList = () => {
             }
             setNotificationItems(prev => Array.from(new Set([...prev, notification])))
         })
-    }, [userData, allItems])
+    }, [firebaseContext])
 
     return (
         <>
             {notificationItems.map(notificationItem => {
                 return (
-                    <Link to={`/item?item=${notificationItem.itemId}`} state={{ item: notificationItem.item }} className={SideNavCSS.sideNavRow} key={notificationItem.itemId}>
-                        <p className={SideNavCSS.sideNavRow__title}>{notificationItem.fullMessage}</p>
-                        <p>{notificationItem.action}</p>
-                    </Link>)
+                    <>
+                        {notificationItem.fullMessage?.search('confirm') > 0 || notificationItem.fullMessage?.search('cancel') > 0 ?
+                            <div className={LayoutCSS.notificationLink} state={{ item: notificationItem.item }} key={notificationItem.itemId}>
+                                <p className={LayoutCSS.notificationMessage}>{notificationItem.fullMessage}</p>
+                                <p className={LayoutCSS.notificationAction}>{notificationItem.action}</p>
+                                {notificationItem.fullMessage?.search('confirm') > 0 && <button className={LayoutCSS.statusButton} id={notificationItem.itemId} onClick={confirmNotification}>Dismiss</button>}
+                                {notificationItem.fullMessage?.search('confirm') > 0 && <Link to={`/item?item=${notificationItem.itemId}`} style={{marginLeft: "10px"}}><button className={LayoutCSS.statusButton} id={"confirm" + notificationItem.itemId}>Visit item page for details</button></Link>}
+                                {notificationItem.fullMessage?.search('cancel') > 0 && <button className={LayoutCSS.statusButton} id={notificationItem.itemId} onClick={deleteNotification}>Dismiss</button>}
+                            </div>
+                            :
+                            <Link to={`/item?item=${notificationItem.itemId}`} className={LayoutCSS.notificationLink} state={{ item: notificationItem.item }} key={notificationItem.itemId}>
+                                <p className={LayoutCSS.notificationMessage}>{notificationItem.fullMessage}</p>
+                                <p className={LayoutCSS.notificationAction}>{notificationItem.action}</p>
+                            </Link>
+                        }
+                    </>
+                )
             })}
         </>
     )
