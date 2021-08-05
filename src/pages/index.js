@@ -11,7 +11,7 @@ const IndexPage = ({ location }) => {
   const [filter, setFilter] = useState('all items')
   const firebaseContext = useUser()
   const [message, setMessage] = useState('')
-
+    
   useEffect(() => {
     // Check to see if user has a success or error message to see
     if (location.state?.message) { setMessage(location.state?.message) }

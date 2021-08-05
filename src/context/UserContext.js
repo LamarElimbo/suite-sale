@@ -174,10 +174,12 @@ export function UserProvider({ children }) {
       console.log('getting all items')
       await firestore
         .collection("items")
+        .orderBy("postedOn", "desc")
         .get()
         .then(items => {
           let itemDocs = []
           items.forEach(item => itemDocs.push(item.data()))
+          setAllItems(itemDocs)
           return itemDocs
         })
         .then(itemDocs => setAllItems(itemDocs))
@@ -221,6 +223,7 @@ export function UserProvider({ children }) {
     userData,
     allItems,
     getAllItems,
+    setAllItems,
     login,
     reauthenticateUser,
     deleteAccount,

@@ -10,7 +10,7 @@ export const getAllItemTags = allItems => {
     var setTags = {}
 
     allItems?.forEach(item => !item.transactionData && tags.push(...item.tags))
-    tags.forEach(tag => { setTags[tag] = setTags[tag] ? setTags++ : 1 })
+    tags?.forEach(tag => setTags[tag] = setTags[tag] ? setTags[tag]+1 : 1 )
 
     const orderedTags = Object.keys(setTags).sort().reduce(
         (tag, key) => {

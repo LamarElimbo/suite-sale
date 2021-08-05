@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { navigate } from "gatsby"
 import { useUser } from "../context/UserContext"
 import { getAllItemTags } from '../components/items'
-import { firestore, imgStorage } from "../components/firebase"
+import { firebase, firestore, imgStorage } from "../components/firebase"
 import * as FormCSS from '../css/form.module.css'
 import camera_icon from '../images/camera_icon.png'
 
@@ -55,6 +55,26 @@ const ItemFormInfo = ({ itemData }) => {
         getTags()
     }, [allItems])
 
+    useEffect(() => {
+        if (typeof photo1 === "object") {
+            imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/1`).put(photo1).then(snapshot => {
+                snapshot.ref.getDownloadURL().then(downloadURL => setPhoto1(downloadURL));
+            })
+        }
+
+        if (typeof photo2 === "object") {
+            imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/2`).put(photo2).then(snapshot => {
+                snapshot.ref.getDownloadURL().then(downloadURL => setPhoto2(downloadURL));
+            })
+        }
+
+        if (typeof photo3 === "object") {
+            imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/3`).put(photo3).then(snapshot => {
+                snapshot.ref.getDownloadURL().then(downloadURL => setPhoto3(downloadURL));
+            })
+        }
+    }, [photo1, photo2, photo3])
+
     const onChangeItem = (e) => setItem(e.target.value)
     const onChangeCost = (e) => setCost(e.target.value)
     const onChangeItemNotes = (e) => setItemNotes(e.target.value)
@@ -73,8 +93,8 @@ const ItemFormInfo = ({ itemData }) => {
     }
 
     const onAddTag = () => {
-        setExistingTags([...existingTags, newTag])
-        setTags([...tags, newTag])
+        setExistingTags([...existingTags, newTag.toLowerCase()])
+        setTags([...tags, newTag.toLowerCase()])
         setNewTag("")
     }
 
@@ -82,18 +102,18 @@ const ItemFormInfo = ({ itemData }) => {
     const onPhoto1Upload = (e) => setPhoto1(e.target.files[0])
     const onPhoto2Upload = (e) => setPhoto2(e.target.files[0])
     const onPhoto3Upload = (e) => setPhoto3(e.target.files[0])
-
+    
     const onPhoto1Remove = () => {
         setPhoto1('')
-        itemData && imgStorage.child(`${itemData.itemId}/1`).delete()
+        itemData && imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/1`).delete()
     }
     const onPhoto2Remove = () => {
         setPhoto2('')
-        itemData && imgStorage.child(`${itemData.itemId}/2`).delete()
+        itemData && imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/2`).delete()
     }
     const onPhoto3Remove = () => {
         setPhoto3('')
-        itemData && imgStorage.child(`${itemData.itemId}/3`).delete()
+        itemData && imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/3`).delete()
     }
 
     const onChangePickUp = () => setPickUp(!pickUp)
@@ -117,55 +137,26 @@ const ItemFormInfo = ({ itemData }) => {
         if (tags.length === 0) setTagError("You'll have to enter a tag")
         if (!locationExchange) setLocationExchangeError("You'll have to select a meet up location")
         if (pickUp) {
-            (!userData?.suite && !suite) && setSuiteError("You'll have to enter your suite number or remove 'Pick up from your suite' as one of your meet up options")
-                (!userData?.suite && suite) && firebaseContext?.addSuite(suite)
+            if (!userData?.suite && !suite) setSuiteError("You'll have to enter your suite number or remove 'Pick up from your suite' as one of your meet up options")
+            if (!userData?.suite && suite) firebaseContext?.addSuite(suite)
         }
         if (item && cost && itemNotes && (tags.length > 0) && (pickUp || dropOff || lobby) && !suiteErr) {
-            const updatedItemData = { seller: userData?.id, item, cost, itemNotes, tags, pickUp, dropOff, lobby }
-
-            const updateImages = itemId => {
-                if (typeof photo1 === 'object') {
-                    imgStorage.child(`${itemId}/1`).put(photo1).then((snapshot) => {
-                        snapshot.ref.getDownloadURL().then((downloadURL) => {
-                            firestore.collection("items").doc(itemId).update({ photo1: downloadURL, itemId })
-                        });
-                    })
-                }
-
-                if (typeof photo2 === 'object') {
-                    imgStorage.child(`${itemId}/2`).put(photo2).then((snapshot) => {
-                        snapshot.ref.getDownloadURL().then((downloadURL) => {
-                            firestore.collection("items").doc(itemId).update({ photo2: downloadURL })
-                        });
-                    })
-                }
-
-                if (typeof photo3 === 'object') {
-                    imgStorage.child(`${itemId}/3`).put(photo3).then((snapshot) => {
-                        snapshot.ref.getDownloadURL().then((downloadURL) => {
-                            firestore.collection("items").doc(itemId).update({ photo3: downloadURL })
-                        });
-                    })
-                }
-            }
+            const updatedItemData = { seller: userData?.id, item, cost, itemNotes, tags, pickUp, dropOff, lobby, postedOn: firebase.firestore.FieldValue.serverTimestamp(), photo1, photo2, photo3 }
 
             if (itemData) {
                 firestore.collection("items").doc(itemData.itemId).update(updatedItemData)
-                    .then(() => { updateImages(itemData.itemId) })
+                    .then(() => { console.log('Success updating a new item') })
                     .catch(error => console.log("Error updating a new item: ", error))
             } else {
-                firestore.collection("items").add(updatedItemData)
-                    .then(itemDoc => {
-                        updateImages(itemDoc.id)
-                        firebaseContext?.updateUserItems('add', 'itemsPosted', itemDoc.id)
-                    })
-                    .catch(error => console.log("Error creating a new item: ", error))
-            }
-            firebaseContext?.getAllItems()
-            const message = itemData ? "item-update" : "item-create"
-            if (typeof window !== 'undefined') {
-                navigate('/', { state: { message } })
-                window.location.reload()
+                firestore.collection('items').add(updatedItemData).then(doc => {
+                    updatedItemData.itemId = doc.id
+                    firebaseContext?.updateUserItems('add', 'itemsPosted', doc.id)
+                    firebaseContext?.setAllItems(prevState => [updatedItemData, ...prevState])
+                    firestore.collection("items").doc(doc.id).update(updatedItemData)
+                })
+
+                const message = itemData ? "item-update" : "item-create"
+                if (typeof window !== 'undefined') navigate('/', { state: { message } })
             }
         }
     }
