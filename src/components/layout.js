@@ -32,7 +32,7 @@ export const Content = ({ contentTitle, children, titlePosition, sideNav = true,
             case 'notificationMethod':
                 return <p className={LayoutCSS.notificationMessage}>Your notification method has been successfully updated!</p>
             case 'paymentMethod':
-                return <p className={LayoutCSS.notificationMessage}>Your accepted payment methods has been successfully updated!</p>
+                return <p className={LayoutCSS.notificationMessage}>Your accepted payment methods have been successfully updated!</p>
             case 'item-buy':
                 return (
                     <>

@@ -154,10 +154,9 @@ const ItemFormInfo = ({ itemData }) => {
                     firebaseContext?.setAllItems(prevState => [updatedItemData, ...prevState])
                     firestore.collection("items").doc(doc.id).update(updatedItemData)
                 })
-
-                const message = itemData ? "item-update" : "item-create"
-                if (typeof window !== 'undefined') navigate('/', { state: { message } })
             }
+            const message = itemData ? "item-update" : "item-create"
+            if (typeof window !== 'undefined') navigate('/', { state: { message } })
         }
     }
 

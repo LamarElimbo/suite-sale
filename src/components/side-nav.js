@@ -18,7 +18,7 @@ const SideNavContent = ({ type, query = null }) => {
                 content.push(
                     <Link to={`/?tag=${tag}`} key={tag} className={SideNavCSS.sideNavRow} onClick={query(tag)}>
                         <p className={SideNavCSS.sideNavRow__title}>{tag}</p>
-                        <p className={SideNavCSS.sideNavRow__itemCount}>{itemTags[tag]} Item{itemTags[tag].length > 1 && 's'}</p>
+                        <p className={SideNavCSS.sideNavRow__itemCount}>{itemTags[tag]} Item{itemTags[tag] > 1 && 's'}</p>
                     </Link>
                 )
             }

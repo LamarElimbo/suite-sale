@@ -9,6 +9,7 @@ import ItemFormConfirmOrder from '../components/item-form-confirm-order'
 import * as LayoutCSS from '../css/layout.module.css'
 import * as SideNavCSS from '../css/side-nav.module.css'
 import * as ItemCSS from '../css/item-page.module.css'
+import wealthsimple_logo from '../images/wealthsimple.png'
 
 const ItemPage = ({ location }) => {
     const [itemData, setItemData] = useState({})
@@ -121,7 +122,7 @@ const ItemPage = ({ location }) => {
                         <div className={ItemCSS.acceptedPayments}>
                             <p className={ItemCSS.acceptedPaymentsLabel}>This seller accepts</p>
                             <p className={ItemCSS.acceptedPaymentsMethods}>Cash</p>
-                            {seller?.acceptedPaymentMethods?.includes("wealthsimple cash") && <p className={ItemCSS.acceptedPaymentsMethods}>Wealthsimple Cash</p>}
+                            {seller?.acceptedPaymentMethods?.includes("wealthsimple cash") && <a href="https://my.wealthsimple.com/app/public/cash-referral-signup?handle=$lamarelimbo" target="_blank" className={ItemCSS.acceptedPaymentsMethods} rel="noreferrer">Wealthsimple Cash<img src={wealthsimple_logo} alt="Wealthsimple logo" className={ItemCSS.wealthsimpleLogo} /></a>}
                             {seller?.acceptedPaymentMethods?.filter(method => method !== "wealthsimple cash").map(method => (<p className={ItemCSS.acceptedPaymentsMethods}>{method}</p>))}
                         </div>
                     </div>
