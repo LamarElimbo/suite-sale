@@ -5,7 +5,6 @@ import { getAllItemTags } from '../components/items'
 import { firebase, firestore, imgStorage } from "../components/firebase"
 import * as FormCSS from '../css/form.module.css'
 import camera_icon from '../images/camera_icon.png'
-import broken_img from '../images/broken_img.png'
 
 const ItemFormInfo = ({ itemData }) => {
     const [item, setItem] = useState()
@@ -30,6 +29,7 @@ const ItemFormInfo = ({ itemData }) => {
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
     const allItems = firebaseContext?.allItems
+    const postedIndex = itemData ? itemData?.postedIndex : userData?.itemsPosted.length
 
     useEffect(() => {
         if (itemData) {
@@ -57,15 +57,14 @@ const ItemFormInfo = ({ itemData }) => {
     }, [allItems])
 
     useEffect(() => {
-        const imgPrefix = itemData ? `${userData?.id}${itemData?.postedIndex}` : `${userData?.id}${userData?.itemsPosted.length}`
         if (typeof photo1 === "object") {
-            imgStorage.child(`${imgPrefix}/1`).put(photo1).then(snapshot => snapshot.ref.getDownloadURL().then(downloadURL => setPhoto1(downloadURL)))
+            imgStorage.child(`${userData?.id}${postedIndex}/1`).put(photo1).then(snapshot => snapshot.ref.getDownloadURL().then(downloadURL => setPhoto1(downloadURL)))
         }
         if (typeof photo2 === "object") {
-            imgStorage.child(`${imgPrefix}/2`).put(photo2).then(snapshot => snapshot.ref.getDownloadURL().then(downloadURL => setPhoto2(downloadURL)))
+            imgStorage.child(`${userData?.id}${postedIndex}/2`).put(photo2).then(snapshot => snapshot.ref.getDownloadURL().then(downloadURL => setPhoto2(downloadURL)))
         }
         if (typeof photo3 === "object") {
-            imgStorage.child(`${imgPrefix}/3`).put(photo3).then(snapshot => snapshot.ref.getDownloadURL().then(downloadURL => setPhoto3(downloadURL)))
+            imgStorage.child(`${userData?.id}${postedIndex}/3`).put(photo3).then(snapshot => snapshot.ref.getDownloadURL().then(downloadURL => setPhoto3(downloadURL)))
         }
     }, [photo1, photo2, photo3])
 
@@ -99,15 +98,15 @@ const ItemFormInfo = ({ itemData }) => {
 
     const onPhoto1Remove = () => {
         setPhoto1('')
-        itemData && imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/1`).delete()
+        itemData && imgStorage.child(`${userData?.id}${postedIndex}/1`).delete()
     }
     const onPhoto2Remove = () => {
         setPhoto2('')
-        itemData && imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/2`).delete()
+        itemData && imgStorage.child(`${userData?.id}${postedIndex}/2`).delete()
     }
     const onPhoto3Remove = () => {
         setPhoto3('')
-        itemData && imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/3`).delete()
+        itemData && imgStorage.child(`${userData?.id}${postedIndex}/3`).delete()
     }
 
     const onChangePickUp = () => setPickUp(!pickUp)
@@ -135,7 +134,7 @@ const ItemFormInfo = ({ itemData }) => {
             if (!userData?.suite && suite) firebaseContext?.addSuite(suite)
         }
         if (item && cost && itemNotes && (tags.length > 0) && (pickUp || dropOff || lobby) && !suiteErr) {
-            const updatedItemData = { seller: userData?.id, item, cost, itemNotes, tags, pickUp, dropOff, lobby, postedOn: firebase.firestore.FieldValue.serverTimestamp(), photo1, photo2, photo3 }
+            const updatedItemData = { seller: userData?.id, item, cost, itemNotes, tags, pickUp, dropOff, lobby, postedOn: firebase.firestore.FieldValue.serverTimestamp(), photo1, photo2, photo3, postedIndex}
             if (itemData) {
                 firestore.collection("items").doc(itemData.itemId).update(updatedItemData)
                     .then(() => { console.log('Success updating an item') })
