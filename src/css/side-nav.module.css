@@ -6,6 +6,7 @@
     justify-content: space-between;
     flex: 1 1;
     flex-direction: column;
+    min-height: 175px;
 }
 
 .sideNavRow__title {

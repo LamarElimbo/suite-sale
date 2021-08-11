@@ -5,6 +5,7 @@ import { getAllItemTags } from '../components/items'
 import { firebase, firestore, imgStorage } from "../components/firebase"
 import * as FormCSS from '../css/form.module.css'
 import camera_icon from '../images/camera_icon.png'
+import broken_img from '../images/broken_img.png'
 
 const ItemFormInfo = ({ itemData }) => {
     const [item, setItem] = useState()
@@ -56,22 +57,15 @@ const ItemFormInfo = ({ itemData }) => {
     }, [allItems])
 
     useEffect(() => {
+        const imgPrefix = itemData ? `${userData?.id}${itemData?.postedIndex}` : `${userData?.id}${userData?.itemsPosted.length}`
         if (typeof photo1 === "object") {
-            imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/1`).put(photo1).then(snapshot => {
-                snapshot.ref.getDownloadURL().then(downloadURL => setPhoto1(downloadURL));
-            })
+            imgStorage.child(`${imgPrefix}/1`).put(photo1).then(snapshot => snapshot.ref.getDownloadURL().then(downloadURL => setPhoto1(downloadURL)))
         }
-
         if (typeof photo2 === "object") {
-            imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/2`).put(photo2).then(snapshot => {
-                snapshot.ref.getDownloadURL().then(downloadURL => setPhoto2(downloadURL));
-            })
+            imgStorage.child(`${imgPrefix}/2`).put(photo2).then(snapshot => snapshot.ref.getDownloadURL().then(downloadURL => setPhoto2(downloadURL)))
         }
-
         if (typeof photo3 === "object") {
-            imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/3`).put(photo3).then(snapshot => {
-                snapshot.ref.getDownloadURL().then(downloadURL => setPhoto3(downloadURL));
-            })
+            imgStorage.child(`${imgPrefix}/3`).put(photo3).then(snapshot => snapshot.ref.getDownloadURL().then(downloadURL => setPhoto3(downloadURL)))
         }
     }, [photo1, photo2, photo3])
 
@@ -102,7 +96,7 @@ const ItemFormInfo = ({ itemData }) => {
     const onPhoto1Upload = (e) => setPhoto1(e.target.files[0])
     const onPhoto2Upload = (e) => setPhoto2(e.target.files[0])
     const onPhoto3Upload = (e) => setPhoto3(e.target.files[0])
-    
+
     const onPhoto1Remove = () => {
         setPhoto1('')
         itemData && imgStorage.child(`${userData?.id}${userData?.itemsPosted.length}/1`).delete()
@@ -142,11 +136,12 @@ const ItemFormInfo = ({ itemData }) => {
         }
         if (item && cost && itemNotes && (tags.length > 0) && (pickUp || dropOff || lobby) && !suiteErr) {
             const updatedItemData = { seller: userData?.id, item, cost, itemNotes, tags, pickUp, dropOff, lobby, postedOn: firebase.firestore.FieldValue.serverTimestamp(), photo1, photo2, photo3 }
-
             if (itemData) {
                 firestore.collection("items").doc(itemData.itemId).update(updatedItemData)
-                    .then(() => { console.log('Success updating a new item') })
-                    .catch(error => console.log("Error updating a new item: ", error))
+                    .then(() => { console.log('Success updating an item') })
+                    .catch(error => console.log("Error updating an item: ", error))
+                const removedItem = firebaseContext?.allItems.filter(item => item.itemId !== itemData.itemId)
+                firebaseContext?.setAllItems([updatedItemData, ...removedItem])
             } else {
                 firestore.collection('items').add(updatedItemData).then(doc => {
                     updatedItemData.itemId = doc.id
@@ -160,7 +155,6 @@ const ItemFormInfo = ({ itemData }) => {
         }
     }
 
-    const padding30 = { padding: "30px" }
     return (
         <form className={FormCSS.form} onSubmit={onSubmit}>
             <div className={FormCSS.formField}>
@@ -299,7 +293,7 @@ const ItemFormInfo = ({ itemData }) => {
                             <span className={FormCSS.checkboxInput__label}>Lobby</span>
                         </label>
                         {(pickUp === true && !userData?.suite) &&
-                            <div style={padding30}>
+                            <div style={{ padding: "30px" }}>
                                 <p className={FormCSS.inputItem__label}>What's your suite number?</p>
                                 <input className={FormCSS.inputItem__textInput}
                                     placeholder="###"

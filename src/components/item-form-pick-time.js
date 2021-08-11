@@ -72,13 +72,9 @@ const ItemFormPickTime = ({ item, availableTimes, setAvailableTimes }) => {
         switch (day) {
             case 'day1':
                 date = day1
-                console.log("timeString: ", timeString.slice(0, 4))
                 for (let i = 0; i < timeSelection.length; i++) {
-                    console.log("timeSelection: ", timeSelection[i]['t24'])
                     if (timeSelection[i]['t24'].slice(0, 4) === timeString.slice(0, 4)) {
-                        console.log("cutting")
                         timeRange = timeSelection.slice(i + 1)
-                        console.log("time range: ", timeRange)
                         break
                     }
                 }

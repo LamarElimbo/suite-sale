@@ -5,13 +5,14 @@ import { NotificationsList } from '../components/notifications'
 import { ItemCard, ItemCardList } from '../components/items'
 import SideNavContent from '../components/side-nav'
 import { useUser } from "../context/UserContext"
+import { firestore } from "../components/firebase"
 import * as LayoutCSS from '../css/layout.module.css'
 
 const IndexPage = ({ location }) => {
   const [filter, setFilter] = useState('all items')
   const firebaseContext = useUser()
   const [message, setMessage] = useState('')
-    
+
   useEffect(() => {
     // Check to see if user has a success or error message to see
     if (location.state?.message) { setMessage(location.state?.message) }
