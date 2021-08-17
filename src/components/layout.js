@@ -54,7 +54,7 @@ export const Content = ({ contentTitle, children, titlePosition, sideNav = true,
     }
 
     return (
-        <div className={LayoutCSS.leftCol} style={sideNav ? { borderRight: "2px solid black", marginRight: "-1px" } : { border: "none" }}>
+        <div className={LayoutCSS.leftCol}>
             {contentTitle &&
                 <div className={LayoutCSS.title}>
                     <h2 className={titlePosition && LayoutCSS.isCentered}>{contentTitle}</h2>
