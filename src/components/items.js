@@ -71,7 +71,7 @@ export const ItemCard = ({ create, item }) => {
     if (create === 'true') {
         return (
             <Link to={firebaseContext?.userAuth ? '/item-create' : '/sign-in'} className={ItemsCSS.itemCardArea}>
-                <div className={ItemsCSS.itemCard}>
+                <div className={ItemsCSS.itemCard} style={{justifyContent: "space-around"}}>
                     <p className={ItemsCSS.itemCardCreate__text}>Create a <br />new listing</p>
                     <img src={add_icon} className={ItemsCSS.itemCardCreate__icon} alt="Add a new listing" />
                 </div>
@@ -89,6 +89,7 @@ export const ItemCard = ({ create, item }) => {
                         {firebaseContext?.userData.itemsInProgress.includes(item.itemId) && <div className={ItemsCSS.cardInfo__status}>{item.transactionData?.status}</div>}
                     </div>
                     <div className={ItemsCSS.itemCard__imgArea}>
+                        <div className={ItemsCSS.tagLabelArea}>{item.tags.map(tag => <div className={ItemsCSS.tagLabel}>{tag}</div>)}</div>
                         {item.photo1 ?
                             <img className={ItemsCSS.itemCard__img} src={item.photo1 && item.photo1} alt="Item Preview" />
                             :

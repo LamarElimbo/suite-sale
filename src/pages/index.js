@@ -5,8 +5,8 @@ import { NotificationsList } from '../components/notifications'
 import { ItemCard, ItemCardList } from '../components/items'
 import SideNavContent from '../components/side-nav'
 import { useUser } from "../context/UserContext"
-import { firestore } from "../components/firebase"
 import * as LayoutCSS from '../css/layout.module.css'
+import wealthsimple_logo from '../images/wealthsimple.png'
 
 const IndexPage = ({ location }) => {
   const [filter, setFilter] = useState('all items')
@@ -28,6 +28,7 @@ const IndexPage = ({ location }) => {
   return (
     <Layout pageTitle="Home">
       <Content message={message} setMessage={setMessage}>
+      {(firebaseContext?.userAuth && !firebaseContext?.userData?.acceptedPaymentMethods.includes('wealthsimple cash')) && <a href="https://my.wealthsimple.com/app/public/cash-referral-signup?handle=$lamarelimbo" className={LayoutCSS.referralLink} target="_blank" rel="noreferrer"><img src={wealthsimple_logo} alt="Wealthsimple logo" className={LayoutCSS.wealthsimpleLogo} />Don't have cash on hand? Give the Wealthsimple Cash app a try. It's Canada's fastest and simplest way to send and receive money. No fees and totally secure. Plus, you can get a free $25 if you sign up with my referral link.</a>}
         {firebaseContext?.userData?.notifications?.length > 0 &&
           <div className={LayoutCSS.aboutSection}>
             <p className={LayoutCSS.aboutTagline}>You have {firebaseContext?.userData?.notifications.length} {firebaseContext?.userData?.notifications.length > 1 ? 'notifications' : 'notification'}</p>

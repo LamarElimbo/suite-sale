@@ -193,20 +193,23 @@ const ItemPage = ({ location }) => {
                 <div className={SideNavCSS.sideNavRow}>
                     <div style={((["Awaiting Time Confirmation", "Awaiting Meetup", "Complete"].includes(itemData.transactionData?.status) && ['seller-with-buyer', 'buyer'].includes(userType)) || interestedBuyer) ? { opacity: "100%" } : { opacity: "40%" }}>
                         <p className={SideNavCSS.sideNavRow__itemCount}>Step 1</p>
-                        <p className={SideNavCSS.sideNavRow__text}>{['potential-buyer', 'non-user'].includes(userType) ? "Select when and where you’d like to meet the seller" : "An order has been placed"}</p>
+                        {(userType === 'non-user') && <p className={SideNavCSS.sideNavRow__text}>The buyer selects when and where they’d like to meet the seller</p>}
+                        {(userType !== 'non-user') && <p className={SideNavCSS.sideNavRow__text}>{['potential-buyer'].includes(userType) ? "Select when and where you’d like to meet the seller" : "An order has been placed"}</p>}
                         {(userType === 'potential-buyer' && interestedBuyer) && <p className={ItemCSS.instructions}>Follow the steps at the bottom of this page</p>}
                     </div>
                 </div>
                 <div className={SideNavCSS.sideNavRow}>
                     <div style={["Awaiting Time Confirmation", "Awaiting Meetup", "Complete"].includes(itemData.transactionData?.status) && ['seller-with-buyer', 'buyer'].includes(userType) ? { opacity: "100%" } : { opacity: "40%" }}>
                         <p className={SideNavCSS.sideNavRow__itemCount}>Step 2</p>
-                        <p className={SideNavCSS.sideNavRow__text}>{userType === 'buyer' ? "Wait for the seller to confirm the time of your meeting" : "Select when and where you’d like to meet the buyer"}</p>
+                        {(userType === 'non-user') && <p className={SideNavCSS.sideNavRow__text}>The seller selects a time from the buyer's available times</p>}
+                        {(userType !== 'non-user') && <p className={SideNavCSS.sideNavRow__text}>{userType === 'buyer' ? "Wait for the seller to confirm the time of your meeting" : "Select when and where you’d like to meet the buyer"}</p>}
                     </div>
                 </div>
                 <div className={SideNavCSS.sideNavRow}>
                     <div style={["Awaiting Meetup", "Complete"].includes(itemData.transactionData?.status) && ['seller-with-buyer', 'buyer'].includes(userType) ? { opacity: "100%" } : { opacity: "40%" }}>
                         <p className={SideNavCSS.sideNavRow__itemCount}>Step 3</p>
-                        <p className={SideNavCSS.sideNavRow__text}>Mark your calendar & {userType === 'buyer' ? "meet the seller" : "meet the buyer"}</p>
+                        {(userType === 'non-user') && <p className={SideNavCSS.sideNavRow__text}>The seller & buyer meet</p>}
+                        {(userType !== 'non-user') && <p className={SideNavCSS.sideNavRow__text}>Mark your calendar & {userType === 'buyer' ? "meet the seller" : "meet the buyer"}</p>}
                         {(itemData.transactionData?.status === 'Complete' && userType === 'seller-with-buyer') &&
                             <>
                                 <p className={SideNavCSS.sideNavRow__text}>Didn't end up selling your item?</p>
