@@ -8,13 +8,13 @@ export const notifyUser = (userId, notifyAbout, itemId) => {
     let message = ""
     switch (notifyAbout) {
         case 'cancelation':
-            message = "Your order has been cancelled"
+            message = "This is Suite Sale letting you know that one of your orders has been cancelled."
             break
         case 'newBuyer':
-            message = "You have a new buyer"
+            message = "This is Suite Sale letting you know that you have a new buyer for an item that you posted."
             break
         case 'orderConfirmed':
-            message = "Your order has been confirmed"
+            message = "This is Suite Sale letting you know that one of your orders has been confirmed."
             break
         default:
             break

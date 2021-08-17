@@ -116,7 +116,8 @@
         margin: 0px;
         flex-direction: row;
         order: 1;
-        justify-content: space-between;   
+        justify-content: space-between;
+        align-items: flex-start;
     }
 
     .cardInfo__item {

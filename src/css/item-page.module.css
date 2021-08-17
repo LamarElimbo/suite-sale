@@ -15,6 +15,7 @@
 .moneySection {
     display: flex;
     justify-content: space-between;
+    padding: 7px;
 }
 
 .cost {
@@ -41,7 +42,6 @@
 .acceptedPaymentsMethods {
     font-weight: 400;
     font-size: 16px;
-    margin-bottom: 5px;
 }
 
 .dollarSign {
