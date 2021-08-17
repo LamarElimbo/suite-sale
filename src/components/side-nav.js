@@ -34,7 +34,7 @@ const SideNavContent = ({ type, query = null }) => {
             return (
                 <>
                     <Link to="/account/items-in-progress" className={SideNavCSS.sideNavRow}>
-                        <p className={SideNavCSS.sideNavRow__title}>Items in progress</p>
+                        <p className={SideNavCSS.sideNavRow__title}>Your Items in progress</p>
                         <p className={SideNavCSS.sideNavRow__itemCount}>{userData?.itemsInProgress.length} Items</p>
                     </Link>
                     <Link to="/account/posted-items" className={SideNavCSS.sideNavRow}>

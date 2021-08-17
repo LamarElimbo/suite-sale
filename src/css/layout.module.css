@@ -74,6 +74,14 @@ p, a {
     flex-direction: column;
 }
 
+.tagCol {
+    height: 95%;
+    width: 30%;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+}
+
 label {
     width: 100%;
 }
@@ -223,6 +231,7 @@ input[type="file"] {
 
     .header {
         height: 50px;
+        border-bottom: 2px solid black;
     }
 
     .title {
@@ -236,12 +245,14 @@ input[type="file"] {
     .content {
         flex-direction: column;
         height: 100%;
+        overflow: auto;
     }
 
     .left-col {
         width: 100%;
-        overflow: auto;
+        overflow: unset;
         height: 90%;
+        order: 2;
     }
     
     .left-col-body {
@@ -249,20 +260,34 @@ input[type="file"] {
         justify-content: space-between;
         flex-wrap: wrap;
         height: 100%;
+        border: 0;
     }
     
     .right-col {
+        order: 1;
         height: auto;
-        min-height: 100px;
-        max-height: 200px;
+        width: 100%;
+        overflow: unset;
+        flex-wrap: wrap;
+        flex-direction: row;
+        background-color: #e8e8e8;
+        box-sizing: border-box;
+        border: 2px solid;
+        border-top: 0px;
+    }
+
+    .tagCol {
+        order: 1;
+        height: 100px;
         width: 100%;
         overflow-x: auto;
         overflow-y: hidden;
         flex-wrap: nowrap;
         flex-direction: row;
-        background-color: #c4c4c4;
+        background-color: #e8e8e8;
         box-sizing: border-box;
         border: 2px solid;
+        border-top: 0px;
     }
     
     .aboutSection {

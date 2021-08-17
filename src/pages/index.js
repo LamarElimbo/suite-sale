@@ -52,7 +52,7 @@ const IndexPage = ({ location }) => {
         }
         <ItemCardList filter={filter} />
       </Content>
-      <SideNav>
+      <SideNav home='true'>
         <SideNavContent query={setFilter} />
       </SideNav>
     </Layout>

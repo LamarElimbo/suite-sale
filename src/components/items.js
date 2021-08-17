@@ -53,16 +53,12 @@ export const ItemCardList = ({ filter }) => {
 
     if (filteredItems?.length === 0) {
         return (
-            <div className={ItemsCSS.itemBuffer2}>
-                <p className={ItemsCSS.itemStatus} style={{color: 'white'}}>There aren't any items under this category</p>
+            <div style={{border: "2px solid black", width: "100%", height: "100%"}}>
+                <p className={ItemsCSS.itemStatus}>There aren't any items under this category</p>
             </div>
             )
     } else {
-        return <>
-            {filteredItems?.map(item => <ItemCard create='false' item={item} key={item.itemId} />)}
-            <div className={ItemsCSS.itemBuffer1}></div>
-            <div className={ItemsCSS.itemBuffer2}></div>
-        </>
+        return <>{filteredItems?.map(item => <ItemCard create='false' item={item} key={item.itemId} />)}</>
     }
 }
 

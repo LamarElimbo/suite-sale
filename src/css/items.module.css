@@ -15,22 +15,6 @@
     text-align: center;
 }
 
-.itemBuffer1 {
-    height: 250px;
-    box-sizing: border-box;
-    border: 2px solid black;
-    flex: 1 0 45%;
-    background-color: black;
-}
-
-.itemBuffer2 {
-    height: 100%;
-    box-sizing: border-box;
-    border: 2px solid black;
-    flex: 1 0 100%;
-    background-color: black;
-}
-
 .itemCardCreate__text {
     font-size: 28px;
     margin-left: 15px;
@@ -109,11 +93,13 @@
 @media only screen and (max-width: 900px) {
     .itemCard {
         flex-direction: column;
+        justify-content: unset;
     }
 
     .itemCard__Info {
         width: 100%;
         margin: 0px;
+        margin-top: 10px;
         flex-direction: row;
         order: 1;
         justify-content: space-between;
