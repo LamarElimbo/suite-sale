@@ -21,7 +21,6 @@ const ItemPage = ({ location }) => {
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
     const updateUserItems = firebaseContext?.updateUserItems
-    const allItems = firebaseContext?.allItems
 
     const toggleSave = () => {
         const action = saved ? 'remove' : 'add'
@@ -54,7 +53,7 @@ const ItemPage = ({ location }) => {
             .update({ transactionData: firebase.firestore.FieldValue.delete() })
             .catch(error => console.log("Error updating item cancellation status: ", error))
 
-            if (typeof window !== 'undefined') navigate('/', { state: { message: "item-cancel" } })
+        if (typeof window !== 'undefined') navigate('/', { state: { message: "item-cancel" } })
     }
 
     useEffect(() => {
@@ -64,12 +63,14 @@ const ItemPage = ({ location }) => {
             setSaved(userData?.itemsSaved.includes(location.state.item.itemId))
         } else { // If user came to page directly from url
             const urlParams = new URLSearchParams(location.search);
-            const item = allItems?.filter(item => item.itemId === urlParams.get('item'))
-            item && setItemData(item[0])
-            item && setCoverPhoto(item[0].photo1)
-            item && setSaved(userData?.itemsSaved.includes(item[0].itemId))
+            firestore.collection('items').doc(urlParams.get('item')).get()
+                .then(doc => {
+                    setItemData(doc.data())
+                    setCoverPhoto(doc.data().photo1)
+                    setSaved(userData?.itemsSaved.includes(doc.data().itemId))
+                })
         }
-    }, [location, userData, allItems])
+    }, [location, userData])
 
     useEffect(() => {
         userData?.id ? setUserType('potential-buyer') : setUserType('non-user')
@@ -127,7 +128,7 @@ const ItemPage = ({ location }) => {
                         </div>
                     </div>
                     <p className={LayoutCSS.aboutTagline}>{itemData.item}</p>
-                    <p className={LayoutCSS.aboutDescription}>Seller's Notes: {itemData.itemNotes}</p>
+                    <p className={LayoutCSS.aboutDescription}><span style={{fontWeight: "700", marginRight: "10px"}}>Seller's Notes: </span>{itemData.itemNotes}</p>
                     {(['potential-buyer', 'buyer'].includes(userType)) && <div className={LayoutCSS.aboutLink} onClick={toggleSave} onKeyDown={toggleSave} role="button" tabIndex="0">{saved ? 'Remove From Cart' : 'Add To Cart'}</div>}
                     {(!itemData.transactionData?.status && !interestedBuyer && userType === 'non-user') && <Link to="/sign-in" className={LayoutCSS.aboutLink}>Sign In To Save Item</Link>}
                 </div>

@@ -78,26 +78,30 @@ export const NotificationsList = () => {
 
     useEffect(() => {
         firebaseContext?.userData?.notifications.forEach(notification => {
-            const item = firebaseContext?.allItems?.filter(item => item.itemId === notification.itemId)
-            notification['item'] = item ? item[0] : null
+            //const item = firebaseContext?.allItems?.filter(item => item.itemId === notification.itemId)
+            //notification['item'] = item ? item[0] : null
+            firestore.collection('items').doc(notification.itemId).get()
+                .then(doc => {
+                    notification['item'] = doc.data()
 
-            switch (notification.message) {
-                case "Your order has been cancelled":
-                    notification['fullMessage'] = `Your ${notification?.item?.item} order has been cancelled`
-                    notification['action'] = ""
-                    break
-                case "You have a new buyer":
-                    notification['fullMessage'] = `You have a new buyer for your ${notification?.item?.item}`
-                    notification['action'] = "Next Step: Choose a time to meet"
-                    break
-                case "Your order has been confirmed":
-                    notification['fullMessage'] = `Your ${notification?.item?.item} order has been confirmed`
-                    notification['action'] = "Next Step: Mark your calendar"
-                    break
-                default:
-                    break
-            }
-            setNotificationItems(prev => Array.from(new Set([...prev, notification])))
+                    switch (notification.message) {
+                        case "Your order has been cancelled":
+                            notification['fullMessage'] = `Your ${notification?.item?.item} order has been cancelled`
+                            notification['action'] = ""
+                            break
+                        case "You have a new buyer":
+                            notification['fullMessage'] = `You have a new buyer for your ${notification?.item?.item}`
+                            notification['action'] = "Next Step: Choose a time to meet"
+                            break
+                        case "Your order has been confirmed":
+                            notification['fullMessage'] = `Your ${notification?.item?.item} order has been confirmed`
+                            notification['action'] = "Next Step: Mark your calendar"
+                            break
+                        default:
+                            break
+                    }
+                    setNotificationItems(prev => Array.from(new Set([...prev, notification])))
+                })
         })
     }, [firebaseContext])
 
@@ -111,7 +115,7 @@ export const NotificationsList = () => {
                                 <p className={LayoutCSS.notificationMessage}>{notificationItem.fullMessage}</p>
                                 <p className={LayoutCSS.notificationAction}>{notificationItem.action}</p>
                                 {notificationItem.fullMessage?.search('confirm') > 0 && <button className={LayoutCSS.statusButton} id={notificationItem.itemId} onClick={confirmNotification}>Dismiss</button>}
-                                {notificationItem.fullMessage?.search('confirm') > 0 && <Link to={`/item?item=${notificationItem.itemId}`} style={{marginLeft: "10px"}}><button className={LayoutCSS.statusButton} id={"confirm" + notificationItem.itemId}>Visit item page for details</button></Link>}
+                                {notificationItem.fullMessage?.search('confirm') > 0 && <Link to={`/item?item=${notificationItem.itemId}`} style={{ marginLeft: "10px" }}><button className={LayoutCSS.statusButton} id={"confirm" + notificationItem.itemId}>Visit item page for details</button></Link>}
                                 {notificationItem.fullMessage?.search('cancel') > 0 && <button className={LayoutCSS.statusButton} id={notificationItem.itemId} onClick={deleteNotification}>Dismiss</button>}
                             </div>
                             :

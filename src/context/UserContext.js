@@ -9,7 +9,6 @@ export const useUser = () => useContext(UserContext)
 export function UserProvider({ children }) {
   const [userAuth, setUserAuth] = useState(null)
   const [userData, setUserData] = useState(null)
-  const [allItems, setAllItems] = useState(null)
   const [loading, setLoading] = useState(true)
   const [windowCheck, setWindowCheck] = useState(false)
 
@@ -42,19 +41,13 @@ export function UserProvider({ children }) {
 
     // TODO(you): prompt the user to re-provide their sign-in credentials
     const credentials = firebase.auth.EmailAuthProvider.credential(userAuth.email, password)
-
-    console.log("credentials: ", userAuth.email)
-    console.log("password: ", password)
     user.reauthenticateWithCredential(credentials).then(() => {
       // User re-authenticated.
-      console.log('reauthenticated')
       switch (action) {
         case 'password':
-          console.log("Updating password")
           updatePassword(password).then((result) => console.log(result))
           break
         case 'email':
-          console.log("Updating email: ", email)
           updateEmail(email).then((result) => console.log(result))
           break
         default:
@@ -63,7 +56,6 @@ export function UserProvider({ children }) {
       return 'success'
     }).catch((error) => {
       // An error ocurred
-      console.log('reauthenticated failed: ', error)
       return 'error'
     });
   }
@@ -169,25 +161,6 @@ export function UserProvider({ children }) {
     }
   }
 
-  const getAllItems = async () => {
-    try {
-      console.log('getting all items')
-      await firestore
-        .collection("items")
-        .orderBy("postedOn", "desc")
-        .get()
-        .then(items => {
-          let itemDocs = []
-          items.forEach(item => itemDocs.push(item.data()))
-          setAllItems(itemDocs)
-          return itemDocs
-        })
-        .then(itemDocs => setAllItems(itemDocs))
-    } catch (error) {
-      console.log("Error getting all documents: ", error)
-    }
-  }
-
   useEffect(() => {
     if (!windowCheck) {
       setUserAuth(false)
@@ -207,7 +180,6 @@ export function UserProvider({ children }) {
     const unsubscribe = auth.onAuthStateChanged(userAuth => {
       setUserAuth(userAuth)
       getUserDocument(userAuth)
-      getAllItems()
       setLoading(false)
     })
 
@@ -221,9 +193,6 @@ export function UserProvider({ children }) {
   const value = {
     userAuth,
     userData,
-    allItems,
-    getAllItems,
-    setAllItems,
     login,
     reauthenticateUser,
     deleteAccount,

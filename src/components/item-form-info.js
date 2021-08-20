@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { navigate } from "gatsby"
 import { useUser } from "../context/UserContext"
-import { getAllItemTags } from '../components/items'
 import { firebase, firestore, imgStorage } from "../components/firebase"
 import * as FormCSS from '../css/form.module.css'
 import camera_icon from '../images/camera_icon.png'
@@ -28,7 +27,6 @@ const ItemFormInfo = ({ itemData }) => {
     const [suiteError, setSuiteError] = useState('')
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
-    const allItems = firebaseContext?.allItems
     const postedIndex = itemData ? itemData?.postedIndex : userData?.itemsPosted.length
 
     useEffect(() => {
@@ -48,13 +46,15 @@ const ItemFormInfo = ({ itemData }) => {
     }, [itemData, userData])
 
     useEffect(() => {
-        function getTags() {
+        async function getTags() {
+            const tags = await firestore.collection('tags').doc("tagsList").get()
+            const itemTags = tags.data()
             let content = []
-            for (let tag in getAllItemTags(allItems)) { content.push(tag) }
+            for (let tag in itemTags) { content.push(tag) }
             setExistingTags(content)
         }
         getTags()
-    }, [allItems])
+    }, [])
 
     useEffect(() => {
         if (typeof photo1 === "object") {
@@ -74,18 +74,24 @@ const ItemFormInfo = ({ itemData }) => {
 
     const onTagSelection = (e) => {
         let selectedTags = tags
-        if (selectedTags.includes(e.target.id)) {
+        if (selectedTags.includes(e.target.id)) { //unselect tag
             const index = selectedTags.indexOf(e.target.id)
             if (index > -1) {
+                firestore.collection('tags').doc("tagsList").update({ tag: firebase.firestore.FieldValue.increment(1) })
                 selectedTags.splice(index, 1)
                 setTags([...selectedTags])
             }
-        } else {
+        } else { //select tag
+            firestore.collection('tags').doc("tagsList").update({ tag: firebase.firestore.FieldValue.increment(-1) })
             setTags([...selectedTags, e.target.id])
         }
     }
 
     const onAddTag = () => {
+        const newTagInput = {}
+        const newTagKey = newTag.toLowerCase()
+        newTagInput[newTagKey] = 1
+        firestore.collection('tags').doc("tagsList").update(newTagInput)
         setExistingTags([...existingTags, newTag.toLowerCase()])
         setTags([...tags, newTag.toLowerCase()])
         setNewTag("")
@@ -134,18 +140,15 @@ const ItemFormInfo = ({ itemData }) => {
             if (!userData?.suite && suite) firebaseContext?.addSuite(suite)
         }
         if (item && cost && itemNotes && (tags.length > 0) && (pickUp || dropOff || lobby) && !suiteErr) {
-            const updatedItemData = { seller: userData?.id, item, cost, itemNotes, tags, pickUp, dropOff, lobby, postedOn: firebase.firestore.FieldValue.serverTimestamp(), photo1, photo2, photo3, postedIndex}
+            const updatedItemData = { seller: userData?.id, item, cost, itemNotes, tags, pickUp, dropOff, lobby, postedOn: firebase.firestore.FieldValue.serverTimestamp(), photo1, photo2, photo3, postedIndex }
             if (itemData) {
                 firestore.collection("items").doc(itemData.itemId).update(updatedItemData)
                     .then(() => { console.log('Success updating an item') })
                     .catch(error => console.log("Error updating an item: ", error))
-                const removedItem = firebaseContext?.allItems.filter(item => item.itemId !== itemData.itemId)
-                firebaseContext?.setAllItems([updatedItemData, ...removedItem])
             } else {
                 firestore.collection('items').add(updatedItemData).then(doc => {
                     updatedItemData.itemId = doc.id
                     firebaseContext?.updateUserItems('add', 'itemsPosted', doc.id)
-                    firebaseContext?.setAllItems(prevState => [updatedItemData, ...prevState])
                     firestore.collection("items").doc(doc.id).update(updatedItemData)
                 })
             }

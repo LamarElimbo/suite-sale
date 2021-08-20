@@ -1,64 +1,91 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'gatsby'
+import { firestore } from "./firebase"
 import { useUser } from "../context/UserContext"
 import * as ItemsCSS from '../css/items.module.css'
 import * as ItemCSS from '../css/item-page.module.css'
 import add_icon from '../images/add_icon.png'
 
-export const getAllItemTags = allItems => {
-    var tags = []
-    var setTags = {}
-
-    allItems?.forEach(item => !item.transactionData && tags.push(...item.tags))
-    tags?.forEach(tag => setTags[tag] = setTags[tag] ? setTags[tag]+1 : 1 )
-
-    const orderedTags = Object.keys(setTags).sort().reduce(
-        (tag, key) => {
-            tag[key] = setTags[key];
-            return tag;
-        }, {}
-    );
-
-    return orderedTags //format = {tag1: count, tag2: count}
-}
-
 export const ItemCardList = ({ filter }) => {
     const [filteredItems, setFilteredItems] = useState([])
+    const [nextButtonDisplay, setNextButtonDisplay] = useState('show')
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
-    const allItems = firebaseContext?.allItems
+    const itemsRef = useRef()
+
+    const onClickLoadMore = () => {
+            let itemDocs = []
+            if (typeof itemsRef.current === Array) {
+                let arrayQuery = itemsRef.current.slice(itemsRef.current.indexOf(filteredItems[filteredItems.length - 1]), 25)
+                arrayQuery.forEach(itemId => itemDocs.push(firestore.collection('items').doc(itemId).get()))
+                setFilteredItems([...filteredItems, itemDocs])
+            } else {
+                // Construct a new query starting at the last visible document, then get the next 25 items.
+                itemsRef.current.orderBy("postedOn", "desc").startAfter(filteredItems[filteredItems.length - 1].postedOn).limit(25).get()
+                    .then(items => {
+                        items.forEach(item => itemDocs.push(item.data()))
+                        setFilteredItems(prev => [...prev, ...itemDocs])
+                    })
+            }
+    }
+
+    useEffect(() => {
+        if (filteredItems.length % 25 !== 0) setNextButtonDisplay('hide')
+    }, [filteredItems])
 
     useEffect(() => {
         switch (filter) {
             default:
-                setFilteredItems(allItems?.filter(item => item.tags.includes(filter)))
+                itemsRef.current = firestore.collection("items").where('tags', 'array-contains', filter)
                 break
             case 'all items':
-                setFilteredItems(allItems)
+                itemsRef.current = firestore.collection("items")
                 break
             case 'in progress':
-                userData?.itemsInProgress.length > 0 && setFilteredItems(allItems?.filter(item => userData.itemsInProgress.includes(item.itemId)))
+                if (userData?.itemsInProgress.length > 0) itemsRef.current = userData?.itemsInProgress
                 break
             case 'posted items':
-                userData?.itemsPosted.length > 0 && setFilteredItems(allItems?.filter(item => item.seller === userData.id))
+                if (userData?.itemsPosted.length > 0) itemsRef.current = firestore.collection("items").where('seller', '==', userData?.id)
                 break
             case 'purchase history':
-                userData?.itemsPurchased.length > 0 && setFilteredItems(allItems?.filter(item => userData.itemsPurchased.includes(item.itemId)))
+                if (userData?.itemsPurchased.length > 0) itemsRef.current = userData?.itemsPurchased
                 break
             case 'saved':
-                userData?.itemsSaved.length > 0 && setFilteredItems(allItems?.filter(item => userData.itemsSaved.includes(item.itemId)))
+                if (userData?.itemsSaved.length > 0) itemsRef.current = userData?.itemsSaved
                 break
         }
-    }, [filter, userData, allItems])
+
+        let itemDocs = []
+        if (typeof itemsRef.current === Array) {
+            let arrayQuery = itemsRef.current.slice(0, 25)
+            arrayQuery.forEach(itemId => itemDocs.push(firestore.collection('items').doc(itemId).get()))
+            setFilteredItems(itemDocs)
+        } else {
+            itemsRef?.current?.orderBy("postedOn", "desc").limit(25).get()
+                .then(items => {
+                    items.forEach(item => itemDocs.push(item.data()))
+                    setFilteredItems(itemDocs)
+                })
+        }
+    }, [])
 
     if (filteredItems?.length === 0) {
         return (
-            <div style={{border: "2px solid black", width: "100%", height: "100%"}}>
+            <div style={{ border: "2px solid black", width: "100%", height: "100%" }}>
                 <p className={ItemsCSS.itemStatus}>There aren't any items under this category</p>
             </div>
-            )
+        )
     } else {
-        return <>{filteredItems?.map(item => <ItemCard create='false' item={item} key={item.itemId} />)}</>
+        return <>
+            {filteredItems?.map(item => <ItemCard create='false' item={item} key={item.itemId} />)}
+            {nextButtonDisplay === 'show' &&
+                <div className={ItemsCSS.itemCardArea} style={{cursor: "pointer", backgroundColor: "#333333"}} onClick={onClickLoadMore} >
+                    <div className={ItemsCSS.itemCard}>
+                        <p className={ItemsCSS.itemCardCreate__text} style={{width: "100%", textAlign: "center", margin: "0", color: "white"}}>Load more</p>
+                    </div>
+                </div>
+            }
+        </>
     }
 }
 
@@ -67,7 +94,7 @@ export const ItemCard = ({ create, item }) => {
     if (create === 'true') {
         return (
             <Link to={firebaseContext?.userAuth ? '/item-create' : '/sign-in'} className={ItemsCSS.itemCardArea}>
-                <div className={ItemsCSS.itemCard} style={{justifyContent: "space-around"}}>
+                <div className={ItemsCSS.itemCard} style={{ justifyContent: "space-around" }}>
                     <p className={ItemsCSS.itemCardCreate__text}>Create a <br />new listing</p>
                     <img src={add_icon} className={ItemsCSS.itemCardCreate__icon} alt="Add a new listing" />
                 </div>
@@ -85,7 +112,7 @@ export const ItemCard = ({ create, item }) => {
                         {firebaseContext?.userData.itemsInProgress.includes(item.itemId) && <div className={ItemsCSS.cardInfo__status}>{item.transactionData?.status}</div>}
                     </div>
                     <div className={ItemsCSS.itemCard__imgArea}>
-                        <div className={ItemsCSS.tagLabelArea}>{item.tags.map(tag => <div className={ItemsCSS.tagLabel}>{tag}</div>)}</div>
+                        <div className={ItemsCSS.tagLabelArea}>{item?.tags?.map(tag => <div className={ItemsCSS.tagLabel} key={tag}>{tag}</div>)}</div>
                         {item.photo1 ?
                             <img className={ItemsCSS.itemCard__img} src={item.photo1 && item.photo1} alt="Item Preview" />
                             :

@@ -172,7 +172,9 @@ input[type="file"] {
 
 .aboutDescription {
     padding: 10px;
-    font-weight: 400
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 160%;
 }
 
 .aboutLink {

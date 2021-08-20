@@ -1,31 +1,36 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'gatsby'
 import { useUser } from "../context/UserContext"
-import { getAllItemTags } from './items'
+import { firestore, firebase } from "./firebase"
 import * as SideNavCSS from '../css/side-nav.module.css'
 
 const SideNavContent = ({ type, query = null }) => {
     const [tags, setTags] = useState()
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
-    const allItems = firebaseContext?.allItems
 
     useEffect(() => {
-        function getTags() {
-            const itemTags = getAllItemTags(allItems)
+        async function getTags() {
+            const tags = await firestore.collection('tags').doc("tagsList").get()
+            const itemTags = tags.data()
+            let allTags = []
+            Object.keys(itemTags)
+                .sort()
+                .forEach((v) => allTags.push([v, itemTags[v]]))
             let content = []
-            for (let tag in itemTags) {
+            allTags.forEach((tag) => {
+                if (tag[1] === 0) firestore.collection('tags').doc("tagsList").update({[tag[0]]: firebase.firestore.FieldValue.delete()})
                 content.push(
-                    <Link to={`/?tag=${tag}`} key={tag} className={SideNavCSS.sideNavRow} onClick={query(tag)}>
-                        <p className={SideNavCSS.sideNavRow__title}>{tag}</p>
-                        <p className={SideNavCSS.sideNavRow__itemCount}>{itemTags[tag]} Item{itemTags[tag] > 1 && 's'}</p>
+                    <Link to={`/?tag=${tag[0]}`} key={tag[0]} className={SideNavCSS.sideNavRow} onClick={() => query(tag[0])}>
+                        <p className={SideNavCSS.sideNavRow__title}>{tag[0]}</p>
+                        <p className={SideNavCSS.sideNavRow__itemCount}>{tag[1]} Item{tag[1] > 1 && 's'}</p>
                     </Link>
                 )
-            }
+            })
             setTags(content)
         }
         if (type !== 'account' && type !== 'notifications' && query) getTags()
-    }, [type, query, allItems])
+    }, [type, query])
 
     switch (type) {
         default:
