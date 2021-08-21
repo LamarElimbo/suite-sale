@@ -13,12 +13,10 @@ const ChangePasswordPage = () => {
     const firebaseContext = useUser()
 
     const onSubmit = (e) => {
-        console.log('len: ', (newPassword.current.value.length === 0))
         e.preventDefault()
         setCurrentPasswordError("")
         setNewPasswordError("")
         const reauthentication = firebaseContext?.reauthenticateUser(currentPassword.current.value, 'password')
-        console.log("reauthentication: ", reauthentication)
         if (reauthentication === "success") {
             if (typeof window !== 'undefined') navigate('/', { state: { message: "password" } })
         } else {

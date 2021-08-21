@@ -4,7 +4,6 @@ import { firestore } from "./firebase"
 import { useUser } from "../context/UserContext"
 import * as ItemsCSS from '../css/items.module.css'
 import * as ItemCSS from '../css/item-page.module.css'
-import add_icon from '../images/add_icon.png'
 
 export const ItemCardList = ({ filter }) => {
     const [filteredItems, setFilteredItems] = useState([])
@@ -14,23 +13,24 @@ export const ItemCardList = ({ filter }) => {
     const itemsRef = useRef()
 
     const onClickLoadMore = () => {
-            let itemDocs = []
-            if (typeof itemsRef.current === Array) {
-                let arrayQuery = itemsRef.current.slice(itemsRef.current.indexOf(filteredItems[filteredItems.length - 1]), 25)
-                arrayQuery.forEach(itemId => itemDocs.push(firestore.collection('items').doc(itemId).get()))
-                setFilteredItems([...filteredItems, itemDocs])
-            } else {
-                // Construct a new query starting at the last visible document, then get the next 25 items.
-                itemsRef.current.orderBy("postedOn", "desc").startAfter(filteredItems[filteredItems.length - 1].postedOn).limit(25).get()
-                    .then(items => {
-                        items.forEach(item => itemDocs.push(item.data()))
-                        setFilteredItems(prev => [...prev, ...itemDocs])
-                    })
-            }
+        let itemDocs = []
+        if (typeof itemsRef.current === Array) {
+            let arrayQuery = itemsRef.current.slice(itemsRef.current.indexOf(filteredItems[filteredItems.length - 1]), 25)
+            arrayQuery.forEach(itemId => itemDocs.push(firestore.collection('items').doc(itemId).get()))
+            setFilteredItems([...filteredItems, itemDocs])
+        } else {
+            // Construct a new query starting at the last visible document, then get the next 25 items.
+            itemsRef.current.orderBy("postedOn", "desc").startAfter(filteredItems[filteredItems.length - 1].postedOn).limit(25).get()
+                .then(items => {
+                    items.forEach(item => itemDocs.push(item.data()))
+                    setFilteredItems(prev => [...prev, ...itemDocs])
+                })
+        }
     }
 
     useEffect(() => {
         if (filteredItems.length % 25 !== 0) setNextButtonDisplay('hide')
+        if (filteredItems.length % 25 === 0) setNextButtonDisplay('show')
     }, [filteredItems])
 
     useEffect(() => {
@@ -54,7 +54,7 @@ export const ItemCardList = ({ filter }) => {
                 if (userData?.itemsSaved.length > 0) itemsRef.current = userData?.itemsSaved
                 break
         }
-
+        
         let itemDocs = []
         if (typeof itemsRef.current === Array) {
             let arrayQuery = itemsRef.current.slice(0, 25)
@@ -67,7 +67,7 @@ export const ItemCardList = ({ filter }) => {
                     setFilteredItems(itemDocs)
                 })
         }
-    }, [])
+    }, [filter])
 
     if (filteredItems?.length === 0) {
         return (
@@ -79,9 +79,9 @@ export const ItemCardList = ({ filter }) => {
         return <>
             {filteredItems?.map(item => <ItemCard create='false' item={item} key={item.itemId} />)}
             {nextButtonDisplay === 'show' &&
-                <div className={ItemsCSS.itemCardArea} style={{cursor: "pointer", backgroundColor: "#333333"}} onClick={onClickLoadMore} >
+                <div className={ItemsCSS.itemCardArea} style={{ cursor: "pointer", backgroundColor: "#333333" }} onClick={onClickLoadMore} >
                     <div className={ItemsCSS.itemCard}>
-                        <p className={ItemsCSS.itemCardCreate__text} style={{width: "100%", textAlign: "center", margin: "0", color: "white"}}>Load more</p>
+                        <p className={ItemsCSS.itemCardCreate__text} style={{ width: "100%", textAlign: "center", margin: "0", color: "white", textTransform: "uppercase", fontSize: "18px" }}>Load more</p>
                     </div>
                 </div>
             }
@@ -93,10 +93,9 @@ export const ItemCard = ({ create, item }) => {
     const firebaseContext = useUser()
     if (create === 'true') {
         return (
-            <Link to={firebaseContext?.userAuth ? '/item-create' : '/sign-in'} className={ItemsCSS.itemCardArea}>
+            <Link to={firebaseContext?.userAuth ? '/item-create' : '/sign-in'} className={ItemsCSS.itemCardArea} style={{backgroundColor: "#333333"}}>
                 <div className={ItemsCSS.itemCard} style={{ justifyContent: "space-around" }}>
                     <p className={ItemsCSS.itemCardCreate__text}>Create a <br />new listing</p>
-                    <img src={add_icon} className={ItemsCSS.itemCardCreate__icon} alt="Add a new listing" />
                 </div>
             </Link>
         )

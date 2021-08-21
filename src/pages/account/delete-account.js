@@ -14,7 +14,6 @@ const DeleteAccountPage = () => {
         e.preventDefault()
         setCurrentPasswordError("")
         const reauthentication = firebaseContext?.reauthenticateUser(currentPassword.current.value, 'delete')
-        console.log("reauthentication: ", reauthentication)
         if (reauthentication === "success") {
             if (typeof window !== 'undefined') navigate('/', { state: { message: "delete" } })
         } else {

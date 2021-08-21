@@ -12,16 +12,16 @@ const IndexPage = ({ location }) => {
   const [filter, setFilter] = useState('all items')
   const firebaseContext = useUser()
   const [message, setMessage] = useState('')
-  console.log('index filter: ', filter)
 
   useEffect(() => {
     // Check to see if user has a success or error message to see
     if (location.state?.message) { setMessage(location.state?.message) }
     // Check to see if user is filtering items based on a tag
     if (location.search) {
-      console.log('searching params')
       const urlParams = new URLSearchParams(location.search);
       setFilter(urlParams.get('tag'))
+    } else {
+      setFilter('all items')
     }
   }, [location, filter])
 
@@ -53,7 +53,7 @@ const IndexPage = ({ location }) => {
         <ItemCardList filter={filter} />
       </Content>
       <SideNav home='true'>
-        <SideNavContent query={setFilter} />
+        <SideNavContent />
       </SideNav>
     </Layout>
   )

@@ -4,7 +4,7 @@ import { useUser } from "../context/UserContext"
 import { firestore, firebase } from "./firebase"
 import * as SideNavCSS from '../css/side-nav.module.css'
 
-const SideNavContent = ({ type, query = null }) => {
+const SideNavContent = ({ type }) => {
     const [tags, setTags] = useState()
     const firebaseContext = useUser()
     const userData = firebaseContext?.userData
@@ -21,7 +21,7 @@ const SideNavContent = ({ type, query = null }) => {
             allTags.forEach((tag) => {
                 if (tag[1] === 0) firestore.collection('tags').doc("tagsList").update({[tag[0]]: firebase.firestore.FieldValue.delete()})
                 content.push(
-                    <Link to={`/?tag=${tag[0]}`} key={tag[0]} className={SideNavCSS.sideNavRow} onClick={() => query(tag[0])}>
+                    <Link to={`/?tag=${tag[0]}`} key={tag[0]} className={SideNavCSS.sideNavRow}>
                         <p className={SideNavCSS.sideNavRow__title}>{tag[0]}</p>
                         <p className={SideNavCSS.sideNavRow__itemCount}>{tag[1]} Item{tag[1] > 1 && 's'}</p>
                     </Link>
@@ -29,8 +29,8 @@ const SideNavContent = ({ type, query = null }) => {
             })
             setTags(content)
         }
-        if (type !== 'account' && type !== 'notifications' && query) getTags()
-    }, [type, query])
+        if (type !== 'account' && type !== 'notifications') getTags()
+    }, [type])
 
     switch (type) {
         default:

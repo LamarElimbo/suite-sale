@@ -99,7 +99,6 @@ export function UserProvider({ children }) {
   }
 
   const getUserDocument = async (userAuth) => {
-    console.log('getting user data')
     if (!userAuth?.uid) return null;
     try {
       const userDocument = await firestore.collection('users').doc(userAuth.uid).get()

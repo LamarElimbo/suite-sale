@@ -11,14 +11,12 @@ const ChangeEmailPage = () => {
     const [currentPasswordError, setCurrentPasswordError] = useState("")
     const [newEmailError, setNewEmailError] = useState("")
     const firebaseContext = useUser()
-    console.log("userAuth: ", firebaseContext?.userAuth?.email)
 
     const onSubmit = (e) => {
         e.preventDefault()
         setCurrentPasswordError("")
         setNewEmailError("")
         const reauthentication = firebaseContext?.reauthenticateUser(currentPassword.current.value, 'email', email.current.value)
-        console.log("reauthentication: ", reauthentication)
         if (reauthentication === "success") {
             if (typeof window !== 'undefined') navigate('/', { state: { message: "email" } })
         } else {
