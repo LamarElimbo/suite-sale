@@ -80,7 +80,7 @@ export const ItemCardList = ({ filter }) => {
             {filteredItems?.map(item => <ItemCard create='false' item={item} key={item.itemId} />)}
             {nextButtonDisplay === 'show' &&
                 <div className={ItemsCSS.itemCardArea} style={{ cursor: "pointer", backgroundColor: "#333333" }} onClick={onClickLoadMore} >
-                    <div className={ItemsCSS.itemCard}>
+                    <div className={ItemsCSS.itemCard} style={{ justifyContent: "space-around" }}>
                         <p className={ItemsCSS.itemCardCreate__text} style={{ width: "100%", textAlign: "center", margin: "0", color: "white", textTransform: "uppercase", fontSize: "18px" }}>Load more</p>
                     </div>
                 </div>
@@ -101,7 +101,7 @@ export const ItemCard = ({ create, item }) => {
         )
     }
 
-    if (!item.transactionData || firebaseContext?.userData.itemsInProgress.includes(item.itemId)) {
+    if (!item.transactionData || firebaseContext?.userData?.itemsInProgress.includes(item.itemId)) {
         return (
             <Link to={`/item?item=${item.itemId}`} state={{ item }} className={ItemsCSS.itemCardArea} id={item.itemId}>
                 <div className={ItemsCSS.itemCard}>
