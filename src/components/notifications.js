@@ -6,15 +6,19 @@ import * as LayoutCSS from '../css/layout.module.css'
 
 export const notifyUser = (userId, notifyAbout, itemId) => {
     let message = ""
+    let fullMessage = ""
     switch (notifyAbout) {
         case 'cancelation':
             message = "Your order has been cancelled"
+            fullMessage = "This is Suite Sale letting you know that one of your orders has been cancelled."
             break
         case 'newBuyer':
             message = "You have a new buyer"
+            fullMessage = "This is Suite Sale letting you know that you have a new buyer for an item that you posted."
             break
         case 'orderConfirmed':
             message = "Your order has been confirmed"
+            fullMessage = "This is Suite Sale letting you know that one of your orders has been confirmed."
             break
         default:
             break
@@ -27,9 +31,9 @@ export const notifyUser = (userId, notifyAbout, itemId) => {
                 transaction
                     .update(userDocRef, { notifications: firebase.firestore.FieldValue.arrayUnion({ message, itemId }) })
                 if (userDoc.data().notifyMethod.by === 'phone') {
-                    sendSMS(userDoc.data().notifyMethod.at, message)
+                    sendSMS(userDoc.data().notifyMethod.at, fullMessage)
                 } else {
-                    sendEmail(userDoc.data().email, message)
+                    sendEmail(userDoc.data().email, fullMessage)
                 }
             })
         })
@@ -86,15 +90,15 @@ export const NotificationsList = () => {
 
                     switch (notification.message) {
                         case "Your order has been cancelled":
-                            notification['fullMessage'] = "This is Suite Sale letting you know that one of your orders has been cancelled."
+                            notification['fullMessage'] = `Your ${notification?.item?.item} order has been cancelled`
                             notification['action'] = ""
                             break
                         case "You have a new buyer":
-                            notification['fullMessage'] = "This is Suite Sale letting you know that you have a new buyer for an item that you posted."
+                            notification['fullMessage'] = `You have a new buyer for your ${notification?.item?.item}`
                             notification['action'] = "Next Step: Choose a time to meet"
                             break
                         case "Your order has been confirmed":
-                            notification['fullMessage'] = "This is Suite Sale letting you know that one of your orders has been confirmed."
+                            notification['fullMessage'] = `Your ${notification?.item?.item} order has been confirmed`
                             notification['action'] = "Next Step: Mark your calendar"
                             break
                         default:
