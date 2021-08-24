@@ -60,7 +60,7 @@ export const sendEmail = async (notifyAt, message) => {
     const response = await fetch(functionURL, {
         method: "post",
         headers: { "Content-type": "application/x-www-form-urlencoded; charset=UTF-8" },
-        body: new URLSearchParams({ to: "lamar_johnson133@yahoo.ca", subject: message, body: message }).toString(),
+        body: new URLSearchParams({ to: notifyAt, subject: message, body: message }).toString(),
     })
     if (response.status === 200) {
         console.log('success sending email')
