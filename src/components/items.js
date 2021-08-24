@@ -54,7 +54,7 @@ export const ItemCardList = ({ filter }) => {
                 if (userData?.itemsSaved.length > 0) itemsRef.current = userData?.itemsSaved
                 break
         }
-        
+
         let itemDocs = []
         if (typeof itemsRef.current === Array) {
             let arrayQuery = itemsRef.current.slice(0, 25)
@@ -79,7 +79,7 @@ export const ItemCardList = ({ filter }) => {
         return <>
             {filteredItems?.map(item => <ItemCard create='false' item={item} key={item.itemId} />)}
             {nextButtonDisplay === 'show' &&
-                <div className={ItemsCSS.itemCardArea} style={{ cursor: "pointer", backgroundColor: "#333333" }} onClick={onClickLoadMore} >
+                <div className={ItemsCSS.itemCardArea} style={{ cursor: "pointer", backgroundColor: "#333333" }} role="button" tabIndex={0} onClick={onClickLoadMore} onKeyDown={onClickLoadMore} >
                     <div className={ItemsCSS.itemCard} style={{ justifyContent: "space-around" }}>
                         <p className={ItemsCSS.itemCardCreate__text} style={{ width: "100%", textAlign: "center", margin: "0", color: "white", textTransform: "uppercase", fontSize: "18px" }}>Load more</p>
                     </div>
@@ -93,7 +93,7 @@ export const ItemCard = ({ create, item }) => {
     const firebaseContext = useUser()
     if (create === 'true') {
         return (
-            <Link to={firebaseContext?.userAuth ? '/item-create' : '/sign-in'} className={ItemsCSS.itemCardArea} style={{backgroundColor: "#333333"}}>
+            <Link to={firebaseContext?.userAuth ? '/item-create' : '/sign-in'} className={ItemsCSS.itemCardArea} style={{ backgroundColor: "#333333" }}>
                 <div className={ItemsCSS.itemCard} style={{ justifyContent: "space-around" }}>
                     <p className={ItemsCSS.itemCardCreate__text}>Create a <br />new listing</p>
                 </div>
@@ -107,8 +107,10 @@ export const ItemCard = ({ create, item }) => {
                 <div className={ItemsCSS.itemCard}>
                     <div className={ItemsCSS.itemCard__Info}>
                         <div className={ItemsCSS.cardInfo__cost}><sup className={ItemsCSS.dollarSign}>$</sup>{item.cost}</div>
-                        <div className={ItemsCSS.cardInfo__item}>{item.item}</div>
-                        {firebaseContext?.userData.itemsInProgress.includes(item.itemId) && <div className={ItemsCSS.cardInfo__status}>{item.transactionData?.status}</div>}
+                        <div>
+                            <div className={ItemsCSS.cardInfo__item}>{item.item}</div>
+                            {firebaseContext?.userData.itemsInProgress.includes(item.itemId) && <div className={ItemsCSS.cardInfo__status}>{item.transactionData?.status}</div>}
+                        </div>
                     </div>
                     <div className={ItemsCSS.itemCard__imgArea}>
                         <div className={ItemsCSS.tagLabelArea}>{item?.tags?.map(tag => <div className={ItemsCSS.tagLabel} key={tag}>{tag}</div>)}</div>

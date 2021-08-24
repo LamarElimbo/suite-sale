@@ -8,7 +8,7 @@ export const notifyUser = (userId, notifyAbout, itemId) => {
     let message = ""
     let fullMessage = ""
     switch (notifyAbout) {
-        case 'cancelation':
+        case 'cancellation':
             message = "Your order has been cancelled"
             fullMessage = "This is Suite Sale letting you know that one of your orders has been cancelled."
             break
@@ -28,18 +28,12 @@ export const notifyUser = (userId, notifyAbout, itemId) => {
     firestore
         .runTransaction(transaction => {
             return transaction.get(userDocRef).then(userDoc => {
-                transaction
-                    .update(userDocRef, { notifications: firebase.firestore.FieldValue.arrayUnion({ message, itemId }) })
-                if (userDoc.data().notifyMethod.by === 'phone') {
-                    sendSMS(userDoc.data().notifyMethod.at, fullMessage)
-                } else {
-                    sendEmail(userDoc.data().email, fullMessage)
-                }
+                transaction.update(userDocRef, { notifications: firebase.firestore.FieldValue.arrayUnion({ message, itemId }) })
+                if (userDoc.data().notifyMethod.by === 'phone') sendSMS(userDoc.data().notifyMethod.at, fullMessage)
+                if (userDoc.data().notifyMethod.by === 'email') sendEmail(userDoc.data().email, fullMessage)
             })
         })
-        .catch((error) => {
-            console.log("Transaction failed: ", error);
-        })
+        .catch((error) => console.log("Transaction failed: ", error))
 }
 
 export const sendSMS = async (notifyAt, message) => {
@@ -115,11 +109,11 @@ export const NotificationsList = () => {
                 return (
                     <>
                         {notificationItem.fullMessage?.search('confirm') > 0 || notificationItem.fullMessage?.search('cancel') > 0 ?
-                            <div className={LayoutCSS.notificationLink} state={{ item: notificationItem.item }} key={notificationItem.itemId}>
+                            <div className={LayoutCSS.notificationLink} key={notificationItem.itemId}>
                                 <p className={LayoutCSS.notificationMessage}>{notificationItem.fullMessage}</p>
                                 <p className={LayoutCSS.notificationAction}>{notificationItem.action}</p>
                                 {notificationItem.fullMessage?.search('confirm') > 0 && <button className={LayoutCSS.statusButton} id={notificationItem.itemId} onClick={confirmNotification}>Dismiss</button>}
-                                {notificationItem.fullMessage?.search('confirm') > 0 && <Link to={`/item?item=${notificationItem.itemId}`} style={{ marginLeft: "10px" }}><button className={LayoutCSS.statusButton} id={"confirm" + notificationItem.itemId}>Visit item page for details</button></Link>}
+                                {notificationItem.fullMessage?.search('confirm') > 0 && <Link to={`/item?item=${notificationItem.itemId}`} state={{ item: notificationItem.item }} style={{ marginLeft: "10px" }}><button className={LayoutCSS.statusButton} id={"confirm" + notificationItem.itemId}>Visit item page for details</button></Link>}
                                 {notificationItem.fullMessage?.search('cancel') > 0 && <button className={LayoutCSS.statusButton} id={notificationItem.itemId} onClick={deleteNotification}>Dismiss</button>}
                             </div>
                             :

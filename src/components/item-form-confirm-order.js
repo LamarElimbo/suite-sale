@@ -54,8 +54,9 @@ const ItemFormConfirmOrder = ({ item }) => {
             <form className={FormCSS.form} onSubmit={onSubmit}>
                 <div className={FormCSS.formField} style={{ flex: "1 0 100%" }}>
                     <div className={FormCSS.inputItem} style={{ justifyContent: "center" }}>
-                        <p className={ItemCSS.formStepTitle}>The active times in white are when your buyer is available.</p>
-                        <p>When would you like to meet with them?</p>
+                        <p className={ItemCSS.formStepTitle}>When would you like to meet with your buyer?</p>
+                        <p>The times at which they are available are in white.</p>
+                        <p style={{fontSize: "14px", fontWeight: "300", marginTop: "10px"}}>Side note: If you don't see any times in white, then it's likely that their available time has already passed, in which case you might want to cancel this order.</p>
                         <ItemFormPickTime item={item} availableTimes={availableTimes} setAvailableTimes={setAvailableTimes} />
                     </div>
                     {availableTimesError && <p className={FormCSS.formError}>{availableTimesError}</p>}

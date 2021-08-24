@@ -141,41 +141,6 @@
     color: red;
 }
 
-.darkButton {
-    width: 100%;
-    height: 64px;
-    background-color: #333333;
-    border: 2px solid black;
-    border-radius: 5px;
-    padding: 5px;
-    margin: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 18px;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
-
-.lightButton {
-    width: 100%;
-    height: 64px;
-    background-color: white;
-    border: 2px solid black;
-    border-radius: 5px;
-    padding: 5px;
-    margin: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 18px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
-
 .inputItem__submitArea {
     display: flex;
     justify-content: space-around;
@@ -208,7 +173,6 @@
 }
 
 .displayButton {
-    background-color: white;
     border: 2px solid black;
     padding: 15px;
     margin: 15px 5px 0px 5px;
@@ -320,4 +284,11 @@
 .signInPageButtons {
     cursor: pointer;
     border-bottom: 2px solid black;
+}
+
+@media only screen and (max-width: 350px) {
+    .displayButton {
+        flex-direction: column;
+        text-align: center;
+    }
 }

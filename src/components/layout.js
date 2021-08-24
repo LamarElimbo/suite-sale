@@ -16,7 +16,7 @@ export const Content = ({ contentTitle, children, titlePosition, sideNav = true,
                     <>
                         <p className={LayoutCSS.notificationMessage}>Your item has been added!</p>
                         <p className={LayoutCSS.notificationAction}>You can find all of your posted items in your <Link to="/account/posted-items">account page</Link></p>
-                        {firebaseContext?.userData?.itemsPosted.length === 0 && <Link to={'/account/change-notification'} className={LayoutCSS.notificationAction}>Select how you'd like to be notified</Link>}
+                        {(firebaseContext?.userData?.itemsPosted.length === 0 && firebaseContext?.userData?.itemsPurchased.length === 0) && <Link to={'/account/change-notification'} className={LayoutCSS.statusButton}>Select how you'd like to be notified</Link>}
                     </>
                 )
             case 'item-update':
@@ -38,7 +38,7 @@ export const Content = ({ contentTitle, children, titlePosition, sideNav = true,
                     <>
                         <p className={LayoutCSS.notificationMessage}>The seller has been notified of your interest in their item.</p>
                         <p className={LayoutCSS.notificationAction}>Once they confirm a time that they're available, you'll be notified with the final details.</p>
-                        {firebaseContext?.userData?.itemsPurchased.length === 0 && <Link to={'/account/change-notification'} className={LayoutCSS.notificationAction}>Select how you'd like to be notified</Link>}
+                        {(firebaseContext?.userData?.itemsPosted.length === 0 && firebaseContext?.userData?.itemsPurchased.length === 0) && <Link to={'/account/change-notification'} className={LayoutCSS.statusButton}>Select how you'd like to be notified</Link>}
                     </>
                 )
             case 'item-confirm':
@@ -49,7 +49,7 @@ export const Content = ({ contentTitle, children, titlePosition, sideNav = true,
                     </>
                 )
             case 'item-cancel':
-                return <p className={LayoutCSS.notificationMessage}>The buyer has been notified that their order has been cancelled.</p>
+                return <p className={LayoutCSS.notificationMessage}>This order has been successfully cancelled.</p>
         }
     }
 

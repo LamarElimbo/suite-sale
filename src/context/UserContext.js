@@ -146,15 +146,15 @@ export function UserProvider({ children }) {
           break
         case 'newOrderNotification':
           userDoc.update({ notifications: firebase.firestore.FieldValue.arrayRemove({ message: "You have a new buyer", itemId }) })
-          setUserData(prevState => ({ ...prevState, notifications: prevState.notifications.filter(notification => notification !== { message: "You have a buyer", itemId }) }))
+          setUserData(prevState => ({ ...prevState, notifications: prevState.notifications.filter(notification => notification.itemId !== itemId) }))
           break
         case 'orderConfirmationNotification':
           userDoc.update({ notifications: firebase.firestore.FieldValue.arrayRemove({ message: "Your order has been confirmed", itemId }) })
-          setUserData(prevState => ({ ...prevState, notifications: prevState.notifications.filter(notification => notification !== { message: "Your order has been confirmed", itemId }) }))
+          setUserData(prevState => ({ ...prevState, notifications: prevState.notifications.filter(notification => notification.itemId !== itemId) }))
           break
         case 'orderCancellationNotification':
           userDoc.update({ notifications: firebase.firestore.FieldValue.arrayRemove({ message: "Your order has been cancelled", itemId }) })
-          setUserData(prevState => ({ ...prevState, notifications: prevState.notifications.filter(notification => notification !== { message: "Your order has been cancelled", itemId }) }))
+          setUserData(prevState => ({ ...prevState, notifications: prevState.notifications.filter(notification => notification.itemId !== itemId) }))
           break
       }
     }

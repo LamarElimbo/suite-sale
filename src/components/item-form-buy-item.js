@@ -28,20 +28,13 @@ const ItemFormBuyItem = ({ itemData }) => {
         setSuiteError("")
         if (!deliveryMethod) setDeliveryMethodError("You'll have to select a delivery method")
         if (availableTimes.length === 0) setAvailableTimesError("You'll have to select some times at which you're available")
-        if (!userData?.suite && !suite.current.value && (deliveryMethod === "dropOff")) {
-            setSuiteError("You'll have to enter your suite number or remove 'Pick up from your suite' as one of your meet up options")
-        }
-        if (suite.current.value) {
-            addSuite(suite.current.value, userData?.id)
-        }
+        if (!userData?.suite && !suite.current.value && (deliveryMethod === "dropOff")) setSuiteError("You'll have to enter your suite number or remove 'Pick up from your suite' as one of your meet up options")
+        if (suite.current.value) addSuite(suite.current.value, userData?.id)
+
         if ((availableTimes.length !== 0) && deliveryMethod) {
             updateUserItems('add', 'itemsInProgress', itemData.itemId) // update the current user (the buyer)
             notifyUser(itemData.seller, 'newBuyer', itemData.itemId)
-
-            firestore
-                .collection("users")
-                .doc(itemData.seller)
-                .update({ itemsInProgress: firebase.firestore.FieldValue.arrayUnion(itemData.itemId) })
+            firestore.collection("users").doc(itemData.seller).update({ itemsInProgress: firebase.firestore.FieldValue.arrayUnion(itemData.itemId) })
 
             let day1Date = new Date()
             let day2Date = new Date()

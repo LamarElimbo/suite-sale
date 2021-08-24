@@ -29,20 +29,16 @@ const ChangeNotificationMethodPage = () => {
             firebaseContext?.updateNotificationMethod("phone", phoneNumber)
             if (typeof window !== 'undefined') navigate('/', { state: { message: "notificationMethod" } })
         }
-        if (notificationMethod !== firebaseContext?.userData?.notifyMethod?.by) {
-            if (notificationMethod === "phone") {
-                if (phoneNumber.length > 0) {
-                    firebaseContext?.updateNotificationMethod(notificationMethod, phoneNumber)
-                    if (typeof window !== 'undefined') navigate('/', { state: { message: "notificationMethod" } })
-                } else {
-                    setPhoneNumberError("You'll have to enter a cell phone number")
-                }
-            } else {
-                firebaseContext?.updateNotificationMethod("email", "")
+        if (notificationMethod === "phone") {
+            if (phoneNumber.length > 0) {
+                if (firebaseContext?.userData?.notifyMethod?.by !== "phone") firebaseContext?.updateNotificationMethod(notificationMethod, phoneNumber)
                 if (typeof window !== 'undefined') navigate('/', { state: { message: "notificationMethod" } })
+            } else {
+                setPhoneNumberError("You'll have to enter a cell phone number")
             }
         } else {
-            setNotificationMethodError("It looks like you didn't make any changes")
+            if (firebaseContext?.userData?.notifyMethod?.by !== "email") firebaseContext?.updateNotificationMethod("email", "")
+            if (typeof window !== 'undefined') navigate('/', { state: { message: "notificationMethod" } })
         }
     }
 
