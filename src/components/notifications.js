@@ -8,13 +8,13 @@ export const notifyUser = (userId, notifyAbout, itemId) => {
     let message = ""
     switch (notifyAbout) {
         case 'cancelation':
-            message = "This is Suite Sale letting you know that one of your orders has been cancelled."
+            message = "Your order has been cancelled"
             break
         case 'newBuyer':
-            message = "This is Suite Sale letting you know that you have a new buyer for an item that you posted."
+            message = "You have a new buyer"
             break
         case 'orderConfirmed':
-            message = "This is Suite Sale letting you know that one of your orders has been confirmed."
+            message = "Your order has been confirmed"
             break
         default:
             break
@@ -86,15 +86,15 @@ export const NotificationsList = () => {
 
                     switch (notification.message) {
                         case "Your order has been cancelled":
-                            notification['fullMessage'] = `Your ${notification?.item?.item} order has been cancelled`
+                            notification['fullMessage'] = "This is Suite Sale letting you know that one of your orders has been cancelled."
                             notification['action'] = ""
                             break
                         case "You have a new buyer":
-                            notification['fullMessage'] = `You have a new buyer for your ${notification?.item?.item}`
+                            notification['fullMessage'] = "This is Suite Sale letting you know that you have a new buyer for an item that you posted."
                             notification['action'] = "Next Step: Choose a time to meet"
                             break
                         case "Your order has been confirmed":
-                            notification['fullMessage'] = `Your ${notification?.item?.item} order has been confirmed`
+                            notification['fullMessage'] = "This is Suite Sale letting you know that one of your orders has been confirmed."
                             notification['action'] = "Next Step: Mark your calendar"
                             break
                         default:

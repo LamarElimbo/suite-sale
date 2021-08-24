@@ -110,11 +110,11 @@ const ItemFormPickTime = ({ item, availableTimes, setAvailableTimes }) => {
                                 {(!item?.transactionData?.status) &&
                                     <div className={FormCSS.timeBoxInner + " " + (availableTimes?.includes(`${day} ${time.t12}`) ? FormCSS.selected : FormCSS.unselected)}
                                         id={`${day} ${time.t12}`}
-                                        onClick={handleTimeSelection} onkeydown={handleTimeSelection} role="button" tabIndex="0">{time.t12}</div>}
+                                        onClick={handleTimeSelection} onKeyDown={handleTimeSelection} role="button" tabIndex="0">{time.t12}</div>}
                                 {(item?.transactionData?.status === 'Awaiting Time Confirmation' && item?.transactionData?.buyerAvailable?.includes(`${day} ${time.t12}`)) &&
                                     <div className={FormCSS.timeBoxInner + " " + (availableTimes === (`${day} ${time.t12}`) ? FormCSS.selected : FormCSS.unselected)}
                                         id={`${day} ${time.t12}`}
-                                        onClick={handleTimeSelection} onkeydown={handleTimeSelection} role="button" tabIndex="0">{time.t12}</div>}
+                                        onClick={handleTimeSelection} onKeyDown={handleTimeSelection} role="button" tabIndex="0">{time.t12}</div>}
                                 {(item?.transactionData?.status === 'Awaiting Time Confirmation' && !item?.transactionData?.buyerAvailable.includes(`${day} ${time.t12}`)) &&
                                     <div className={FormCSS.timeBoxInner + " " + FormCSS.inactive} id={`${day} ${time.t12}`}>{time.t12}</div>}
                             </div>
