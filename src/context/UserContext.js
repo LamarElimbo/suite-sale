@@ -43,16 +43,8 @@ export function UserProvider({ children }) {
     const credentials = firebase.auth.EmailAuthProvider.credential(userAuth.email, password)
     user.reauthenticateWithCredential(credentials).then(() => {
       // User re-authenticated.
-      switch (action) {
-        case 'password':
-          updatePassword(password).then((result) => console.log(result))
-          break
-        case 'email':
-          updateEmail(email).then((result) => console.log(result))
-          break
-        default:
-          return null
-      }
+      if (action === 'password') updatePassword(password).then((result) => console.log(result))
+      if (action === 'email') updateEmail(email).then((result) => console.log(result))
       return 'success'
     }).catch((error) => {
       // An error ocurred

@@ -25,18 +25,16 @@ const IndexPage = ({ location }) => {
     }
   }, [location, filter])
 
-  const onSetWealthsimpleCashPayments = () => {
-    firebaseContext?.updateAcceptedPaymentMethods(['wealthsimple cash'])
-  }
+  const onSetWealthsimpleCashPayments = () => firebaseContext?.updateAcceptedPaymentMethods(['wealthsimple cash'])
 
   return (
     <Layout pageTitle="Home">
       <Content message={message} setMessage={setMessage}>
         {(firebaseContext?.userAuth && !firebaseContext?.userData?.acceptedPaymentMethods?.includes('wealthsimple cash')) &&
           <div className={LayoutCSS.referralLink}>
-            <div className={ LayoutCSS.referralInfo }><img src={wealthsimple_logo} alt="Wealthsimple logo" className={LayoutCSS.wealthsimpleLogo} />Don't have cash on hand? Give the Wealthsimple Cash app a try. It's Canada's fastest and simplest way to send and receive money. No fees and totally secure. Plus, you can get a free $25 if you sign up with my referral link.</div>
+            <div className={ LayoutCSS.referralInfo }><img src={wealthsimple_logo} alt="Wealthsimple logo" className={LayoutCSS.wealthsimpleLogo} />Don't have cash on hand? Give the Wealthsimple Cash app a try. It's Canada's fastest and simplest way to send and receive money. No fees and totally secure. Plus, you can get a free $10 if you sign up with my referral link.</div>
             <div className={LayoutCSS.referralButtons}>
-              <a href="https://my.wealthsimple.com/app/public/cash-referral-signup?handle=$lamarelimbo" target="_blank" rel="noreferrer" className={LayoutCSS.referralButton}>Get your $25</a>
+              <a href="https://my.wealthsimple.com/app/public/cash-referral-signup?handle=$lamarelimbo" target="_blank" rel="noreferrer" className={LayoutCSS.referralButton}>Get your $10</a>
               <button className={LayoutCSS.statusButton} onClick={onSetWealthsimpleCashPayments} className={LayoutCSS.referralButton}>Already got it</button>
             </div>
           </div>}
