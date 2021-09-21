@@ -1,54 +1,22 @@
-<p align="center">
-  <a href="https://www.gatsbyjs.com/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter">
-    <img alt="Gatsby" src="https://www.gatsbyjs.com/Gatsby-Monogram.svg" width="60" />
-  </a>
-</p>
-<h1 align="center">
-  Gatsby minimal starter
-</h1>
+# Suite-Sale
+For when you want to sell your stuff, but you don’t want to deal with shipping or take off your pajamas.
 
-## 🚀 Quick start
+## General info
+Inspired by local yard sales, I built this online marketplace for the residents of building I live in. People can post things that they want to sell and organize a time to meet in the lobby. The best part is that they get to keep 100% of the profits and avoid the packaging, costs, and duration that come with shipping.
 
-1.  **Create a Gatsby site.**
+And my solution was Suite Sale.
+[Check out the case study](https://www.lamarelimbo.com/case-studies/suite-sale-case-study "Suite Sale's Case Study")
 
-    Use the Gatsby CLI to create a new site, specifying the minimal starter.
+	
+## Technologies
+Project is created with:
+* React version: 17.0.1
+* Firebase: 8.7.0
+* Gatsby: 3.8.1
+	
+## Setup
+To run this project, check it out live:
+[Suite Sale Live Site](https://www.suitesale.ca/ "Suite Sale's Homepage")
 
-    ```shell
-    # create a new Gatsby site using the minimal starter
-    npm init gatsby
-    ```
-
-2.  **Start developing.**
-
-    Navigate into your new site’s directory and start it up.
-
-    ```shell
-    cd my-gatsby-site/
-    npm run develop
-    ```
-
-3.  **Open the code and start customizing!**
-
-    Your site is now running at http://localhost:8000!
-
-    Edit `src/pages/index.js` to see your site update in real-time!
-
-4.  **Learn more**
-
-    - [Documentation](https://www.gatsbyjs.com/docs/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Tutorials](https://www.gatsbyjs.com/tutorial/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Guides](https://www.gatsbyjs.com/tutorial/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [API Reference](https://www.gatsbyjs.com/docs/api-reference/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Plugin Library](https://www.gatsbyjs.com/plugins?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-    - [Cheat Sheet](https://www.gatsbyjs.com/docs/cheat-sheet/?utm_source=starter&utm_medium=readme&utm_campaign=minimal-starter)
-
-## 🚀 Quick start (Gatsby Cloud)
-
-Deploy this starter with one click on [Gatsby Cloud](https://www.gatsbyjs.com/cloud/):
-
-[<img src="https://www.gatsbyjs.com/deploynow.svg" alt="Deploy to Gatsby Cloud">](https://www.gatsbyjs.com/dashboard/deploynow?url=https://github.com/gatsbyjs/gatsby-starter-minimal)
+or run it locally using:
+$ gatsby build
